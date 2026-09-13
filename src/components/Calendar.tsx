@@ -47,7 +47,8 @@ export function Calendar({ log, onPick, onNew }: Props) {
   const daysInMonth = new Date(cursor.y, cursor.m + 1, 0).getDate()
   const cells: (string | null)[] = [...Array(lead).fill(null)]
   for (let d = 1; d <= daysInMonth; d++) cells.push(toISO(new Date(cursor.y, cursor.m, d)))
-  while (cells.length % 7) cells.push(null)
+  // Always six rows, so every month page is the same height.
+  while (cells.length < 42) cells.push(null)
 
   const monthLabel = first.toLocaleDateString(locale(), { month: 'long', year: 'numeric' })
   const weekdays = Array.from({ length: 7 }, (_, i) =>
