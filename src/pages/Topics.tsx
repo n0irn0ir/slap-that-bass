@@ -45,8 +45,7 @@ export function Topics() {
   return (
     <>
       {/* stickers live in the empty space: right of the heading, and in the side margins on wide screens */}
-      <Sticker src={`${B}st-theory.png`} width={120} rotate={7} style={{ right: 250, top: -6 }} />
-      <Sticker src={`${B}st-ritard.png`} width={170} rotate={-6} style={{ right: 420, top: 70 }} delay={0.15} />
+      <Sticker src={`${B}st-ritard.png`} width={170} rotate={-6} style={{ right: 300, top: 40 }} delay={0.15} />
       <Sticker src={`${B}st-short.png`} width={128} rotate={5} className="margin-only" style={{ left: -150, top: 420 }} delay={0.3} />
       <Sticker src={`${B}st-veryhard.png`} width={128} rotate={-5} className="margin-only" style={{ right: -150, top: 900 }} delay={0.45} />
       <div className="page-head">
