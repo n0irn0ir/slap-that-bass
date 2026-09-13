@@ -998,6 +998,9 @@ button {
   z-index: 3;
   pointer-events: none;
 }
+.sticker-float.over-bar {
+  z-index: 11; /* sits on top of the sticky top bar */
+}
 .sticker-float img {
   display: block;
   height: auto;

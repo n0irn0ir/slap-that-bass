@@ -76,7 +76,7 @@ export function Topics() {
   return (
     <>
       {/* stickers live in the empty space: right of the heading, and in the side margins on wide screens */}
-      <Sticker src={`${B}st-hand3b.png`} width={140} rotate={8} bubble="below" style={{ right: 500, top: 22 }} lines={pep} />
+      <Sticker src={`${B}st-hand3b.png`} width={140} rotate={8} bubble="below" className="over-bar" style={{ right: 500, top: -30 }} lines={pep} />
       <Sticker src={`${B}st-ritard.png`} width={160} rotate={-6} bubble="below" style={{ right: 320, top: 50 }} delay={0.15} lines={pep} />
       <Sticker src={`${B}st-short.png`} width={128} rotate={5} className="margin-only" style={{ left: -150, top: 420 }} delay={0.3} lines={pep} />
       <Sticker src={`${B}st-hand4b.png`} width={128} rotate={-4} className="margin-only" style={{ right: -150, top: 420 }} delay={0.4} lines={pep} />
