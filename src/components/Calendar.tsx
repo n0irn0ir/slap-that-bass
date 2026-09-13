@@ -106,15 +106,17 @@ export function Calendar({ log, onPick, onNew }: Props) {
         <motion.div
           key={`${cursor.y}-${cursor.m}`}
           className="cal-page"
-          style={{ transformOrigin: '50% 0%' }}
-          initial={dir.current >= 0 ? { opacity: 0, y: -18, rotate: 0 } : { opacity: 0, y: 40, rotate: -4 }}
-          animate={{ opacity: 1, y: 0, rotate: 0 }}
+          style={{ transformOrigin: '50% 0%', transformPerspective: 900 }}
+          // Forward: the old page flips up over the spiral and the next one is underneath.
+          // Back: the previous page swings down from the top.
+          initial={dir.current >= 0 ? { opacity: 0.6, rotateX: 0 } : { opacity: 0, rotateX: -100 }}
+          animate={{ opacity: 1, rotateX: 0 }}
           exit={
             dir.current >= 0
-              ? { opacity: 0, y: 70, rotate: 7, transition: { duration: 0.32, ease: [0.4, 0, 1, 1] } }
-              : { opacity: 0, y: -18, transition: { duration: 0.15 } }
+              ? { opacity: 0, rotateX: -100, transition: { duration: 0.38, ease: [0.4, 0, 0.8, 1] } }
+              : { opacity: 0, transition: { duration: 0.12 } }
           }
-          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+          transition={dir.current >= 0 ? { duration: 0.25 } : { type: 'spring', stiffness: 220, damping: 22 }}
         >
           <div className="cal-head">
             <span className="cal-month">{monthLabel}</span>
