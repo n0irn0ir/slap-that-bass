@@ -140,3 +140,41 @@ export function useTypedWord(word: string, fn: () => void) {
     return () => window.removeEventListener('keydown', onKey)
   }, [word, fn])
 }
+
+const RIPPLE = ['var(--hot)', 'var(--hot-cyan)', 'var(--hot-lime)', 'var(--violet)', 'var(--hot)']
+
+/** A highlighted number: coloured by default, pops and runs a colour ripple with a burst on hover. */
+export function Jiggle({ children, color = 'var(--hot)' }: { children: string; color?: string }) {
+  const [burst, setBurst] = useState(0)
+  const letters = children.split('')
+  return (
+    <motion.span
+      className="jiggle has-burst"
+      style={{ color }}
+      whileHover="hover"
+      onHoverStart={() => setBurst(Date.now())}
+      variants={{
+        hover: { scale: 1.08, rotate: -3, transition: { type: 'spring', stiffness: 400, damping: 12 } },
+      }}
+    >
+      {letters.map((ch, i) => (
+        <motion.span
+          key={i}
+          custom={i}
+          style={{ display: 'inline-block', whiteSpace: 'pre' }}
+          variants={{
+            hover: (n: number) => ({
+              y: [0, -14, 0, -5, 0],
+              rotate: [0, n % 2 ? 10 : -10, 0],
+              color: RIPPLE,
+              transition: { delay: n * 0.05, duration: 0.7, ease: 'easeOut' },
+            }),
+          }}
+        >
+          {ch}
+        </motion.span>
+      ))}
+      <Burst id={burst} n={12} />
+    </motion.span>
+  )
+}

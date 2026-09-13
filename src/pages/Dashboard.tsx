@@ -5,7 +5,7 @@ import { Rhythm, TopTopics, WeeklyBars } from '../components/Charts'
 import { Icon } from '../components/Icon'
 import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
-import { Wave, useTypedWord } from '../components/fun'
+import { Jiggle, Wave, useTypedWord } from '../components/fun'
 import { Burst, Counter } from '../components/ui'
 import { CATEGORY_BY_ID } from '../lib/categories'
 import { daysAgoISO, fmtDate, fmtMinutes, todayISO } from '../lib/format'
@@ -114,14 +114,14 @@ export function Dashboard() {
             ) : (
               <>
                 <strong>
-                  <Wave>{fmtMinutes(totalMin)}</Wave>
+                  <Jiggle>{fmtMinutes(totalMin)}</Jiggle>
                 </strong>{' '}
                 <Wave>on the bass</Wave>
                 <br />
                 <Wave>across</Wave>{' '}
-                <span className="mono" style={{ fontWeight: 400 }}>
-                  <Counter value={sessions} />
-                </span>{' '}
+                <strong>
+                  <Jiggle>{String(sessions)}</Jiggle>
+                </strong>{' '}
                 <Wave>{sessions === 1 ? 'session.' : 'sessions.'}</Wave>
               </>
             )}

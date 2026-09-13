@@ -102,13 +102,19 @@ button {
 
 .display {
   font-weight: 300;
-  font-size: clamp(40px, 6vw, 72px);
+  font-size: clamp(40px, 5.2vw, 64px);
   line-height: 0.98;
   letter-spacing: -0.035em;
   margin: 0;
 }
 .display strong {
   font-weight: 500;
+}
+.jiggle {
+  display: inline-block;
+  position: relative;
+  cursor: default;
+  transform-origin: 50% 70%;
 }
 .h2 {
   font-weight: 400;
