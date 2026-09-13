@@ -304,6 +304,7 @@ export function Sticker({
   style,
   delay = 0,
   className,
+  lines,
 }: {
   src: string
   width: number
@@ -311,8 +312,30 @@ export function Sticker({
   style?: CSSProperties
   delay?: number
   className?: string
+  /** Optional lines to pop up in a speech bubble on tap. */
+  lines?: string[]
 }) {
   const [kick, setKick] = useState(0)
+  const [line, setLine] = useState<{ id: number; text: string } | null>(null)
+  // Stickers hanging in the side margins get a bubble anchored to their inner edge, so it stays on screen.
+  const side =
+    typeof style?.left === 'number' && style.left < 0 ? 'left' : typeof style?.right === 'number' && style.right < 0 ? 'right' : 'center'
+  const bx = side === 'center' ? '-50%' : '0%'
+  useEffect(() => {
+    if (!line) return
+    const t = setTimeout(() => setLine(null), 2800)
+    return () => clearTimeout(t)
+  }, [line])
+  function tap() {
+    setKick(Date.now())
+    if (lines?.length) {
+      setLine((prev) => {
+        let text = lines[Math.floor(Math.random() * lines.length)]
+        if (lines.length > 1 && prev && text === prev.text) text = lines[(lines.indexOf(text) + 1) % lines.length]
+        return { id: Date.now(), text }
+      })
+    }
+  }
   return (
     <motion.div
       className={`sticker-float${className ? ` ${className}` : ''}`}
@@ -339,9 +362,23 @@ export function Sticker({
           whileDrag={{ scale: 1.1, rotate: 4 }}
           animate={kick ? { rotate: [0, -8, 6, -3, 0], scale: [1, 1.08, 0.97, 1.02, 1] } : undefined}
           transition={{ duration: 0.5 }}
-          onTap={() => setKick(Date.now())}
+          onTap={tap}
         />
       </motion.div>
+      <AnimatePresence>
+        {line && (
+          <motion.span
+            key={line.id}
+            className={`bubble ${side}`}
+            initial={{ opacity: 0, y: 10, scale: 0.6, rotate: -6, x: bx }}
+            animate={{ opacity: 1, y: 0, scale: 1, rotate: 0, x: bx }}
+            exit={{ opacity: 0, y: -8, scale: 0.8, x: bx, transition: { duration: 0.18 } }}
+            transition={{ type: 'spring', stiffness: 500, damping: 18 }}
+          >
+            {line.text}
+          </motion.span>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
