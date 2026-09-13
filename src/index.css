@@ -240,6 +240,7 @@ button {
 }
 
 .page {
+  position: relative;
   max-width: 1160px;
   width: 100%;
   margin: 0 auto;
@@ -1137,9 +1138,10 @@ button {
 /* ---------- songs ---------- */
 
 .disc-wrap {
-  position: relative;
-  align-self: center;
-  margin-right: 24px;
+  position: absolute;
+  right: 40px;
+  top: -22px; /* creeps over the top bar a little; takes no space in the layout */
+  z-index: 11;
 }
 .disc {
   display: block;
