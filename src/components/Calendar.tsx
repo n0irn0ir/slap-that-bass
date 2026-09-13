@@ -107,22 +107,22 @@ export function Calendar({ log, onPick, onNew }: Props) {
         <motion.div
           key={`${cursor.y}-${cursor.m}`}
           className="cal-page"
-          style={{ transformOrigin: '50% 0%', transformPerspective: 900 }}
+          style={{ transformOrigin: '50% 0%', transformPerspective: 1100, backfaceVisibility: 'hidden' }}
           custom={dir.current}
           variants={{
-            // Forward: the old page flips up over the spiral; the next one is already underneath.
-            // Back: the previous page swings down from the top onto the current one.
-            enter: (d: number) => (d > 0 ? { opacity: 1, rotateX: 0 } : { opacity: 0, rotateX: -100 }),
+            // Forward: the old page swings all the way up and over the spiral (its back is hidden,
+            // so it vanishes past 90°); the next page is already lying underneath.
+            // Back: the previous page comes over the top and swings down onto the current one.
+            enter: (d: number) => (d > 0 ? { rotateX: 0, zIndex: 1 } : { rotateX: 180, zIndex: 2 }),
             show: (d: number) => ({
-              opacity: 1,
               rotateX: 0,
-              zIndex: 1,
-              transition: d > 0 ? { duration: 0.2 } : { type: 'spring', stiffness: 220, damping: 22 },
+              zIndex: d > 0 ? 1 : 2,
+              transition: d > 0 ? { duration: 0 } : { duration: 0.55, ease: [0.3, 0.7, 0.3, 1] },
             }),
             leave: (d: number) =>
               d > 0
-                ? { opacity: [1, 1, 0], rotateX: -100, zIndex: 2, transition: { duration: 0.42, ease: [0.4, 0, 0.8, 1] } }
-                : { opacity: 0, zIndex: 0, transition: { duration: 0.1 } },
+                ? { rotateX: 180, zIndex: 2, transition: { duration: 0.55, ease: [0.5, 0, 0.7, 0.4] } }
+                : { rotateX: 0, zIndex: 1, transition: { duration: 0.55 } },
           }}
           initial="enter"
           animate="show"
