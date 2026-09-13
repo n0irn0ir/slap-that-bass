@@ -67,14 +67,13 @@ export function Calendar({ log, onPick, onNew }: Props) {
     <div className="cal">
       {/* spiral binding with the hanger wire threaded through it, up to the nail */}
       <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
-      <div className="cal-binding" aria-hidden>
-        <svg className="cal-spiral" viewBox="0 -72 360 116" width="360" height="116">
+      <svg className="cal-spiral" aria-hidden viewBox="0 -72 360 116" width="360" height="116">
           {/* the wire: horizontal through the coils, rising into the hanging loop */}
           <path
-            d="M 2 9 L 166 9 L 166 -40 A 14 14 0 0 1 194 -40 L 194 9 L 358 9"
+            d="M 2 9 L 156 9 Q 166 9 166 -1 L 166 -40 A 14 14 0 0 1 194 -40 L 194 -1 Q 194 9 204 9 L 358 9"
             fill="none"
-            stroke="#b9c0be"
-            strokeWidth="2.2"
+            stroke="var(--hot)"
+            strokeWidth="2.4"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -92,8 +91,10 @@ export function Calendar({ log, onPick, onNew }: Props) {
                 />
               </g>
             ))}
-        </svg>
-      </div>
+      </svg>
+      <span className="cal-shadow" aria-hidden />
+      <div className="cal-paper">
+        <div className="cal-binding" aria-hidden />
       <button type="button" className="cal-nav prev" onClick={() => { dir.current = -1; move(-1) }} aria-label={t('cal.prev')}>
         ‹
       </button>
@@ -189,6 +190,7 @@ export function Calendar({ log, onPick, onNew }: Props) {
           <span className="cal-perf" aria-hidden />
         </motion.div>
       </AnimatePresence>
+      </div>
     </div>
   )
 }
