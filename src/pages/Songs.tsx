@@ -161,8 +161,11 @@ export function Songs() {
                 ))}
               </AnimatePresence>
               {items.length === 0 && (
-                <div className="empty small">
-                  <Bounce>↓</Bounce> Drop a song here.
+                <div className="drop-slot">
+                  <span className="cover placeholder" aria-hidden />
+                  <span className="small">
+                    <Bounce>↓</Bounce> Drop a song here
+                  </span>
                 </div>
               )}
             </div>

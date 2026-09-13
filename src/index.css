@@ -1272,9 +1272,31 @@ button {
 .col.done .song .h3 {
   color: var(--ink-2);
 }
-.col .empty {
-  padding: 12px 14px 24px;
+.drop-slot {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 12px;
+  align-items: center;
+  min-height: 80px;
+  padding: 14px 16px 12px;
+  margin: 0 0 6px;
+  border-radius: var(--r-md);
+  border: 1.5px dashed color-mix(in srgb, var(--c) 45%, var(--paper));
+  background: color-mix(in srgb, var(--paper) 55%, transparent);
   color: var(--cd);
+  opacity: 0.8;
+}
+.drop-slot .cover {
+  display: block;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  border: 1.5px dashed color-mix(in srgb, var(--c) 45%, var(--paper));
+  background: color-mix(in srgb, var(--c) 8%, var(--paper));
+}
+.col.over .drop-slot {
+  opacity: 1;
+  border-color: var(--c);
 }
 
 /* ---------- log ---------- */
