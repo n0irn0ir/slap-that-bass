@@ -1362,11 +1362,17 @@ button {
   stroke-width: 2;
   stroke-linecap: round;
 }
-.cal-rope .nail {
-  fill: #6d7371;
-}
-.cal-rope .nail-hi {
-  fill: #d9dcdb;
+.cal-nail {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  z-index: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  user-select: none;
 }
 .cal-binding {
   position: absolute;
