@@ -109,15 +109,16 @@ export function Log() {
       {days.length === 0 ? (
         <div className="empty">{t('log.empty')}</div>
       ) : (
-        <div className="days">
+        <div className="timeline">
           {days.map((d, di) => (
             <motion.section
               key={d.date}
-              className="day panel tight"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: Math.min(di, 8) * 0.04, type: 'spring', stiffness: 260, damping: 24 }}
+              className="day"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: Math.min(di, 10) * 0.04, type: 'spring', stiffness: 260, damping: 24 }}
             >
+              <span className="node" aria-hidden />
               <div className="day-head">
                 <span className="h3">{fmtDate(d.date)}</span>
                 <span className="mono small muted">{fmtMinutes(d.total)}</span>

@@ -1319,11 +1319,39 @@ button {
 
 /* ---------- log ---------- */
 
-.days {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  align-items: start;
+.timeline {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.timeline .day {
+  position: relative;
+  padding: 0 0 28px 30px;
+}
+.timeline .day::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 14px;
+  bottom: -6px;
+  width: 2px;
+  background: var(--line-2);
+}
+.timeline .day:last-child::before {
+  display: none;
+}
+.timeline .node {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--line-2);
+}
+.timeline .day:first-child .node {
+  background: var(--hot);
 }
 .modal-backdrop {
   position: fixed;
@@ -1470,9 +1498,8 @@ button {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--ink);
-  margin-bottom: 4px;
+  padding-bottom: 6px;
+  margin-bottom: 2px;
 }
 .entry {
   display: grid;
@@ -1484,7 +1511,6 @@ button {
 }
 .entry:last-child {
   border-bottom: 0;
-  padding-bottom: 4px;
 }
 .entry .m {
   font-family: var(--mono);
@@ -1552,8 +1578,8 @@ button {
   .dash-grid,
   .dash-row,
   .cat-grid,
-  .days {
-    grid-template-columns: 1fr;
+  .timeline .day {
+    padding-left: 24px;
   }
   .song-form {
     grid-template-columns: 1fr 1fr;
