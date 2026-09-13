@@ -33,17 +33,6 @@ export function Topics() {
             time goes into it. Rename, add or remove anything.
           </p>
         </div>
-        {total > 0 && (
-          <motion.div
-            className="total-pill"
-            initial={{ rotate: 6, scale: 0.8, opacity: 0 }}
-            animate={{ rotate: -3, scale: 1, opacity: 1 }}
-            whileHover={{ rotate: 2, scale: 1.05 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 16 }}
-          >
-            {fmtMinutes(total)} so far
-          </motion.div>
-        )}
       </div>
 
       <div className="cat-grid">
