@@ -65,28 +65,33 @@ export function Calendar({ log, onPick, onNew }: Props) {
 
   return (
     <div className="cal">
-      {/* wire hanger looped over the nail, like a real wall calendar */}
-      <div className="cal-hanger" aria-hidden>
-        <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
-        <svg className="cal-hook" viewBox="-18 0 36 64">
-          <path
-            d="M -11 64 L -11 15 A 11 11 0 0 1 11 15 L 11 64"
-            fill="none"
-            stroke="#c6ccca"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
+      {/* spiral binding with the hanger wire threaded through it, up to the nail */}
+      <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
       <div className="cal-binding" aria-hidden>
-        <svg className="cal-spiral">
-          <defs>
-            <pattern id="cal-spiral-loop" width="18" height="40" patternUnits="userSpaceOnUse">
-              <circle cx="9" cy="22" r="2.6" fill="#5c6462" />
-              <path d="M6.5 22 C 4 12, 4 4, 9 3 C 14 4, 14 12, 11.5 22" fill="none" stroke="#c6ccca" strokeWidth="2.2" strokeLinecap="round" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="40" fill="url(#cal-spiral-loop)" />
+        <svg className="cal-spiral" viewBox="0 -72 360 116" width="360" height="116">
+          {/* the wire: horizontal through the coils, rising into the hanging loop */}
+          <path
+            d="M 2 9 L 166 9 L 166 -40 A 14 14 0 0 1 194 -40 L 194 9 L 358 9"
+            fill="none"
+            stroke="#b9c0be"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {Array.from({ length: 20 }, (_, i) => i)
+            .filter((i) => i < 8 || i > 11)
+            .map((i) => (
+              <g key={i} transform={`translate(${i * 18} 0)`}>
+                <circle cx="9" cy="22" r="2.6" fill="#5c6462" />
+                <path
+                  d="M6.5 22 C 4 12, 4 4, 9 3 C 14 4, 14 12, 11.5 22"
+                  fill="none"
+                  stroke="#c6ccca"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                />
+              </g>
+            ))}
         </svg>
       </div>
       <button type="button" className="cal-nav prev" onClick={() => { dir.current = -1; move(-1) }} aria-label={t('cal.prev')}>

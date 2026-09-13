@@ -1347,32 +1347,14 @@ button {
   margin: 0 0 0 auto;
   padding-top: 86px; /* hanger + spiral */
 }
-.cal-hanger {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 36px;
-  height: 90px;
-  margin-left: -18px;
-  z-index: 3;
-}
-.cal-hook {
-  position: absolute;
-  left: 0;
-  top: 8px;
-  width: 36px;
-  height: 64px;
-  overflow: visible;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
-}
 .cal-nail {
   position: absolute;
   left: 50%;
-  top: 14px;
+  top: 5px;
   width: 18px;
   height: 18px;
   margin-left: -9px;
-  z-index: 1;
+  z-index: 3;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   user-select: none;
@@ -1403,12 +1385,16 @@ button {
 .cal-spiral {
   position: absolute;
   left: 50%;
-  width: 324px; /* 18 loops × 18px, so no loop is cut */
-  margin-left: -162px;
-  top: -14px;
-  height: 40px;
+  width: 360px; /* 20 coil slots × 18px, centred; the middle four are left out for the notch */
+  margin-left: -180px;
+  top: -86px; /* viewBox starts 72 units above the coils */
+  height: 116px;
   overflow: visible;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+  z-index: 1;
+}
+.cal-binding::after {
+  z-index: 0;
 }
 .cal-nav {
   position: absolute;
