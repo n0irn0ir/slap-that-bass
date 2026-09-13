@@ -187,13 +187,13 @@ export function WeeklyBars({ log }: { log: LogEntry[] }) {
   const active = weeks.filter((w) => w.min > 0)
   const avg = active.length ? Math.round(active.reduce((a, w) => a + w.min, 0) / active.length) : 0
 
-  const W = 480
-  const H = 200
+  const W = 1000
+  const H = 220
   const PAD_B = 22
   const PAD_TOP = 14
   const plotH = H - PAD_B - PAD_TOP
   const slot = W / NWEEKS
-  const barW = Math.min(28, slot * 0.55)
+  const barW = Math.min(40, slot * 0.5)
 
   const y = (min: number) => PAD_TOP + plotH - (min / max) * plotH
 
@@ -230,11 +230,9 @@ export function WeeklyBars({ log }: { log: LogEntry[] }) {
                 />
               )}
               {w.min === 0 && <circle cx={cx} cy={y(0)} r={2} fill="var(--line-2)" />}
-              {(i % 2 === NWEEKS % 2 || current) && (
-                <text x={cx} y={H - 6} textAnchor="middle" className="chart-axis">
-                  {current ? t('chart.now') : w.start.toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}
-                </text>
-              )}
+              <text x={cx} y={H - 6} textAnchor="middle" className="chart-axis">
+                {current ? t('chart.now') : w.start.toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}
+              </text>
               <rect
                 x={slot * i}
                 y={0}

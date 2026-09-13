@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useAnimation, useMotionValue, useSpring } from 'motion/react'
 import { useCallback, useRef, useState, type MouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Rhythm, TopTopics, WeeklyBars } from '../components/Charts'
+import { Rhythm, WeeklyBars } from '../components/Charts'
 import { Icon } from '../components/Icon'
 import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
@@ -264,24 +264,13 @@ export function Dashboard() {
         <Rhythm log={log} />
       </motion.section>
 
-      <div className="dash-row">
-        <motion.section className="panel" {...fadeUp(8)}>
-          <div className="panel-head">
-            <div className="label"><Icon name="chart-bar" /> {t('dash.weeks')}</div>
-            <span className="small faint">{t('dash.weeksHint')}</span>
-          </div>
-          <WeeklyBars log={log} />
-        </motion.section>
-        <motion.section className="panel" {...fadeUp(9)}>
-          <div className="panel-head">
-            <div className="label"><Icon name="trending-up" /> {t('dash.mostPractised')}</div>
-            <Link to="/topics" className="link-btn">
-              {t('dash.allTopics')}
-            </Link>
-          </div>
-          <TopTopics log={log} topics={topics} />
-        </motion.section>
-      </div>
+      <motion.section className="panel" style={{ marginTop: 24 }} {...fadeUp(8)}>
+        <div className="panel-head">
+          <div className="label"><Icon name="chart-bar" /> {t('dash.weeks')}</div>
+          <span className="small faint">{t('dash.weeksHint')}</span>
+        </div>
+        <WeeklyBars log={log} />
+      </motion.section>
     </>
   )
 }

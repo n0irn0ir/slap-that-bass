@@ -1168,8 +1168,8 @@ button {
 
 .disc-wrap {
   position: absolute;
-  /* centre of the disc on the one-third line of the viewport (page box is 1160px wide, centred) */
-  left: calc(580px - 16.667vw - 90px);
+  /* centre of the disc on the right-third line of the viewport (page box is 1160px wide, centred) */
+  left: calc(490px + 16.667vw);
   top: -22px; /* creeps over the top bar a little; takes no space in the layout */
   z-index: 11;
 }
