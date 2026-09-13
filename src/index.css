@@ -1319,23 +1319,53 @@ button {
 
 /* ---------- log ---------- */
 
-.log-grid {
+.days {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
   align-items: start;
 }
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+.modal {
+  width: min(520px, 100%);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 16px;
+  padding: 24px 28px 28px;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.45);
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
 .log-form {
-  position: sticky;
-  top: 88px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 .log-form .two {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  align-items: end;
 }
 .minutes-big {
   display: flex;
@@ -1400,9 +1430,6 @@ button {
   margin: 0 0 0 8px;
 }
 
-.day {
-  margin-bottom: 28px;
-}
 .day-head {
   display: flex;
   align-items: baseline;
@@ -1418,6 +1445,10 @@ button {
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
   align-items: start;
+}
+.entry:last-child {
+  border-bottom: 0;
+  padding-bottom: 4px;
 }
 .entry .m {
   font-family: var(--mono);
@@ -1485,11 +1516,8 @@ button {
   .dash-grid,
   .dash-row,
   .cat-grid,
-  .log-grid {
+  .days {
     grid-template-columns: 1fr;
-  }
-  .log-form {
-    position: static;
   }
   .song-form {
     grid-template-columns: 1fr 1fr;

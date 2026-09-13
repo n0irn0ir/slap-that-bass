@@ -167,7 +167,7 @@ export function Dashboard() {
           </AnimatePresence>
           <motion.div {...fadeUp(2)} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <Pep />
-            <Link to="/log" className="btn">
+            <Link to="/log" state={{ open: true }} className="btn">
               {t('dash.logTime')}
             </Link>
           </motion.div>

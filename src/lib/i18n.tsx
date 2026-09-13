@@ -107,6 +107,7 @@ const en = {
 
   // log
   'log.title': 'Log',
+  'log.button': 'Log',
   'log.lead': 'Write it down after you put the bass back. Minutes, roughly. No timer.',
   'log.new': 'New entry',
   'log.editing': 'Editing an entry',
@@ -309,6 +310,7 @@ const ru: Record<Key, string> = {
   'songs.removeConfirm': 'Удалить «{title}»?',
 
   'log.title': 'Журнал',
+  'log.button': 'Записать',
   'log.lead': 'Запиши, когда отложишь бас. Минуты — примерно. Таймера нет.',
   'log.new': 'Новая запись',
   'log.editing': 'Правка записи',
