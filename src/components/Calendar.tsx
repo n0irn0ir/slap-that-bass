@@ -65,7 +65,12 @@ export function Calendar({ log, onPick, onNew }: Props) {
 
   return (
     <div className="cal">
-      <span className="cal-nail" aria-hidden />
+      <svg className="cal-rope" aria-hidden>
+        <line className="string" x1="6%" y1="100%" x2="50%" y2="10" />
+        <line className="string" x1="94%" y1="100%" x2="50%" y2="10" />
+        <circle className="nail" cx="50%" cy="8" r="4" />
+        <circle className="nail-hi" cx="50%" cy="7" r="1.4" />
+      </svg>
       <div className="cal-binding" aria-hidden>
         <i className="ring" />
         <i className="ring" />
