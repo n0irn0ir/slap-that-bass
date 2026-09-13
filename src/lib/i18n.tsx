@@ -134,6 +134,9 @@ const en = {
   'log.deleteConfirm': 'Delete this entry?',
   'log.hours': 'That’s {n} {hours} on the bass.',
   'log.hour1': 'hour',
+  'cal.hint': 'Click a day to jump to it. An empty day starts a new entry.',
+  'cal.prev': 'previous month',
+  'cal.next': 'next month',
   'log.hourN': 'hours',
 
   // settings
@@ -339,6 +342,9 @@ const ru: Record<Key, string> = {
   'log.deleteConfirm': 'Удалить запись?',
   'log.hours': 'Уже {n} {hours} с басом.',
   'log.hour1': 'час',
+  'cal.hint': 'Клик по дню — к его записям. Пустой день — новая запись.',
+  'cal.prev': 'предыдущий месяц',
+  'cal.next': 'следующий месяц',
   'log.hourN': 'часов',
 
   'settings.title': 'Настройки',

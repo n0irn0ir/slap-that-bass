@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { Calendar } from '../components/Calendar'
 import { Toast } from '../components/fun'
 import { Burst, Jelly, Segmented, listItem } from '../components/ui'
 import { CATEGORIES, CATEGORY_BY_ID } from '../lib/categories'
@@ -17,6 +18,7 @@ interface Prefill {
   open?: boolean
   category?: CategoryId
   topic_id?: string
+  date?: string
 }
 
 export function Log() {
@@ -30,6 +32,19 @@ export function Log() {
   const [prefill, setPrefill] = useState<Prefill | null>(state)
   const [burst, setBurst] = useState(0)
   const [toast, setToast] = useState<{ id: number; text: string }>({ id: 0, text: '' })
+  const [flash, setFlash] = useState<string | null>(null)
+
+  function jumpTo(iso: string) {
+    document.getElementById(`day-${iso}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setFlash(iso)
+    setTimeout(() => setFlash(null), 1400)
+  }
+
+  function newOn(iso: string) {
+    setEditing(null)
+    setPrefill({ date: iso })
+    setOpen(true)
+  }
 
   // Consume router state once, so a reload does not reopen the form.
   useEffect(() => {
@@ -106,6 +121,7 @@ export function Log() {
 
       <Toast id={toast.id}>{toast.text}</Toast>
 
+      <div className="log-layout">
       {days.length === 0 ? (
         <div className="empty">{t('log.empty')}</div>
       ) : (
@@ -113,7 +129,8 @@ export function Log() {
           {days.map((d, di) => (
             <motion.section
               key={d.date}
-              className="day"
+              id={`day-${d.date}`}
+              className={`day${flash === d.date ? ' flash' : ''}`}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: Math.min(di, 10) * 0.04, type: 'spring', stiffness: 260, damping: 24 }}
@@ -158,6 +175,10 @@ export function Log() {
           ))}
         </div>
       )}
+        <aside className="log-side">
+          <Calendar log={log} onPick={jumpTo} onNew={newOn} />
+        </aside>
+      </div>
 
       <LogModal
         open={open}
@@ -209,7 +230,7 @@ function LogModal({
       setNote(editing.note ?? '')
       setRating(editing.rating ?? null)
     } else {
-      setDate(todayISO())
+      setDate(prefill?.date ?? todayISO())
       setCategory(prefill?.category ?? 'technique')
       setTopicId(prefill?.topic_id ?? '')
       setTopicText(topics.find((x) => x.id === prefill?.topic_id)?.title ?? '')

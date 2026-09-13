@@ -1319,8 +1319,120 @@ button {
 
 /* ---------- log ---------- */
 
+.log-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 640px) 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.log-side {
+  position: sticky;
+  top: 88px;
+}
 .timeline {
   max-width: 640px;
+}
+.timeline .day.flash .day-head .h3 {
+  color: var(--hot);
+  transition: color 0.2s;
+}
+.timeline .day .day-head .h3 {
+  transition: color 0.6s;
+}
+
+/* calendar */
+.cal {
+  max-width: 380px;
+  margin-left: auto;
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.cal-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.cal-nav {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--line-2);
+  background: var(--paper);
+  font-size: 20px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.2s, transform 0.25s var(--ease-spring);
+}
+.cal-nav:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+.cal-weekdays,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-weekdays span {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-bottom: 4px;
+}
+.cal-day {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+.cal-day:not(.has):not(.future):hover {
+  background: var(--paper);
+}
+.cal-day.future {
+  color: var(--line-2);
+  cursor: default;
+}
+.cal-day.has {
+  color: #fff;
+}
+.cal-day.today {
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+.cal-fill {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+}
+.cal-num {
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
+}
+.cal-day:not(.has) .cal-num {
+  text-shadow: none;
+  font-weight: 400;
+}
+.cal-foot {
+  min-height: 24px;
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
 }
 .timeline .day {
   position: relative;
@@ -1579,6 +1691,16 @@ button {
   .cat-grid,
   .timeline .day {
     padding-left: 24px;
+  }
+  .log-layout {
+    grid-template-columns: 1fr;
+  }
+  .log-side {
+    position: static;
+    order: -1;
+  }
+  .cal {
+    margin-left: 0;
   }
   .song-form {
     grid-template-columns: 1fr 1fr;
