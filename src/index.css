@@ -1345,12 +1345,12 @@ button {
   position: relative;
   max-width: 380px;
   margin: 0 0 0 auto;
-  padding-top: 54px; /* hanger + spiral */
+  padding-top: 46px; /* hanger + spiral */
 }
 .cal-nail {
   position: absolute;
   left: 50%;
-  top: -1px;
+  top: -2px;
   width: 18px;
   height: 18px;
   margin-left: -9px;
@@ -1373,7 +1373,7 @@ button {
   position: absolute;
   left: 0;
   right: 0;
-  top: 54px;
+  top: 46px;
   bottom: 0;
   border-radius: 6px;
   pointer-events: none;
@@ -1390,7 +1390,7 @@ button {
   left: 50%;
   width: 360px; /* 20 coil slots × 18px, centred; the middle four are left out for the notch */
   margin-left: -180px;
-  top: -32px; /* coils land on the sheet's top edge at 54px */
+  top: -40px; /* coils land on the sheet's top edge at 46px */
   height: 116px;
   overflow: visible;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
