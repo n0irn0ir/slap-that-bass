@@ -592,25 +592,6 @@ button {
   font-weight: 600;
   box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.4);
 }
-.stamp {
-  position: absolute;
-  right: 12px;
-  top: 10px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 2px solid var(--cd);
-  color: var(--cd);
-  display: grid;
-  place-items: center;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-}
-.song {
-  position: relative;
-}
-
 /* ---------- burst ---------- */
 
 .burst {
@@ -1213,9 +1194,9 @@ button {
   color: var(--ink-2);
   font-size: 13px;
 }
-.song .with-cover {
+.song-row {
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
 }
@@ -1234,14 +1215,29 @@ button {
   object-fit: cover;
   display: block;
 }
-.song .with-cover .text {
+.song .cover.placeholder {
+  display: grid;
+  place-items: center;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--c) 10%, var(--paper));
+  border: 1px dashed color-mix(in srgb, var(--c) 40%, var(--paper));
+}
+.song .cover.placeholder .icon {
+  color: var(--cd);
+  opacity: 0.6;
+}
+.song-row .text {
   min-width: 0;
 }
-.song .t {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+.song-row .h3 {
+  overflow-wrap: anywhere;
+}
+.song-row .slot {
+  align-self: start;
+}
+.col.done .song .cover {
+  outline: 2px solid var(--c);
+  outline-offset: 2px;
 }
 .song .slot {
   --s: var(--teal-d);

@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
+import { useEffect, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
 import { Bounce } from '../components/fun'
 import { Burst, Counter, Jelly, listItem } from '../components/ui'
 import type { Song, SongSlot, SongStatus } from '../lib/types'
 import { isSpotify, spotifyMeta, type SpotifyMeta } from '../lib/spotify'
+import { Icon } from '../components/Icon'
 import { useData } from '../state/DataContext'
 
 const STATUSES: { id: SongStatus; label: string; hint: string; color: string; deep: string }[] = [
@@ -181,11 +182,6 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
   const [slot, setSlot] = useState<SongSlot>(song.slot)
   const [link, setLink] = useState(song.link ?? '')
 
-  // Stamp animates only when the card has just arrived in Learned, not on page load.
-  const prevStatus = useRef(song.status)
-  const justLearned = song.status === 'learned' && prevStatus.current !== 'learned'
-  prevStatus.current = song.status
-
   const idx = STATUSES.findIndex((s) => s.id === song.status)
   const prev = STATUSES[idx - 1]?.id
   const next = STATUSES[idx + 1]?.id
@@ -236,19 +232,8 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
         </form>
       ) : (
         <>
-          {song.status === 'learned' && (
-            <motion.span
-              className="stamp"
-              aria-hidden
-              initial={justLearned ? { scale: 3, opacity: 0, rotate: 20 } : false}
-              animate={{ scale: 1, opacity: 1, rotate: -12 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 18, delay: justLearned ? 0.25 : 0 }}
-            >
-              ✓
-            </motion.span>
-          )}
-          <div className={cover ? 'with-cover' : undefined}>
-            {cover && song.link && (
+          <div className="song-row">
+            {cover && song.link ? (
               <motion.a
                 className="cover"
                 href={song.link}
@@ -262,14 +247,16 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
               >
                 <img src={cover.thumb} alt="" draggable={false} />
               </motion.a>
+            ) : (
+              <span className="cover placeholder" aria-hidden>
+                <Icon name="headphones" size={20} />
+              </span>
             )}
             <div className="text">
               <div className="artist">{song.artist}</div>
-              <div className="t">
-                <span className="h3">{song.title}</span>
-                {song.slot && <span className={`slot ${song.slot}`}>{slotLabel(song.slot)}</span>}
-              </div>
+              <div className="h3">{song.title}</div>
             </div>
+            {song.slot && <span className={`slot ${song.slot}`}>{slotLabel(song.slot)}</span>}
           </div>
           <div className="foot">
             {prev && (
