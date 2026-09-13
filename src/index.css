@@ -1137,7 +1137,7 @@ button {
   --c: var(--green);
   --cd: var(--green);
   border-radius: var(--r-lg);
-  padding: 6px;
+  padding: 10px;
   background: transparent;
   border: 3px dashed color-mix(in srgb, var(--c) 50%, var(--bg));
   transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease-spring);
@@ -1153,7 +1153,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 14px 14px 12px;
+  padding: 10px 10px 12px;
 }
 .col-head .h3 {
   color: var(--cd);
