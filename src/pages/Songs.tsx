@@ -194,7 +194,7 @@ export function Songs() {
               </div>
               <AnimatePresence initial={false}>
                 {items.map((s) => (
-                  <SongCard key={s.id} song={s} onMove={move} />
+                  <SongCard key={s.id} song={s} />
                 ))}
               </AnimatePresence>
               {items.length === 0 && (
@@ -211,7 +211,7 @@ export function Songs() {
   )
 }
 
-function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongStatus) => void }) {
+function SongCard({ song }: { song: Song }) {
   const { updateSong, deleteSong } = useData()
   const { t } = useT()
   const cover = useSpotify(song.link)
@@ -220,10 +220,6 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
   const [title, setTitle] = useState(song.title)
   const [slot, setSlot] = useState<SongSlot>(song.slot)
   const [link, setLink] = useState(song.link ?? '')
-
-  const idx = STATUSES.findIndex((s) => s.id === song.status)
-  const prev = STATUSES[idx - 1]?.id
-  const next = STATUSES[idx + 1]?.id
 
   async function save(e: FormEvent) {
     e.preventDefault()
@@ -298,16 +294,6 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
             {song.slot && <span className={`slot ${song.slot}`}>{t(slotKey(song.slot))}</span>}
           </div>
           <div className="foot">
-            {prev && (
-              <button type="button" className="link-btn" onClick={() => onMove(song.id, prev)}>
-                ← {t(STATUSES[idx - 1].label).toLowerCase()}
-              </button>
-            )}
-            {next && (
-              <button type="button" className="link-btn" onClick={() => onMove(song.id, next)}>
-                {t(STATUSES[idx + 1].label).toLowerCase()} →
-              </button>
-            )}
             {song.link && (
               <a className="link-btn" href={song.link} target="_blank" rel="noreferrer">
                 {isSpotify(song.link) ? t('songs.spotify') : t('songs.open')}
