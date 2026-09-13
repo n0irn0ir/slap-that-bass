@@ -1350,11 +1350,11 @@ button {
 .cal-nail {
   position: absolute;
   left: 50%;
-  top: 5px;
+  top: -1px;
   width: 18px;
   height: 18px;
   margin-left: -9px;
-  z-index: 3;
+  z-index: 5; /* the head sits in front of the wire, which hangs on the shank behind it */
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   user-select: none;
