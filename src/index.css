@@ -1139,7 +1139,7 @@ button {
 
 .disc-wrap {
   position: absolute;
-  right: 40px;
+  right: 330px;
   top: -22px; /* creeps over the top bar a little; takes no space in the layout */
   z-index: 11;
 }
