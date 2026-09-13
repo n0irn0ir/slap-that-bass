@@ -1137,13 +1137,14 @@ button {
   --cd: var(--green);
   border-radius: var(--r-lg);
   padding: 6px;
-  background: color-mix(in srgb, var(--c) 8%, var(--paper));
-  border: 1px solid color-mix(in srgb, var(--c) 22%, var(--paper));
+  background: transparent;
+  border: 1.5px dashed color-mix(in srgb, var(--c) 55%, var(--bg));
   transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease-spring);
 }
 .col.over {
-  background: color-mix(in srgb, var(--c) 18%, var(--paper));
+  background: color-mix(in srgb, var(--c) 8%, var(--bg));
   border-color: var(--c);
+  border-style: solid;
   transform: scale(1.015);
 }
 .col-head {
@@ -1171,7 +1172,7 @@ button {
 .song {
   position: relative;
   background: var(--paper);
-  border: 1px solid color-mix(in srgb, var(--c) 18%, var(--paper));
+  border: 1px solid var(--line);
   border-left: 4px solid var(--c);
   border-radius: var(--r-md);
   padding: 14px 16px 12px;
@@ -1279,12 +1280,12 @@ button {
   align-items: center;
   min-height: 80px;
   padding: 14px 16px 12px;
-  margin: 0 0 6px;
+  margin: 0;
   border-radius: var(--r-md);
-  border: 1.5px dashed color-mix(in srgb, var(--c) 45%, var(--paper));
-  background: color-mix(in srgb, var(--paper) 55%, transparent);
+  border: 1.5px dashed color-mix(in srgb, var(--c) 40%, var(--bg));
+  background: color-mix(in srgb, var(--paper) 50%, transparent);
   color: var(--cd);
-  opacity: 0.8;
+  opacity: 0.85;
 }
 .drop-slot .cover {
   display: block;
