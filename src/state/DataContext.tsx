@@ -19,6 +19,8 @@ interface DataValue extends Snapshot {
   error: string | null
 
   addTopic(t: NewTopic): Promise<void>
+  /** Like addTopic, but returns the created topic (for "log against a new topic"). */
+  createTopic(t: NewTopic): Promise<Topic | null>
   updateTopic(id: string, patch: Partial<NewTopic>): Promise<void>
   deleteTopic(id: string): Promise<void>
   restoreSampleTopics(): Promise<number>
@@ -123,6 +125,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
       error,
 
       addTopic: (t) => run(() => store.addTopics([t])),
+      createTopic: async (t) => {
+        let created: Topic | null = null
+        await run(async () => {
+          const [c] = await store.addTopics([t])
+          created = c ?? null
+        })
+        return created
+      },
       updateTopic: (id, p) => run(() => store.updateTopic(id, p)),
       deleteTopic: (id) => run(() => store.deleteTopic(id)),
       restoreSampleTopics: async () => {

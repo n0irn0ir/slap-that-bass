@@ -1361,6 +1361,42 @@ button {
   flex-direction: column;
   gap: 16px;
 }
+.combo {
+  position: relative;
+}
+.combo-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 4px 0 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--paper);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  box-shadow: 0 16px 32px -16px rgba(0, 0, 0, 0.3);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 3;
+}
+.combo-list li {
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.combo-list li:hover,
+.combo-list li.on {
+  background: var(--green-soft);
+}
+.combo-list li.create {
+  color: var(--green);
+  font-weight: 500;
+}
+.combo-list li.create .plus {
+  font-weight: 600;
+}
 .log-form .two {
   display: grid;
   grid-template-columns: 1fr 1fr;

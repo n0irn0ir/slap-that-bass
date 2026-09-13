@@ -184,11 +184,13 @@ function LogModal({
   onClose: () => void
   onSave: (payload: Omit<LogEntry, 'id' | 'created_at'>) => Promise<void>
 }) {
-  const { topics } = useData()
+  const { topics, createTopic } = useData()
   const { t } = useT()
   const [date, setDate] = useState(todayISO())
   const [category, setCategory] = useState<CategoryId>('technique')
   const [topicId, setTopicId] = useState('')
+  const [topicText, setTopicText] = useState('')
+  const [topicFocus, setTopicFocus] = useState(false)
   const [minutes, setMinutes] = useState('')
   const [note, setNote] = useState('')
   const [rating, setRating] = useState<number | null>(null)
@@ -201,6 +203,7 @@ function LogModal({
       setDate(editing.date)
       setCategory(editing.category)
       setTopicId(editing.topic_id ?? '')
+      setTopicText(topics.find((x) => x.id === editing.topic_id)?.title ?? '')
       setMinutes(String(editing.minutes))
       setNote(editing.note ?? '')
       setRating(editing.rating ?? null)
@@ -208,11 +211,12 @@ function LogModal({
       setDate(todayISO())
       setCategory(prefill?.category ?? 'technique')
       setTopicId(prefill?.topic_id ?? '')
+      setTopicText(topics.find((x) => x.id === prefill?.topic_id)?.title ?? '')
       setMinutes('')
       setNote('')
       setRating(null)
     }
-  }, [open, editing, prefill])
+  }, [open, editing, prefill]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open) return
@@ -223,15 +227,35 @@ function LogModal({
 
   const catTopics = topics.filter((x) => x.category === category)
   useEffect(() => {
-    if (topicId && !catTopics.some((x) => x.id === topicId)) setTopicId('')
+    // Switching category drops a topic that belongs elsewhere.
+    if (topicId && !catTopics.some((x) => x.id === topicId)) {
+      setTopicId('')
+      setTopicText('')
+    }
   }, [category, topicId, catTopics])
+
+  const query = topicText.trim().toLowerCase()
+  const exact = catTopics.find((x) => x.title.trim().toLowerCase() === query)
+  const matches = query ? catTopics.filter((x) => x.title.toLowerCase().includes(query)) : catTopics
+  const canCreate = !!query && !exact
+
+  function pick(x: { id: string; title: string }) {
+    setTopicId(x.id)
+    setTopicText(x.title)
+    setTopicFocus(false)
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     const m = parseInt(minutes, 10)
     if (!m || m <= 0) return
     setBusy(true)
-    await onSave({ date, category, topic_id: topicId || null, minutes: m, note: note.trim() || null, rating })
+    let tid: string | null = topicId || exact?.id || null
+    if (!tid && canCreate) {
+      const created = await createTopic({ category, title: topicText.trim(), sort: catTopics.length })
+      tid = created?.id ?? null
+    }
+    await onSave({ date, category, topic_id: tid, minutes: m, note: note.trim() || null, rating })
     setBusy(false)
   }
 
@@ -275,17 +299,52 @@ function LogModal({
               />
             </div>
 
-            <label className="field">
+            <div className="field combo">
               <span className="label">{t('log.topic')}</span>
-              <select className="select" value={topicId} onChange={(e) => setTopicId(e.target.value)}>
-                <option value="">{t('log.none')}</option>
-                {catTopics.map((x) => (
-                  <option key={x.id} value={x.id}>
-                    {x.title}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <input
+                className="input"
+                value={topicText}
+                placeholder={t('log.topicPlaceholder')}
+                onChange={(e) => {
+                  setTopicText(e.target.value)
+                  setTopicId('')
+                }}
+                onFocus={() => setTopicFocus(true)}
+                onBlur={() => setTimeout(() => setTopicFocus(false), 120)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    if (exact) pick(exact)
+                    else if (matches.length === 1 && !canCreate) pick(matches[0])
+                    setTopicFocus(false)
+                  }
+                }}
+                autoComplete="off"
+              />
+              <AnimatePresence>
+                {topicFocus && (matches.length > 0 || canCreate) && (
+                  <motion.ul
+                    className="combo-list"
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4, transition: { duration: 0.1 } }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {canCreate && (
+                      <li className="create" onMouseDown={() => setTopicFocus(false)}>
+                        <span className="plus">+</span>{' '}
+                        {t('log.createTopic', { cat: catText(category).name, title: topicText.trim() })}
+                      </li>
+                    )}
+                    {matches.map((x) => (
+                      <li key={x.id} className={x.id === topicId ? 'on' : ''} onMouseDown={() => pick(x)}>
+                        {x.title}
+                      </li>
+                    ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </div>
 
             <div className="two">
               <div className="field">
