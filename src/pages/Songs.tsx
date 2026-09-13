@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useRef, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
 import { Bounce } from '../components/fun'
 import { Burst, Counter, Jelly, listItem } from '../components/ui'
 import type { Song, SongSlot, SongStatus } from '../lib/types'
+import { isSpotify, spotifyMeta, type SpotifyMeta } from '../lib/spotify'
 import { useData } from '../state/DataContext'
 
 const STATUSES: { id: SongStatus; label: string; hint: string; color: string; deep: string }[] = [
@@ -20,6 +21,20 @@ const SLOTS: { id: SongSlot; label: string }[] = [
 
 const slotLabel = (s: SongSlot) => SLOTS.find((x) => x.id === s)?.label ?? ''
 
+/** Cover + title for a Spotify link; null for anything else or while loading. */
+function useSpotify(link: string | null | undefined): SpotifyMeta | null {
+  const [meta, setMeta] = useState<SpotifyMeta | null>(null)
+  useEffect(() => {
+    let alive = true
+    setMeta(null)
+    if (isSpotify(link)) spotifyMeta(link!).then((m) => alive && setMeta(m))
+    return () => {
+      alive = false
+    }
+  }, [link])
+  return meta
+}
+
 export function Songs() {
   const { songs, loading, addSong, updateSong } = useData()
   const [artist, setArtist] = useState('')
@@ -29,6 +44,10 @@ export function Songs() {
   const [link, setLink] = useState('')
   const [over, setOver] = useState<SongStatus | null>(null)
   const [cheer, setCheer] = useState(0)
+  const linkMeta = useSpotify(link)
+  useEffect(() => {
+    if (linkMeta && !title.trim()) setTitle(linkMeta.title)
+  }, [linkMeta]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function move(id: string, to: SongStatus) {
     const s = songs.find((x) => x.id === id)
@@ -102,7 +121,7 @@ export function Songs() {
         </label>
         <label className="field">
           <span className="label">Link (optional)</span>
-          <input className="input" type="url" placeholder="tab, video…" value={link} onChange={(e) => setLink(e.target.value)} />
+          <input className="input" type="url" placeholder="Spotify, tab, video…" value={link} onChange={(e) => setLink(e.target.value)} />
         </label>
         <Jelly className="btn" type="submit" disabled={!artist.trim() || !title.trim()}>
           Add
@@ -155,6 +174,7 @@ export function Songs() {
 
 function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongStatus) => void }) {
   const { updateSong, deleteSong } = useData()
+  const cover = useSpotify(song.link)
   const [editing, setEditing] = useState(false)
   const [artist, setArtist] = useState(song.artist)
   const [title, setTitle] = useState(song.title)
@@ -227,10 +247,29 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
               ✓
             </motion.span>
           )}
-          <div className="artist">{song.artist}</div>
-          <div className="t">
-            <span className="h3">{song.title}</span>
-            {song.slot && <span className={`slot ${song.slot}`}>{slotLabel(song.slot)}</span>}
+          <div className={cover ? 'with-cover' : undefined}>
+            {cover && song.link && (
+              <motion.a
+                className="cover"
+                href={song.link}
+                target="_blank"
+                rel="noreferrer"
+                title="Open in Spotify"
+                draggable={false}
+                whileHover={{ scale: 1.08, rotate: -4 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 16 }}
+              >
+                <img src={cover.thumb} alt="" draggable={false} />
+              </motion.a>
+            )}
+            <div className="text">
+              <div className="artist">{song.artist}</div>
+              <div className="t">
+                <span className="h3">{song.title}</span>
+                {song.slot && <span className={`slot ${song.slot}`}>{slotLabel(song.slot)}</span>}
+              </div>
+            </div>
           </div>
           <div className="foot">
             {prev && (
@@ -245,7 +284,7 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
             )}
             {song.link && (
               <a className="link-btn" href={song.link} target="_blank" rel="noreferrer">
-                open
+                {isSpotify(song.link) ? 'spotify' : 'open'}
               </a>
             )}
             <button type="button" className="link-btn" onClick={() => setEditing(true)}>

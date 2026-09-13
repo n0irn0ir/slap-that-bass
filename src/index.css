@@ -1213,6 +1213,30 @@ button {
   color: var(--ink-2);
   font-size: 13px;
 }
+.song .with-cover {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.song .cover {
+  display: block;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.45);
+  background: var(--line);
+}
+.song .cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.song .with-cover .text {
+  min-width: 0;
+}
 .song .t {
   display: flex;
   align-items: baseline;
