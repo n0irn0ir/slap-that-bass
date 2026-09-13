@@ -1137,7 +1137,6 @@ button {
   --cd: var(--green);
   border-radius: var(--r-lg);
   padding: 6px;
-  min-height: 240px;
   background: color-mix(in srgb, var(--c) 8%, var(--paper));
   border: 1px solid color-mix(in srgb, var(--c) 22%, var(--paper));
   transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease-spring);
@@ -1176,7 +1175,7 @@ button {
   border-left: 4px solid var(--c);
   border-radius: var(--r-md);
   padding: 14px 16px 12px;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   cursor: grab;
   transition: border-color 0.2s, box-shadow 0.25s, transform 0.3s var(--ease-spring);
 }
@@ -1457,9 +1456,6 @@ button {
   }
   .board {
     grid-template-columns: 1fr;
-  }
-  .col {
-    min-height: 0;
   }
   .rose-legend {
     grid-template-columns: 1fr;
