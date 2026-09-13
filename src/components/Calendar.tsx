@@ -71,8 +71,15 @@ export function Calendar({ log, onPick, onNew }: Props) {
       </svg>
       <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
       <div className="cal-binding" aria-hidden>
-        <i className="ring" />
-        <i className="ring" />
+        <svg className="cal-spiral">
+          <defs>
+            <pattern id="cal-spiral-loop" width="18" height="40" patternUnits="userSpaceOnUse">
+              <circle cx="9" cy="22" r="2.6" fill="#07221c" />
+              <path d="M6.5 22 C 4 12, 4 4, 9 3 C 14 4, 14 12, 11.5 22" fill="none" stroke="#c6ccca" strokeWidth="2.2" strokeLinecap="round" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="40" fill="url(#cal-spiral-loop)" />
+        </svg>
       </div>
       <button type="button" className="cal-nav prev" onClick={() => { dir.current = -1; move(-1) }} aria-label={t('cal.prev')}>
         ‹
