@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Avatar } from './Avatar'
 import { CursorDot } from './fun'
 import { useAuth } from '../state/AuthContext'
 import { useData } from '../state/DataContext'
@@ -47,7 +48,10 @@ export function Shell() {
               </NavLink>
             ))}
           </nav>
-          <span className="who">{user?.id === 'local' ? t('nav.local') : user?.email}</span>
+          <span className="who">
+            {user?.id === 'local' ? t('nav.local') : user?.email}
+            <Avatar />
+          </span>
         </div>
       </header>
 

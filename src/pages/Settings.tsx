@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Avatar } from '../components/Avatar'
 import { Segmented } from '../components/ui'
 import { buildDemo } from '../lib/demo'
 import { useT, type Lang } from '../lib/i18n'
@@ -7,7 +8,7 @@ import { useAuth } from '../state/AuthContext'
 import { useData } from '../state/DataContext'
 
 export function Settings() {
-  const { user, mode, signOut } = useAuth()
+  const { user, mode, signOut, avatar, setAvatar } = useAuth()
   const { topics, songs, log, restoreSampleTopics, importSnapshot } = useData()
   const { t, lang, setLang } = useT()
   const [msg, setMsg] = useState<string | null>(null)
@@ -54,6 +55,17 @@ export function Settings() {
               </button>
             ) : (
               <span className="small muted">{t('settings.localMode')}</span>
+            )}
+          </div>
+          <div className="row">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+              <Avatar size={40} />
+              {t('settings.avatar')}
+            </span>
+            {avatar && (
+              <button className="btn ghost sm" onClick={() => setAvatar(null)}>
+                {t('settings.avatarRemove')}
+              </button>
             )}
           </div>
           <div className="row">
