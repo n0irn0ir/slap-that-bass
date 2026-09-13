@@ -65,16 +65,24 @@ export function Calendar({ log, onPick, onNew }: Props) {
 
   return (
     <div className="cal">
-      <svg className="cal-rope" aria-hidden>
-        <line className="string" x1="6%" y1="100%" x2="50%" y2="10" />
-        <line className="string" x1="94%" y1="100%" x2="50%" y2="10" />
-      </svg>
-      <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
+      {/* wire hanger looped over the nail, like a real wall calendar */}
+      <div className="cal-hanger" aria-hidden>
+        <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
+        <svg className="cal-hook" viewBox="-18 0 36 64">
+          <path
+            d="M -5 64 C -5 44, -14 38, -14 16 A 14 14 0 1 1 14 16 C 14 38, 5 44, 5 64"
+            fill="none"
+            stroke="#c6ccca"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
       <div className="cal-binding" aria-hidden>
         <svg className="cal-spiral">
           <defs>
             <pattern id="cal-spiral-loop" width="18" height="40" patternUnits="userSpaceOnUse">
-              <circle cx="9" cy="22" r="2.6" fill="#07221c" />
+              <circle cx="9" cy="22" r="2.6" fill="#5c6462" />
               <path d="M6.5 22 C 4 12, 4 4, 9 3 C 14 4, 14 12, 11.5 22" fill="none" stroke="#c6ccca" strokeWidth="2.2" strokeLinecap="round" />
             </pattern>
           </defs>
