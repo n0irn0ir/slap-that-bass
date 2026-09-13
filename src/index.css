@@ -478,6 +478,7 @@ button {
 .sticker-wrap {
   position: relative;
   cursor: grab;
+  margin-right: 28px;
 }
 .sticker-wrap:active {
   cursor: grabbing;
@@ -961,6 +962,7 @@ button {
 .add-topic {
   position: relative;
   align-self: flex-start;
+  margin-top: 10px; /* centred on the 64px title line */
 }
 .add-topic .plus {
   font-size: 20px;
