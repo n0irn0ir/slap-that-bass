@@ -113,7 +113,7 @@ export function Songs() {
           <Notes id={notes} />
           <motion.img
             className="disc"
-            src={`${import.meta.env.BASE_URL}cd.png`}
+            src={`${import.meta.env.BASE_URL}cd-toys.png`}
             alt=""
             draggable={false}
             drag

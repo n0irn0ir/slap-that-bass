@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { Sticker } from '../components/fun'
 import { Icon } from '../components/Icon'
 import { Jelly, listItem } from '../components/ui'
 import { CATEGORIES, type Category } from '../lib/categories'
@@ -39,8 +40,15 @@ export function Topics() {
 
   if (loading) return null
 
+  const B = import.meta.env.BASE_URL
+
   return (
     <>
+      {/* stickers live in the empty space: right of the heading, and in the side margins on wide screens */}
+      <Sticker src={`${B}st-theory.png`} width={120} rotate={7} style={{ right: 250, top: -6 }} />
+      <Sticker src={`${B}st-ritard.png`} width={170} rotate={-6} style={{ right: 420, top: 70 }} delay={0.15} />
+      <Sticker src={`${B}st-short.png`} width={128} rotate={5} className="margin-only" style={{ left: -150, top: 420 }} delay={0.3} />
+      <Sticker src={`${B}st-veryhard.png`} width={128} rotate={-5} className="margin-only" style={{ right: -150, top: 900 }} delay={0.45} />
       <div className="page-head">
         <div>
           <h1 className="display">{t('topics.title')}</h1>

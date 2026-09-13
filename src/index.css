@@ -960,6 +960,35 @@ button {
 
 /* ---------- topics ---------- */
 
+.sticker-float {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+.sticker-float img {
+  display: block;
+  height: auto;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+    drop-shadow(0 10px 14px rgba(0, 0, 0, 0.22));
+}
+.sticker-float img:active {
+  cursor: grabbing;
+}
+@media (max-width: 1400px) {
+  .sticker-float.margin-only {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .sticker-float {
+    display: none;
+  }
+}
+
 .add-topic {
   position: relative;
   align-self: flex-start;
@@ -1139,7 +1168,8 @@ button {
 
 .disc-wrap {
   position: absolute;
-  right: 330px;
+  /* centre of the disc on the one-third line of the viewport (page box is 1160px wide, centred) */
+  left: calc(580px - 16.667vw - 90px);
   top: -22px; /* creeps over the top bar a little; takes no space in the layout */
   z-index: 11;
 }

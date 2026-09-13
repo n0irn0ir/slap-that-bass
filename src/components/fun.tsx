@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useMotionValue, useSpring } from 'motion/react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { Burst } from './ui'
 
 /** A pink guitar pick that trails the pointer and tilts over anything clickable. Pointer devices only. */
@@ -293,5 +293,55 @@ export function Notes({ id, n = 12 }: { id: number; n?: number }) {
         )
       })}
     </span>
+  )
+}
+
+/** A floating photo sticker: bobs gently, can be dragged (snaps back), wobbles on tap. */
+export function Sticker({
+  src,
+  width,
+  rotate = 0,
+  style,
+  delay = 0,
+  className,
+}: {
+  src: string
+  width: number
+  rotate?: number
+  style?: CSSProperties
+  delay?: number
+  className?: string
+}) {
+  const [kick, setKick] = useState(0)
+  return (
+    <motion.div
+      className={`sticker-float${className ? ` ${className}` : ''}`}
+      style={style}
+      initial={{ opacity: 0, scale: 0.7, rotate: rotate - 12 }}
+      animate={{ opacity: 1, scale: 1, rotate }}
+      transition={{ type: 'spring', stiffness: 200, damping: 14, delay }}
+    >
+      <motion.div
+        animate={{ y: [0, -7, 0], rotate: [0, 2, 0, -2, 0] }}
+        transition={{ repeat: Infinity, duration: 5 + delay * 3, ease: 'easeInOut' }}
+      >
+        <motion.img
+          key={kick}
+          src={src}
+          alt=""
+          draggable={false}
+          style={{ width }}
+          drag
+          dragSnapToOrigin
+          dragElastic={0.6}
+          dragTransition={{ bounceStiffness: 300, bounceDamping: 14 }}
+          whileHover={{ scale: 1.06, rotate: -3 }}
+          whileDrag={{ scale: 1.1, rotate: 4 }}
+          animate={kick ? { rotate: [0, -8, 6, -3, 0], scale: [1, 1.08, 0.97, 1.02, 1] } : undefined}
+          transition={{ duration: 0.5 }}
+          onTap={() => setKick(Date.now())}
+        />
+      </motion.div>
+    </motion.div>
   )
 }
