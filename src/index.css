@@ -978,14 +978,14 @@ button {
 .cat {
   --c: var(--green);
   --cd: var(--green);
-  background: color-mix(in srgb, var(--c) 7%, var(--paper));
-  border: 1px solid color-mix(in srgb, var(--c) 28%, var(--paper));
+  background: transparent;
+  border: 1.5px dashed color-mix(in srgb, var(--c) 55%, var(--bg));
   border-radius: var(--r-lg);
   padding: 24px 24px 20px;
-  transition: box-shadow 0.3s;
+  transition: border-color 0.3s;
 }
 .cat:hover {
-  box-shadow: 0 24px 40px -28px color-mix(in srgb, var(--c) 60%, transparent);
+  border-color: var(--c);
 }
 .cat-head {
   display: grid;
@@ -1032,6 +1032,7 @@ button {
 }
 .cat-list {
   background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: 14px;
   padding: 4px 16px 10px;
 }
