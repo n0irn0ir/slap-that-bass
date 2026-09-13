@@ -179,9 +179,7 @@ export function Calendar({ log, onPick, onNew }: Props) {
                 .join(', ')}
             </span>
           </>
-        ) : (
-          <span className="faint small">{t('cal.hint')}</span>
-        )}
+        ) : null}
       </div>
           <span className="cal-perf" aria-hidden />
         </motion.div>
