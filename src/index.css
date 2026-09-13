@@ -979,7 +979,7 @@ button {
   --c: var(--green);
   --cd: var(--green);
   background: transparent;
-  border: 1.5px dashed color-mix(in srgb, var(--c) 55%, var(--bg));
+  border: 3px dashed color-mix(in srgb, var(--c) 50%, var(--bg));
   border-radius: var(--r-lg);
   padding: 24px 24px 20px;
   transition: border-color 0.3s;
@@ -1139,7 +1139,7 @@ button {
   border-radius: var(--r-lg);
   padding: 6px;
   background: transparent;
-  border: 1.5px dashed color-mix(in srgb, var(--c) 55%, var(--bg));
+  border: 3px dashed color-mix(in srgb, var(--c) 50%, var(--bg));
   transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease-spring);
 }
 .col.over {
