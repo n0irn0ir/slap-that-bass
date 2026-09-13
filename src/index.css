@@ -1457,6 +1457,9 @@ button {
   color: var(--ink-3);
   padding-bottom: 4px;
 }
+.cal-empty {
+  aspect-ratio: 1;
+}
 .cal-day {
   position: relative;
   aspect-ratio: 1;

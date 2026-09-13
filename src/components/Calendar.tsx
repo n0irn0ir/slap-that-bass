@@ -109,7 +109,7 @@ export function Calendar({ log, onPick, onNew }: Props) {
 
           <div className="cal-grid">
           {cells.map((iso, i) => {
-            if (!iso) return <span key={`e${i}`} />
+            if (!iso) return <span key={`e${i}`} className="cal-empty" />
             const info = byDay.get(iso)
             const isToday = iso === today
             const future = iso > today
