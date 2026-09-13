@@ -5,7 +5,8 @@ import { Toast } from '../components/fun'
 import { Burst, Jelly, Segmented, listItem } from '../components/ui'
 import { CATEGORIES, CATEGORY_BY_ID } from '../lib/categories'
 import { fmtDate, fmtMinutes, todayISO } from '../lib/format'
-import { FACES, FACE_LABELS, face } from '../lib/rating'
+import { FACES, face, faceLabel } from '../lib/rating'
+import { catText, plural, useT } from '../lib/i18n'
 import type { CategoryId, LogEntry } from '../lib/types'
 import { useData } from '../state/DataContext'
 
@@ -19,6 +20,7 @@ interface Prefill {
 export function Log() {
   const { log, topics, loading, addLog, updateLog, deleteLog } = useData()
   const { state } = useLocation() as { state: Prefill | null }
+  const { t } = useT()
 
   const [editing, setEditing] = useState<LogEntry | null>(null)
   const [date, setDate] = useState(todayISO())
@@ -91,7 +93,7 @@ export function Log() {
       const hoursBefore = Math.floor(before / 60)
       const hoursAfter = Math.floor((before + m) / 60)
       if (hoursAfter > hoursBefore) {
-        setToast({ id: Date.now(), text: `That's ${hoursAfter} ${hoursAfter === 1 ? 'hour' : 'hours'} on the bass.` })
+        setToast({ id: Date.now(), text: t('log.hours', { n: hoursAfter, hours: plural(hoursAfter, 'hour', 'hours', 'час', 'часа', 'часов') }) })
       }
     }
     reset()
@@ -108,8 +110,8 @@ export function Log() {
     <>
       <div className="page-head">
         <div>
-          <h1 className="display">Log</h1>
-          <p className="muted">Write it down after you put the bass back. Minutes, roughly. No timer.</p>
+          <h1 className="display">{t('log.title')}</h1>
+          <p className="muted">{t('log.lead')}</p>
         </div>
       </div>
 
@@ -117,24 +119,24 @@ export function Log() {
 
       <div className="log-grid">
         <form className="log-form" onSubmit={submit}>
-          <div className="label">{editing ? 'Editing an entry' : 'New entry'}</div>
+          <div className="label">{editing ? t('log.editing') : t('log.new')}</div>
 
           <div className="field">
-            <span className="label">Category</span>
+            <span className="label">{t('log.category')}</span>
             <Segmented
               name="category"
               className="grid3"
               color={CATEGORY_BY_ID[category].deep}
               value={category}
-              options={CATEGORIES.map((c) => ({ value: c.id, label: c.short }))}
+              options={CATEGORIES.map((c) => ({ value: c.id, label: catText(c.id).short }))}
               onChange={setCategory}
             />
           </div>
 
           <label className="field">
-            <span className="label">Topic (optional)</span>
+            <span className="label">{t('log.topic')}</span>
             <select className="select" value={topicId} onChange={(e) => setTopicId(e.target.value)}>
-              <option value="">— none —</option>
+              <option value="">{t('log.none')}</option>
               {catTopics.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.title}
@@ -144,7 +146,7 @@ export function Log() {
           </label>
 
           <div className="field">
-            <span className="label">Minutes</span>
+            <span className="label">{t('log.minutes')}</span>
             <div className="minutes-big">
               <input
                 type="number"
@@ -154,14 +156,14 @@ export function Log() {
                 placeholder="25"
                 value={minutes}
                 onChange={(e) => setMinutes(e.target.value)}
-                aria-label="Minutes"
+                aria-label={t('log.minutes')}
                 required
               />
-              <span>min</span>
+              <span>{t('log.min')}</span>
             </div>
             {parseInt(minutes, 10) >= 90 && (
               <motion.div className="small muted" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
-                Long one. Stretch your hands.
+                {t('log.long')}
               </motion.div>
             )}
             <div className="chips" style={{ marginTop: 8 }}>
@@ -180,7 +182,7 @@ export function Log() {
           </div>
 
           <label className="field">
-            <span className="label">Date</span>
+            <span className="label">{t('log.date')}</span>
             <input
               className="input mono"
               type="date"
@@ -191,8 +193,8 @@ export function Log() {
           </label>
 
           <div className="field">
-            <span className="label">How did it go? (optional)</span>
-            <div className="rates" role="radiogroup" aria-label="Session rating">
+            <span className="label">{t('log.rating')}</span>
+            <div className="rates" role="radiogroup" aria-label={t('log.ratingAria')}>
               {FACES.map((f, i) => {
                 const v = i + 1
                 const on = rating === v
@@ -202,8 +204,8 @@ export function Log() {
                     type="button"
                     role="radio"
                     aria-checked={on}
-                    aria-label={FACE_LABELS[i]}
-                    title={FACE_LABELS[i]}
+                    aria-label={faceLabel(i)}
+                    title={faceLabel(i)}
                     className={`rate${on ? ' on' : ''}${rating && !on ? ' dim' : ''}`}
                     onClick={() => setRating(on ? null : v)}
                     whileHover={{ scale: 1.25, rotate: i % 2 ? 8 : -8 }}
@@ -219,10 +221,10 @@ export function Log() {
           </div>
 
           <label className="field">
-            <span className="label">Note (optional)</span>
+            <span className="label">{t('log.note')}</span>
             <textarea
               className="textarea"
-              placeholder="What worked, what did not, what next"
+              placeholder={t('log.notePlaceholder')}
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
@@ -231,13 +233,13 @@ export function Log() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <span className="has-burst" style={{ display: 'inline-block' }}>
               <Jelly className={`btn${saved ? ' accent' : ''}`} type="submit" disabled={!minutes}>
-                {saved ? 'Saved' : editing ? 'Save changes' : 'Add entry'}
+                {saved ? t('log.saved') : editing ? t('log.saveChanges') : t('log.addEntry')}
               </Jelly>
               <Burst id={burst} />
             </span>
             {editing && (
               <button className="btn ghost" type="button" onClick={reset}>
-                Cancel
+                {t('log.cancel')}
               </button>
             )}
           </div>
@@ -245,7 +247,7 @@ export function Log() {
 
         <div>
           {days.length === 0 ? (
-            <div className="empty">Nothing here yet. The first entry is the hardest.</div>
+            <div className="empty">{t('log.empty')}</div>
           ) : (
             days.map((d) => (
               <section key={d.date} className="day">
@@ -257,12 +259,12 @@ export function Log() {
                   {d.items.map((l) => (
                     <motion.div key={l.id} className="entry" layout="position" {...listItem}>
                       <span className="m">
-                        {l.minutes}m
+                        {l.minutes}{t('unit.m')}
                         {face(l.rating) && <span className="face-sm">{face(l.rating)}</span>}
                       </span>
                       <div>
                         <span className="cat-dot" style={{ background: CATEGORY_BY_ID[l.category].color }} />
-                        <span className="cat">{CATEGORY_BY_ID[l.category].name}</span>
+                        <span className="cat">{catText(l.category).name}</span>
                         {l.topic_id && topicName(l.topic_id) && (
                           <span className="topic-name"> · {topicName(l.topic_id)}</span>
                         )}
@@ -270,14 +272,14 @@ export function Log() {
                       </div>
                       <div className="acts">
                         <button type="button" className="link-btn" onClick={() => startEdit(l)}>
-                          edit
+                          {t('log.edit')}
                         </button>
                         <button
                           type="button"
                           className="link-btn danger"
-                          onClick={() => confirm('Delete this entry?') && deleteLog(l.id)}
+                          onClick={() => confirm(t('log.deleteConfirm')) && deleteLog(l.id)}
                         >
-                          delete
+                          {t('log.delete')}
                         </button>
                       </div>
                     </motion.div>

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { CATEGORIES } from '../lib/categories'
 import { fmtMinutes, pct } from '../lib/format'
 import type { CategoryId } from '../lib/types'
+import { catText, useT } from '../lib/i18n'
 
 interface Props {
   minutes: Record<string, number>
@@ -26,6 +27,7 @@ const toPoints = (pts: [number, number][]) => pts.map((p) => p.map((n) => n.toFi
 
 export function Rose({ minutes, onPick }: Props) {
   const [hover, setHover] = useState<CategoryId | null>(null)
+  const { t } = useT()
 
   const values = CATEGORIES.map((c) => minutes[c.id] ?? 0)
   const total = values.reduce((a, b) => a + b, 0)
@@ -40,7 +42,7 @@ export function Rose({ minutes, onPick }: Props) {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label="Minutes per category"
+        aria-label={t('rose.aria')}
         className="rose-svg"
       >
         {rings.map((f) => (
@@ -169,7 +171,7 @@ export function Rose({ minutes, onPick }: Props) {
               onMouseLeave={() => setHover(null)}
               onClick={() => onPick?.(c.id)}
             >
-              {c.short}
+              {catText(c.id).short}
             </motion.text>
           )
         })}
@@ -186,8 +188,8 @@ export function Rose({ minutes, onPick }: Props) {
           >
             <span className="sw" style={{ background: c.color }} />
             <span>
-              {c.name}
-              {i === lowest && <span className="low-tag">least</span>}
+              {catText(c.id).name}
+              {i === lowest && <span className="low-tag">{t('rose.least')}</span>}
             </span>
             <span className="m">{fmtMinutes(values[i])}</span>
             <span className="p">{pct(values[i], total)}%</span>
@@ -195,7 +197,7 @@ export function Rose({ minutes, onPick }: Props) {
         ))}
         {lowest >= 0 && (
           <p className="small faint" style={{ margin: '12px 0 0' }}>
-            The pulsing ring marks the category with the least time so far.
+            {t('rose.note')}
           </p>
         )}
       </div>

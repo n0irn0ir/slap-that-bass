@@ -3,19 +3,21 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { CursorDot } from './fun'
 import { useAuth } from '../state/AuthContext'
 import { useData } from '../state/DataContext'
+import { useT } from '../lib/i18n'
 
 const LINKS = [
-  { to: '/', label: 'Progress' },
-  { to: '/topics', label: 'Topics' },
-  { to: '/songs', label: 'Songs' },
-  { to: '/log', label: 'Log' },
-  { to: '/settings', label: 'Settings' },
-]
+  { to: '/', key: 'nav.progress' },
+  { to: '/topics', key: 'nav.topics' },
+  { to: '/songs', key: 'nav.songs' },
+  { to: '/log', key: 'nav.log' },
+  { to: '/settings', key: 'nav.settings' },
+] as const
 
 export function Shell() {
   const { user } = useAuth()
   const { error } = useData()
   const location = useLocation()
+  const { t, lang } = useT()
 
   return (
     <div className="shell">
@@ -39,19 +41,19 @@ export function Shell() {
                         transition={{ type: 'spring', stiffness: 380, damping: 24 }}
                       />
                     )}
-                    <span className="nav-label">{l.label}</span>
+                    <span className="nav-label">{t(l.key)}</span>
                   </motion.span>
                 )}
               </NavLink>
             ))}
           </nav>
-          <span className="who">{user?.email}</span>
+          <span className="who">{user?.id === 'local' ? t('nav.local') : user?.email}</span>
         </div>
       </header>
 
       {/* Keyed by route: a plain fade-in on mount, no exit animation to wait for. */}
       <motion.main
-        key={location.pathname}
+        key={location.pathname + lang}
         className="page"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

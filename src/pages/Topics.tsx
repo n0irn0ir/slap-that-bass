@@ -8,10 +8,12 @@ import { fmtMinutes, pct } from '../lib/format'
 import type { CategoryId } from '../lib/types'
 import type { Topic } from '../lib/types'
 import { minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
+import { catText, useT } from '../lib/i18n'
 
 export function Topics() {
   const { topics, log, loading, addTopic } = useData()
   const { hash } = useLocation()
+  const { t } = useT()
   const [open, setOpen] = useState(false)
   const [newCat, setNewCat] = useState<CategoryId>('technique')
   const [newTitle, setNewTitle] = useState('')
@@ -41,18 +43,15 @@ export function Topics() {
     <>
       <div className="page-head">
         <div>
-          <h1 className="display">Topics</h1>
-          <p className="muted">
-            A map of what there is to learn, not a checklist. A topic is never finished — only
-            time goes into it. Rename, add or remove anything.
-          </p>
+          <h1 className="display">{t('topics.title')}</h1>
+          <p className="muted">{t('topics.lead')}</p>
         </div>
         <div className="add-topic">
           <Jelly type="button" className="btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
             <span className="plus" aria-hidden>
               +
             </span>
-            Add topic
+            {t('topics.add')}
           </Jelly>
           <AnimatePresence>
             {open && (
@@ -65,32 +64,32 @@ export function Topics() {
                 transition={{ type: 'spring', stiffness: 420, damping: 26 }}
               >
                 <label className="field">
-                  <span className="label">Category</span>
+                  <span className="label">{t('topics.category')}</span>
                   <select className="select" value={newCat} onChange={(e) => setNewCat(e.target.value as CategoryId)}>
                     {CATEGORIES.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.name}
+                        {catText(c.id).name}
                       </option>
                     ))}
                   </select>
                 </label>
                 <label className="field">
-                  <span className="label">Topic</span>
+                  <span className="label">{t('topics.topic')}</span>
                   <input
                     className="input"
                     autoFocus
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder="e.g. Ghost notes at 90 bpm"
+                    placeholder={t('topics.placeholder')}
                     onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
                   />
                 </label>
                 <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                   <button type="button" className="btn ghost sm" onClick={() => setOpen(false)}>
-                    Cancel
+                    {t('topics.cancel')}
                   </button>
                   <Jelly type="submit" className="btn sm" disabled={!newTitle.trim()}>
-                    Add
+                    {t('topics.addShort')}
                   </Jelly>
                 </div>
               </motion.form>
@@ -132,6 +131,7 @@ function CategoryBlock({
   byTopic: Record<string, number>
 }) {
   const { addTopic } = useData()
+  const { t } = useT()
   const [draft, setDraft] = useState('')
   const max = Math.max(...topics.map((t) => byTopic[t.id] ?? 0), 1)
 
@@ -162,12 +162,12 @@ function CategoryBlock({
           <Icon name={category.icon} size={22} />
         </motion.span>
         <div className="cat-title">
-          <h2 className="h2">{category.name}</h2>
-          <p className="cat-scope">{category.scope}</p>
+          <h2 className="h2">{catText(category.id).name}</h2>
+          <p className="cat-scope">{catText(category.id).scope}</p>
         </div>
         <div className="cat-num">
           <span className="big">{total === 0 ? '—' : fmtMinutes(total)}</span>
-          {total > 0 && <span className="small faint">{share}% of all time</span>}
+          {total > 0 && <span className="small faint">{share}{t('topics.ofAll')}</span>}
         </div>
       </div>
 
@@ -182,12 +182,12 @@ function CategoryBlock({
           <input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Add a topic"
-            aria-label={`Add a topic to ${category.name}`}
+            placeholder={t('topics.addInline')}
+            aria-label={`${t('topics.addInline')}: ${catText(category.id).name}`}
           />
           {draft.trim() && (
             <Jelly type="submit" className="btn sm ghost">
-              Add
+              {t('topics.addShort')}
             </Jelly>
           )}
         </form>
@@ -199,6 +199,7 @@ function CategoryBlock({
 function TopicRow({ topic, minutes, max }: { topic: Topic; minutes: number; max: number }) {
   const { updateTopic, deleteTopic } = useData()
   const nav = useNavigate()
+  const { t } = useT()
   const [editing, setEditing] = useState(false)
   const [title, setTitle] = useState(topic.title)
 
@@ -230,7 +231,7 @@ function TopicRow({ topic, minutes, max }: { topic: Topic; minutes: number; max:
             onChange={(e) => setTitle(e.target.value)}
             onBlur={commit}
             onKeyDown={key}
-            aria-label="Topic title"
+            aria-label={t('topics.titleAria')}
           />
         ) : (
           <span onDoubleClick={() => setEditing(true)}>{topic.title}</span>
@@ -242,20 +243,19 @@ function TopicRow({ topic, minutes, max }: { topic: Topic; minutes: number; max:
           className="link-btn"
           onClick={() => nav('/log', { state: { category: topic.category, topic_id: topic.id } })}
         >
-          log
+          {t('topics.log')}
         </button>
         <button type="button" className="link-btn" onClick={() => setEditing(true)}>
-          rename
+          {t('topics.rename')}
         </button>
         <button
           type="button"
           className="link-btn danger"
           onClick={() => {
-            if (minutes === 0 || confirm(`Remove "${topic.title}"? Logged time stays, without a topic.`))
-              deleteTopic(topic.id)
+            if (minutes === 0 || confirm(t('topics.removeConfirm', { title: topic.title }))) deleteTopic(topic.id)
           }}
         >
-          remove
+          {t('topics.remove')}
         </button>
       </div>
       <span className={`m${minutes === 0 ? ' zero' : ''}`}>{minutes === 0 ? '—' : fmtMinutes(minutes)}</span>

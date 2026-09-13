@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
+import { Segmented } from '../components/ui'
 import { buildDemo } from '../lib/demo'
+import { useT, type Lang } from '../lib/i18n'
 import type { Snapshot } from '../lib/types'
 import { useAuth } from '../state/AuthContext'
 import { useData } from '../state/DataContext'
@@ -7,6 +9,7 @@ import { useData } from '../state/DataContext'
 export function Settings() {
   const { user, mode, signOut } = useAuth()
   const { topics, songs, log, restoreSampleTopics, importSnapshot } = useData()
+  const { t, lang, setLang } = useT()
   const [msg, setMsg] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -25,52 +28,64 @@ export function Settings() {
     try {
       const snap = JSON.parse(await file.text()) as Snapshot
       if (!Array.isArray(snap.topics) || !Array.isArray(snap.songs) || !Array.isArray(snap.log))
-        throw new Error('Not a slap that bass export.')
-      if (!confirm('Replace everything on this device with the file contents?')) return
+        throw new Error(t('settings.notExport'))
+      if (!confirm(t('settings.importConfirm'))) return
       await importSnapshot(snap)
-      setMsg('Imported.')
+      setMsg(t('settings.imported'))
     } catch (e) {
-      setMsg(e instanceof Error ? e.message : 'Could not import.')
+      setMsg(e instanceof Error ? e.message : t('settings.importFail'))
     }
   }
 
   return (
     <>
       <div className="page-head">
-        <h1 className="display">Settings</h1>
+        <h1 className="display">{t('settings.title')}</h1>
       </div>
 
       <div className="settings">
         <section>
-          <div className="label">Account</div>
+          <div className="label">{t('settings.account')}</div>
           <div className="row">
-            <span>{user?.email}</span>
+            <span>{user?.id === 'local' ? t('nav.local') : user?.email}</span>
             {mode === 'supabase' ? (
               <button className="btn ghost sm" onClick={signOut}>
-                Sign out
+                {t('settings.signOut')}
               </button>
             ) : (
-              <span className="small muted">Local mode — data stays in this browser</span>
+              <span className="small muted">{t('settings.localMode')}</span>
             )}
+          </div>
+          <div className="row">
+            <span>{t('settings.language')}</span>
+            <Segmented<Lang>
+              name="language"
+              value={lang}
+              options={[
+                { value: 'en', label: 'EN' },
+                { value: 'ru', label: 'RU' },
+              ]}
+              onChange={setLang}
+            />
           </div>
         </section>
 
         <section>
-          <div className="label">Data</div>
+          <div className="label">{t('settings.data')}</div>
           <div className="row">
             <span>
-              Export everything as JSON
+              {t('settings.export')}
               <div className="small muted">
-                {topics.length} topics · {songs.length} songs · {log.length} log entries
+                {t('settings.counts', { t: topics.length, s: songs.length, l: log.length })}
               </div>
             </span>
             <button className="btn ghost sm" onClick={exportJSON}>
-              Export
+              {t('settings.exportBtn')}
             </button>
           </div>
           {mode === 'local' && (
             <div className="row">
-              <span>Import a JSON export (replaces current data)</span>
+              <span>{t('settings.import')}</span>
               <input
                 ref={fileRef}
                 type="file"
@@ -83,23 +98,23 @@ export function Settings() {
                 }}
               />
               <button className="btn ghost sm" onClick={() => fileRef.current?.click()}>
-                Import
+                {t('settings.importBtn')}
               </button>
             </div>
           )}
           <div className="row">
             <span>
-              Restore sample topics
-              <div className="small muted">Adds back any of the topics from the brief you removed.</div>
+              {t('settings.restore')}
+              <div className="small muted">{t('settings.restoreHint')}</div>
             </span>
             <button
               className="btn ghost sm"
               onClick={async () => {
                 const n = await restoreSampleTopics()
-                setMsg(n ? `Added ${n} topic${n === 1 ? '' : 's'}.` : 'Nothing missing.')
+                setMsg(n ? t('settings.restored', { n }) : t('settings.nothingMissing'))
               }}
             >
-              Restore
+              {t('settings.restoreBtn')}
             </button>
           </div>
           {msg && <div className="small muted">{msg}</div>}
@@ -107,41 +122,39 @@ export function Settings() {
 
         {mode === 'local' && (
           <section>
-            <div className="label">Local mode</div>
+            <div className="label">{t('settings.local')}</div>
             <div className="row">
               <span>
-                Load sample data
-                <div className="small muted">A month of made-up entries and placeholder songs, to see the pages filled in.</div>
+                {t('settings.sample')}
+                <div className="small muted">{t('settings.sampleHint')}</div>
               </span>
               <button
                 className="btn ghost sm"
                 onClick={() => {
-                  if (confirm('Replace current data with sample data?')) importSnapshot(buildDemo(topics))
+                  if (confirm(t('settings.sampleConfirm'))) importSnapshot(buildDemo(topics))
                 }}
               >
-                Load
+                {t('settings.load')}
               </button>
             </div>
             <div className="row">
-              <span>Clear everything on this device</span>
+              <span>{t('settings.clear')}</span>
               <button
                 className="btn ghost sm"
                 onClick={() => {
-                  if (confirm('Delete all local data? Sample topics will be re-added.'))
-                    importSnapshot({ topics: [], songs: [], log: [] })
+                  if (confirm(t('settings.clearConfirm'))) importSnapshot({ topics: [], songs: [], log: [] })
                 }}
               >
-                Clear
+                {t('settings.clearBtn')}
               </button>
             </div>
           </section>
         )}
 
         <section>
-          <div className="label">About</div>
+          <div className="label">{t('settings.about')}</div>
           <p className="small muted" style={{ margin: 0 }}>
-            The six categories and the sample topics come from the 26‑week brief. Nothing here is
-            an assessment; logged minutes and self‑ratings are your own evidence.
+            {t('settings.aboutText')}
           </p>
         </section>
       </div>

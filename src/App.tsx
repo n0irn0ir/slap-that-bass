@@ -8,6 +8,7 @@ import { Songs } from './pages/Songs'
 import { Topics } from './pages/Topics'
 import { AuthProvider, useAuth } from './state/AuthContext'
 import { DataProvider } from './state/DataContext'
+import { I18nProvider } from './lib/i18n'
 
 function Gate() {
   const { ready, user } = useAuth()
@@ -32,9 +33,11 @@ function Gate() {
 export default function App() {
   return (
     <HashRouter>
-      <AuthProvider>
-        <Gate />
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <Gate />
+        </AuthProvider>
+      </I18nProvider>
     </HashRouter>
   )
 }

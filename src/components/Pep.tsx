@@ -3,9 +3,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { STRINGS, pluck } from '../lib/pluck'
 import { Burst, Jelly } from './ui'
+import { useT } from '../lib/i18n'
 
 // Sobering, not soaring. Original lines; no gurus quoted.
-const LINES: string[] = [
+const LINES_EN: string[] = [
   'Nobody is watching. Play the boring thing slowly.',
   'You don’t have to feel like it. You have to pick it up.',
   'Bad days count. Log ten minutes and go.',
@@ -30,7 +31,34 @@ const LINES: string[] = [
   'You already know how to be bad at this. That was the hard part.',
 ]
 
+const LINES_RU: string[] = [
+  'Никто не смотрит. Сыграй скучное медленно.',
+  'Не обязательно хотеть. Обязательно взять в руки.',
+  'Плохие дни считаются. Запиши десять минут и иди.',
+  'Месяц назад было хуже. Ты и тогда не замечала.',
+  'Не та нота вовремя — это нота. Та нота не сыграна — это ничто.',
+  'Басовые линии — в основном тоники. Прогресс тоже.',
+  'Разочарование — не план. Двадцать минут — план.',
+  'Сегодня можно быть средней.',
+  'Рифф не сложный. Он незнакомый. Это разные проблемы.',
+  'Медленно — не компромисс. В медленном вся информация.',
+  'Никто из хороших не чувствовал себя готовым.',
+  'Руки знают больше, чем настроение.',
+  'Один чистый такт лучше десяти грязных. Остановись на одном.',
+  'На плато растут корни. Постой на нём.',
+  'Мотивация приходит после начала, не до. Она опаздывает, а не отсутствует.',
+  'Нужен не бас получше. Нужен тот же бас, но чаще.',
+  'Сравнение — это история. Минуты — это данные.',
+  'Если больно — стоп. Если скучно — это и есть практика.',
+  'Практика делает постоянным. Больше она ничего не обещает.',
+  'Сыграй неправильно нарочно. Теперь видно, где края.',
+  'Смысл сегодня — чтобы завтра было чуть легче.',
+  'Быть плохой в этом ты уже умеешь. Это была сложная часть.',
+]
+
 export function Pep() {
+  const { t, lang } = useT()
+  const LINES = lang === 'ru' ? LINES_RU : LINES_EN
   const [open, setOpen] = useState(false)
   const [i, setI] = useState(() => Math.floor(Math.random() * LINES.length))
   const [burst, setBurst] = useState(0)
@@ -38,7 +66,7 @@ export function Pep() {
   const next = useCallback(() => {
     setI((n) => (n + 1 + Math.floor(Math.random() * (LINES.length - 1))) % LINES.length)
     setBurst(Date.now())
-  }, [])
+  }, [LINES.length])
 
   function show() {
     setOpen(true)
@@ -76,7 +104,7 @@ export function Pep() {
         transition={{ type: 'spring', stiffness: 400, damping: 14 }}
       >
         <span className="face">(-_-)</span>
-        not feeling it
+        {t('pep.button')}
       </motion.button>
 
       {createPortal(
@@ -92,7 +120,7 @@ export function Pep() {
             <motion.div
               className="pep has-burst"
               role="dialog"
-              aria-label="A sober word"
+              aria-label={t('pep.aria')}
               onClick={(e) => e.stopPropagation()}
               drag
               dragSnapToOrigin
@@ -120,13 +148,13 @@ export function Pep() {
               <div className="row">
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Jelly type="button" className="btn hot" onClick={next}>
-                    Another
+                    {t('pep.another')}
                   </Jelly>
                   <Jelly type="button" className="btn ghost" onClick={() => setOpen(false)}>
-                    Fine, I’ll play
+                    {t('pep.fine')}
                   </Jelly>
                 </div>
-                <span className="hint">drag to dismiss · space for next</span>
+                <span className="hint">{t('pep.hint')}</span>
               </div>
             </motion.div>
           </motion.div>

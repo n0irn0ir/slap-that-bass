@@ -5,21 +5,22 @@ import type { Song, SongSlot, SongStatus } from '../lib/types'
 import { isSpotify, spotifyMeta, type SpotifyMeta } from '../lib/spotify'
 import { Icon } from '../components/Icon'
 import { useData } from '../state/DataContext'
+import { useT, type Key } from '../lib/i18n'
 
-const STATUSES: { id: SongStatus; label: string; hint: string; color: string; deep: string }[] = [
-  { id: 'backlog', label: 'Backlog', hint: 'Want to learn', color: 'var(--cyan)', deep: 'var(--cyan-d)' },
-  { id: 'learning', label: 'Learning', hint: 'Started', color: 'var(--violet)', deep: 'var(--violet-d)' },
-  { id: 'learned', label: 'Learned', hint: 'Can play through', color: 'var(--teal)', deep: 'var(--teal-d)' },
+const STATUSES: { id: SongStatus; label: Key; hint: Key; color: string; deep: string }[] = [
+  { id: 'backlog', label: 'songs.backlog', hint: 'songs.backlogHint', color: 'var(--cyan)', deep: 'var(--cyan-d)' },
+  { id: 'learning', label: 'songs.learning', hint: 'songs.learningHint', color: 'var(--violet)', deep: 'var(--violet-d)' },
+  { id: 'learned', label: 'songs.learned', hint: 'songs.learnedHint', color: 'var(--teal)', deep: 'var(--teal-d)' },
 ]
 
-const SLOTS: { id: SongSlot; label: string }[] = [
-  { id: null, label: 'No slot' },
-  { id: 'easy', label: 'Easy win' },
-  { id: 'growth', label: 'Growth' },
-  { id: 'dream', label: 'Dream' },
+const SLOTS: { id: SongSlot; label: Key }[] = [
+  { id: null, label: 'songs.slotNone' },
+  { id: 'easy', label: 'songs.slotEasy' },
+  { id: 'growth', label: 'songs.slotGrowth' },
+  { id: 'dream', label: 'songs.slotDream' },
 ]
 
-const slotLabel = (s: SongSlot) => SLOTS.find((x) => x.id === s)?.label ?? ''
+const slotKey = (s: SongSlot): Key => SLOTS.find((x) => x.id === s)?.label ?? 'songs.slotNone'
 
 /** Cover + title for a Spotify link; null for anything else or while loading. */
 function useSpotify(link: string | null | undefined): SpotifyMeta | null {
@@ -37,6 +38,7 @@ function useSpotify(link: string | null | undefined): SpotifyMeta | null {
 
 export function Songs() {
   const { songs, loading, addSong, updateSong } = useData()
+  const { t } = useT()
   const [artist, setArtist] = useState('')
   const [title, setTitle] = useState('')
   const [status, setStatus] = useState<SongStatus>('backlog')
@@ -85,46 +87,46 @@ export function Songs() {
     <>
       <div className="page-head">
         <div>
-          <h1 className="display">Songs</h1>
-          <p className="muted">Pick without thinking: something to start, something to keep going, something to revisit.</p>
+          <h1 className="display">{t('songs.title')}</h1>
+          <p className="muted">{t('songs.lead')}</p>
         </div>
       </div>
 
       <form className="song-form" onSubmit={submit}>
         <label className="field">
-          <span className="label">Artist</span>
+          <span className="label">{t('songs.artist')}</span>
           <input className="input" value={artist} onChange={(e) => setArtist(e.target.value)} required />
         </label>
         <label className="field">
-          <span className="label">Title</span>
+          <span className="label">{t('songs.songTitle')}</span>
           <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} required />
         </label>
         <label className="field">
-          <span className="label">Status</span>
+          <span className="label">{t('songs.status')}</span>
           <select className="select" value={status} onChange={(e) => setStatus(e.target.value as SongStatus)}>
             {STATUSES.map((s) => (
               <option key={s.id} value={s.id}>
-                {s.label}
+                {t(s.label)}
               </option>
             ))}
           </select>
         </label>
         <label className="field">
-          <span className="label">Slot</span>
+          <span className="label">{t('songs.slot')}</span>
           <select className="select" value={slot ?? ''} onChange={(e) => setSlot((e.target.value || null) as SongSlot)}>
             {SLOTS.map((s) => (
               <option key={s.id ?? 'none'} value={s.id ?? ''}>
-                {s.label}
+                {t(s.label)}
               </option>
             ))}
           </select>
         </label>
         <label className="field">
-          <span className="label">Link (optional)</span>
-          <input className="input" type="url" placeholder="Spotify, tab, video…" value={link} onChange={(e) => setLink(e.target.value)} />
+          <span className="label">{t('songs.link')}</span>
+          <input className="input" type="url" placeholder={t('songs.linkPlaceholder')} value={link} onChange={(e) => setLink(e.target.value)} />
         </label>
         <Jelly className="btn" type="submit" disabled={!artist.trim() || !title.trim()}>
-          Add
+          {t('songs.add')}
         </Jelly>
       </form>
 
@@ -146,8 +148,8 @@ export function Songs() {
             >
               <div className="col-head has-burst">
                 <div>
-                  <h2 className="h3">{col.label}</h2>
-                  <span className="small faint">{col.hint}</span>
+                  <h2 className="h3">{t(col.label)}</h2>
+                  <span className="small faint">{t(col.hint)}</span>
                 </div>
                 <span className="n">
                   <Counter value={items.length} />
@@ -162,7 +164,7 @@ export function Songs() {
               {items.length === 0 && (
                 <div className="drop-slot">
                   <span className="cover placeholder" aria-hidden />
-                  <span className="small">Drop a song here</span>
+                  <span className="small">{t('songs.drop')}</span>
                 </div>
               )}
             </div>
@@ -175,6 +177,7 @@ export function Songs() {
 
 function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongStatus) => void }) {
   const { updateSong, deleteSong } = useData()
+  const { t } = useT()
   const cover = useSpotify(song.link)
   const [editing, setEditing] = useState(false)
   const [artist, setArtist] = useState(song.artist)
@@ -211,22 +214,22 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
     >
       {editing ? (
         <form onSubmit={save} style={{ display: 'grid', gap: 8 }}>
-          <input className="input" value={artist} onChange={(e) => setArtist(e.target.value)} aria-label="Artist" />
-          <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} aria-label="Title" />
-          <select className="select" value={slot ?? ''} onChange={(e) => setSlot((e.target.value || null) as SongSlot)} aria-label="Slot">
+          <input className="input" value={artist} onChange={(e) => setArtist(e.target.value)} aria-label={t('songs.artist')} />
+          <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} aria-label={t('songs.songTitle')} />
+          <select className="select" value={slot ?? ''} onChange={(e) => setSlot((e.target.value || null) as SongSlot)} aria-label={t('songs.slot')}>
             {SLOTS.map((s) => (
               <option key={s.id ?? 'none'} value={s.id ?? ''}>
-                {s.label}
+                {t(s.label)}
               </option>
             ))}
           </select>
-          <input className="input" type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="Link" aria-label="Link" />
+          <input className="input" type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder={t('songs.link')} aria-label={t('songs.link')} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="btn sm" type="submit">
-              Save
+              {t('songs.save')}
             </button>
             <button className="btn sm ghost" type="button" onClick={() => setEditing(false)}>
-              Cancel
+              {t('songs.cancel')}
             </button>
           </div>
         </form>
@@ -239,7 +242,7 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
                 href={song.link}
                 target="_blank"
                 rel="noreferrer"
-                title="Open in Spotify"
+                title={t('songs.openSpotify')}
                 draggable={false}
                 whileHover={{ scale: 1.08, rotate: -4 }}
                 whileTap={{ scale: 0.94 }}
@@ -256,33 +259,33 @@ function SongCard({ song, onMove }: { song: Song; onMove: (id: string, to: SongS
               <div className="artist">{song.artist}</div>
               <div className="h3">{song.title}</div>
             </div>
-            {song.slot && <span className={`slot ${song.slot}`}>{slotLabel(song.slot)}</span>}
+            {song.slot && <span className={`slot ${song.slot}`}>{t(slotKey(song.slot))}</span>}
           </div>
           <div className="foot">
             {prev && (
               <button type="button" className="link-btn" onClick={() => onMove(song.id, prev)}>
-                ← {STATUSES[idx - 1].label.toLowerCase()}
+                ← {t(STATUSES[idx - 1].label).toLowerCase()}
               </button>
             )}
             {next && (
               <button type="button" className="link-btn" onClick={() => onMove(song.id, next)}>
-                {STATUSES[idx + 1].label.toLowerCase()} →
+                {t(STATUSES[idx + 1].label).toLowerCase()} →
               </button>
             )}
             {song.link && (
               <a className="link-btn" href={song.link} target="_blank" rel="noreferrer">
-                {isSpotify(song.link) ? 'spotify' : 'open'}
+                {isSpotify(song.link) ? t('songs.spotify') : t('songs.open')}
               </a>
             )}
             <button type="button" className="link-btn" onClick={() => setEditing(true)}>
-              edit
+              {t('songs.edit')}
             </button>
             <button
               type="button"
               className="link-btn danger"
-              onClick={() => confirm(`Remove "${song.title}"?`) && deleteSong(song.id)}
+              onClick={() => confirm(t('songs.removeConfirm', { title: song.title })) && deleteSong(song.id)}
             >
-              remove
+              {t('songs.remove')}
             </button>
           </div>
         </>

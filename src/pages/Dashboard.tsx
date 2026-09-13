@@ -12,6 +12,7 @@ import { daysAgoISO, fmtDate, fmtMinutes } from '../lib/format'
 import { STRINGS, pluck as play } from '../lib/pluck'
 import { face } from '../lib/rating'
 import { countByStatus, minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
+import { catText, plural, useT } from '../lib/i18n'
 
 const fadeUp = (i: number) => ({
   initial: { opacity: 0, y: 10 },
@@ -22,6 +23,7 @@ const fadeUp = (i: number) => ({
 export function Dashboard() {
   const { log, songs, topics, loading } = useData()
   const nav = useNavigate()
+  const { t } = useT()
   const strum = useAnimation()
   const [strums, setStrums] = useState(0)
   const [ring, setRing] = useState(0)
@@ -100,10 +102,10 @@ export function Dashboard() {
           <h1 className="display">
             {totalMin === 0 ? (
               <>
-                <Wave>Nothing logged yet.</Wave>
+                <Wave>{t('dash.empty1')}</Wave>
                 <br />
                 <span className="muted">
-                  <Wave>First session?</Wave>
+                  <Wave>{t('dash.empty2')}</Wave>
                 </span>
               </>
             ) : (
@@ -111,13 +113,13 @@ export function Dashboard() {
                 <strong>
                   <Jiggle>{fmtMinutes(totalMin)}</Jiggle>
                 </strong>{' '}
-                <Wave>on the bass</Wave>
+                <Wave>{t('dash.onTheBass')}</Wave>
                 <br />
-                <Wave>across</Wave>{' '}
+                <Wave>{t('dash.across')}</Wave>{' '}
                 <strong>
                   <Jiggle>{String(sessions)}</Jiggle>
                 </strong>{' '}
-                <Wave>{sessions === 1 ? 'session.' : 'sessions.'}</Wave>
+                <Wave>{plural(sessions, 'session.', 'sessions.', 'сессию.', 'сессии.', 'сессий.')}</Wave>
               </>
             )}
           </h1>
@@ -145,7 +147,7 @@ export function Dashboard() {
               <img
                 className="sticker"
                 src={`${import.meta.env.BASE_URL}bass.png`}
-                alt="Mustang bass in British Racing Green. Drag it around, or tap it."
+                alt={t('dash.bassAlt')}
                 draggable={false}
               />
             </motion.div>
@@ -159,14 +161,14 @@ export function Dashboard() {
                 exit={{ opacity: 0, y: -6, scale: 0.95 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 22 }}
               >
-                it also drags
+                {t('dash.dragHint')}
               </motion.span>
             )}
           </AnimatePresence>
           <motion.div {...fadeUp(2)} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <Pep />
             <Link to="/log" className="btn">
-              Log time
+              {t('dash.logTime')}
             </Link>
           </motion.div>
         </div>
@@ -177,31 +179,31 @@ export function Dashboard() {
           <div className="num">
             <Counter value={weekMin} format={fmtMinutes} />
             <span className="suffix">
-              {weekSessions} {weekSessions === 1 ? 'session' : 'sessions'}
+              {weekSessions} {plural(weekSessions, 'session', 'sessions', 'сессия', 'сессии', 'сессий')}
             </span>
           </div>
-          <div className="label">Last 7 days</div>
+          <div className="label">{t('dash.last7')}</div>
         </motion.div>
         <motion.div className="stat" {...fadeUp(2)}>
           <div className="num">
             <Counter value={touched} />
-            <span className="suffix">of {topics.length}</span>
+            <span className="suffix">{t('dash.of')} {topics.length}</span>
           </div>
-          <div className="label">Topics touched</div>
+          <div className="label">{t('dash.topicsTouched')}</div>
         </motion.div>
         <motion.div className="stat" {...fadeUp(3)}>
           <div className="num">
             <Counter value={status.learned} />
-            <span className="suffix">of {songs.length}</span>
+            <span className="suffix">{t('dash.of')} {songs.length}</span>
           </div>
-          <div className="label">Songs learned</div>
+          <div className="label">{t('dash.songsLearned')}</div>
         </motion.div>
       </div>
 
       <div className="dash-grid">
         <motion.section className="panel" {...fadeUp(4)}>
           <div className="label" style={{ marginBottom: 20 }}>
-            <Icon name="timer" /> Where the time goes
+            <Icon name="timer" /> {t('dash.whereTime')}
           </div>
           <Rose minutes={byCat} onPick={(id) => nav(`/topics#${id}`)} />
         </motion.section>
@@ -209,15 +211,13 @@ export function Dashboard() {
         <div style={{ display: 'grid', gap: 24 }}>
           <motion.section className="panel tight" {...fadeUp(5)}>
             <div className="label" style={{ marginBottom: 14 }}>
-              <Icon name="headphones" /> Songs
+              <Icon name="headphones" /> {t('dash.songs')}
             </div>
             <div className="songs-mini">
               {(['backlog', 'learning', 'learned'] as const).map((s) => (
                 <Link key={s} to={`/songs#${s}`}>
                   <div className="n mono">{status[s]}</div>
-                  <div className="small muted" style={{ textTransform: 'capitalize' }}>
-                    {s}
-                  </div>
+                  <div className="small muted">{t(`songs.${s}`)}</div>
                 </Link>
               ))}
             </div>
@@ -225,10 +225,10 @@ export function Dashboard() {
 
           <motion.section className="panel tight" {...fadeUp(6)}>
             <div className="label" style={{ marginBottom: 10 }}>
-              <Icon name="clock" /> Recent
+              <Icon name="clock" /> {t('dash.recent')}
             </div>
             {recent.length === 0 ? (
-              <div className="empty small">Your log will show up here.</div>
+              <div className="empty small">{t('dash.recentEmpty')}</div>
             ) : (
               <div className="recent">
                 {recent.map((l) => (
@@ -236,7 +236,7 @@ export function Dashboard() {
                     <span className="t">{fmtDate(l.date)}</span>
                     <span>
                       <span className="cat-dot" style={{ background: CATEGORY_BY_ID[l.category].color }} />
-                      {CATEGORY_BY_ID[l.category].short}
+                      {catText(l.category).short}
                       {l.topic_id && topicName(l.topic_id) && (
                         <span className="muted"> · {topicName(l.topic_id)}</span>
                       )}
@@ -250,7 +250,7 @@ export function Dashboard() {
               </div>
             )}
             <Link to="/log" className="link-btn" style={{ display: 'inline-block', marginTop: 12 }}>
-              Full log
+              {t('dash.fullLog')}
             </Link>
           </motion.section>
         </div>
@@ -258,8 +258,8 @@ export function Dashboard() {
 
       <motion.section className="panel" style={{ marginTop: 24 }} {...fadeUp(7)}>
         <div className="panel-head">
-          <div className="label"><Icon name="calendar-days" /> Rhythm</div>
-          <span className="small faint">One dot per day, last 26 weeks. Bigger is longer.</span>
+          <div className="label"><Icon name="calendar-days" /> {t('dash.rhythm')}</div>
+          <span className="small faint">{t('dash.rhythmHint')}</span>
         </div>
         <Rhythm log={log} />
       </motion.section>
@@ -267,16 +267,16 @@ export function Dashboard() {
       <div className="dash-row">
         <motion.section className="panel" {...fadeUp(8)}>
           <div className="panel-head">
-            <div className="label"><Icon name="chart-bar" /> Weeks</div>
-            <span className="small faint">Minutes per week, last 12</span>
+            <div className="label"><Icon name="chart-bar" /> {t('dash.weeks')}</div>
+            <span className="small faint">{t('dash.weeksHint')}</span>
           </div>
           <WeeklyBars log={log} />
         </motion.section>
         <motion.section className="panel" {...fadeUp(9)}>
           <div className="panel-head">
-            <div className="label"><Icon name="trending-up" /> Most practised</div>
+            <div className="label"><Icon name="trending-up" /> {t('dash.mostPractised')}</div>
             <Link to="/topics" className="link-btn">
-              All topics
+              {t('dash.allTopics')}
             </Link>
           </div>
           <TopTopics log={log} topics={topics} />

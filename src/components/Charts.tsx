@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { CATEGORY_BY_ID } from '../lib/categories'
-import { fmtMinutes, toISO, todayISO } from '../lib/format'
+import { fmtMinutes, locale, toISO, todayISO } from '../lib/format'
+import { catText, useT } from '../lib/i18n'
 import type { LogEntry, Topic } from '../lib/types'
 
 /* ---------- shared tooltip ---------- */
@@ -64,6 +65,7 @@ const PAD_T = 22
 
 export function Rhythm({ log }: { log: LogEntry[] }) {
   const [tip, setTip] = useState<Tip | null>(null)
+  const { t: tx } = useT()
   const today = todayISO()
   const byDate = useMemo(() => minutesByDate(log), [log])
 
@@ -83,7 +85,7 @@ export function Rhythm({ log }: { log: LogEntry[] }) {
         // month label at the first Monday that lands in a new month
         const prev = new Date(date.getTime() - 7 * DAY)
         if (w === 0 || prev.getMonth() !== date.getMonth()) {
-          months.push({ x: PAD_L + w * CELL, label: date.toLocaleDateString('en-GB', { month: 'short' }) })
+          months.push({ x: PAD_L + w * CELL, label: date.toLocaleDateString(locale(), { month: 'short' }) })
         }
       }
       cells.push({
@@ -97,11 +99,11 @@ export function Rhythm({ log }: { log: LogEntry[] }) {
   }
 
   const label = (iso: string) =>
-    parseISO(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+    parseISO(iso).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' })
 
   return (
     <div className="chart" style={{ aspectRatio: `${W} / ${H}` }}>
-      <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label="Minutes per day, last 26 weeks">
+      <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label={tx('chart.rhythmAria')}>
         {months.map((m) => (
           <text key={m.x} x={m.x} y={12} className="chart-axis" style={{ fontSize: 7 }}>
             {m.label}
@@ -138,7 +140,7 @@ export function Rhythm({ log }: { log: LogEntry[] }) {
                 height={CELL}
                 fill="transparent"
                 onMouseEnter={() =>
-                  setTip({ x: (c.x / W) * 100, y: ((c.y - CELL / 2) / H) * 100, text: c.min ? fmtMinutes(c.min) : 'rest', sub: label(c.iso) })
+                  setTip({ x: (c.x / W) * 100, y: ((c.y - CELL / 2) / H) * 100, text: c.min ? fmtMinutes(c.min) : tx('chart.rest'), sub: label(c.iso) })
                 }
                 onMouseLeave={() => setTip(null)}
               />
@@ -157,6 +159,7 @@ const NWEEKS = 12
 
 export function WeeklyBars({ log }: { log: LogEntry[] }) {
   const [tip, setTip] = useState<Tip | null>(null)
+  const { t } = useT()
   const today = parseISO(todayISO())
   const thisMonday = mondayOf(today)
 
@@ -196,13 +199,13 @@ export function WeeklyBars({ log }: { log: LogEntry[] }) {
 
   return (
     <div className="chart" style={{ aspectRatio: `${W} / ${H}` }}>
-      <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label="Minutes per week, last 12 weeks">
+      <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" role="img" aria-label={t('chart.weeksAria')}>
         <line x1={0} x2={W} y1={y(0)} y2={y(0)} stroke="var(--line-2)" />
         {avg > 0 && (
           <g>
             <line x1={0} x2={W} y1={y(avg)} y2={y(avg)} stroke="var(--ink-3)" strokeDasharray="3 4" />
             <text x={0} y={y(avg) - 5} className="chart-axis">
-              avg {fmtMinutes(avg)}
+              {t('chart.avg')} {fmtMinutes(avg)}
             </text>
           </g>
         )}
@@ -229,7 +232,7 @@ export function WeeklyBars({ log }: { log: LogEntry[] }) {
               {w.min === 0 && <circle cx={cx} cy={y(0)} r={2} fill="var(--line-2)" />}
               {(i % 2 === NWEEKS % 2 || current) && (
                 <text x={cx} y={H - 6} textAnchor="middle" className="chart-axis">
-                  {current ? 'now' : w.start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  {current ? t('chart.now') : w.start.toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}
                 </text>
               )}
               <rect
@@ -242,8 +245,8 @@ export function WeeklyBars({ log }: { log: LogEntry[] }) {
                   setTip({
                     x: (cx / W) * 100,
                     y: ((y(w.min) - 6) / H) * 100,
-                    text: w.min ? fmtMinutes(w.min) : 'nothing',
-                    sub: `week of ${w.start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}${w.sessions ? ` · ${w.sessions} ${w.sessions === 1 ? 'day' : 'days'}` : ''}`,
+                    text: w.min ? fmtMinutes(w.min) : t('chart.nothing'),
+                    sub: `${t('chart.weekOf')} ${w.start.toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}${w.sessions ? ` · ${w.sessions} ${w.sessions === 1 ? t('chart.day') : t('chart.days')}` : ''}`,
                   })
                 }
                 onMouseLeave={() => setTip(null)}
@@ -260,6 +263,7 @@ export function WeeklyBars({ log }: { log: LogEntry[] }) {
 /* ---------- Top topics: horizontal bars ---------- */
 
 export function TopTopics({ log, topics, limit = 6 }: { log: LogEntry[]; topics: Topic[]; limit?: number }) {
+  const { t } = useT()
   const rows = useMemo(() => {
     const m = new Map<string, number>()
     for (const l of log) if (l.topic_id) m.set(l.topic_id, (m.get(l.topic_id) ?? 0) + l.minutes)
@@ -270,7 +274,7 @@ export function TopTopics({ log, topics, limit = 6 }: { log: LogEntry[]; topics:
       .slice(0, limit)
   }, [log, topics, limit])
 
-  if (rows.length === 0) return <div className="empty small">Log time against a topic and it shows up here.</div>
+  if (rows.length === 0) return <div className="empty small">{t('chart.topEmpty')}</div>
 
   const max = rows[0].min
   return (
@@ -280,7 +284,7 @@ export function TopTopics({ log, topics, limit = 6 }: { log: LogEntry[]; topics:
           <div className="top-name">
             <span className="cat-dot" style={{ background: CATEGORY_BY_ID[r.topic.category].color }} />
             <span>{r.topic.title}</span>
-            <span className="faint small"> · {CATEGORY_BY_ID[r.topic.category].short}</span>
+            <span className="faint small"> · {catText(r.topic.category).short}</span>
           </div>
           <span className="mono small muted">{fmtMinutes(r.min)}</span>
           <div className="top-track">
