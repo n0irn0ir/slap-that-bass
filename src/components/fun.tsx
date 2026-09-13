@@ -214,7 +214,7 @@ export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
       const y = uy * t + ux * jit
       d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`
     }
-    return { d, color: RIPPLE[i % 4], delay: rnd() * 0.08, width: 2.5 + rnd() * 2 }
+    return { d, start: i % 4, delay: rnd() * 0.08, width: 1.4 + rnd() * 1.2 }
   })
 
   return (
@@ -231,15 +231,20 @@ export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
             key={`${live}-${i}`}
             d={b.d}
             fill="none"
-            stroke={b.color}
             strokeWidth={b.width}
             strokeLinecap="round"
             strokeLinejoin="round"
-            initial={{ pathLength: 0, opacity: 1 }}
-            animate={{ pathLength: 1, opacity: 0 }}
+            initial={{ pathLength: 0, opacity: 1, stroke: RIPPLE[b.start] }}
+            animate={{
+              pathLength: 1,
+              opacity: 0,
+              // each bolt cycles through the palette from its own starting colour
+              stroke: [...RIPPLE.slice(b.start, 4), ...RIPPLE.slice(0, b.start), RIPPLE[b.start]],
+            }}
             transition={{
               pathLength: { duration: 0.2, delay: b.delay, ease: 'easeOut' },
               opacity: { duration: 0.35, delay: b.delay + 0.3, ease: 'easeIn' },
+              stroke: { duration: 0.65, delay: b.delay, ease: 'linear' },
             }}
           />
         ))}
