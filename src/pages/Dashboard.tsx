@@ -1,11 +1,11 @@
-import { motion, useAnimation, useMotionValue, useSpring } from 'motion/react'
+import { AnimatePresence, motion, useAnimation, useMotionValue, useSpring } from 'motion/react'
 import { useCallback, useRef, useState, type MouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Rhythm, TopTopics, WeeklyBars } from '../components/Charts'
 import { Icon } from '../components/Icon'
 import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
-import { Jiggle, Wave, useTypedWord } from '../components/fun'
+import { Jiggle, Rings, Wave, useTypedWord } from '../components/fun'
 import { Burst, Counter } from '../components/ui'
 import { CATEGORY_BY_ID } from '../lib/categories'
 import { daysAgoISO, fmtDate, fmtMinutes, todayISO } from '../lib/format'
@@ -24,6 +24,8 @@ export function Dashboard() {
   const nav = useNavigate()
   const strum = useAnimation()
   const [strums, setStrums] = useState(0)
+  const [ring, setRing] = useState(0)
+  const [hint, setHint] = useState(false)
   const [slapBurst, setSlapBurst] = useState(0)
   const spinning = useRef(false)
 
@@ -31,6 +33,11 @@ export function Dashboard() {
   async function pluck() {
     play(STRINGS[strums % STRINGS.length])
     setStrums((n) => n + 1)
+    setRing(Date.now())
+    if (strums === 2) {
+      setHint(true)
+      setTimeout(() => setHint(false), 2600)
+    }
     if (spinning.current) return
     await strum.start({
       rotate: [0, -5, 4, -2, 1, 0],
@@ -140,6 +147,7 @@ export function Dashboard() {
             transition={{ type: 'spring', stiffness: 160, damping: 14, delay: 0.15 }}
             style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
           >
+            <Rings id={ring} />
             <motion.div
               className="sticker-wrap"
               drag
@@ -159,11 +167,19 @@ export function Dashboard() {
               />
             </motion.div>
           </motion.div>
-          {strums >= 3 && strums < 6 && (
-            <motion.span className="sticker-hint" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              it also drags
-            </motion.span>
-          )}
+          <AnimatePresence>
+            {hint && (
+              <motion.span
+                className="sticker-hint"
+                initial={{ opacity: 0, y: 6, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+              >
+                it also drags
+              </motion.span>
+            )}
+          </AnimatePresence>
           <motion.div {...fadeUp(2)} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <Pep />
             <Link to="/log" className="btn">
@@ -175,27 +191,27 @@ export function Dashboard() {
 
       <div className="stat-row">
         <motion.div className="stat" {...fadeUp(1)}>
-          <div className="label"><Icon name="calendar-week" /> Last 7 days</div>
           <div className="num">
             <Counter value={weekMin} format={fmtMinutes} />
             <span className="suffix">
               {weekSessions} {weekSessions === 1 ? 'session' : 'sessions'}
             </span>
           </div>
+          <div className="label"><Icon name="calendar-week" /> Last 7 days</div>
         </motion.div>
         <motion.div className="stat" {...fadeUp(2)}>
-          <div className="label"><Icon name="compass" /> Topics touched</div>
           <div className="num">
             <Counter value={touched} />
             <span className="suffix">of {topics.length}</span>
           </div>
+          <div className="label"><Icon name="compass" /> Topics touched</div>
         </motion.div>
         <motion.div className="stat" {...fadeUp(3)}>
-          <div className="label"><Icon name="circle-check" /> Songs learned</div>
           <div className="num">
             <Counter value={status.learned} />
             <span className="suffix">of {songs.length}</span>
           </div>
+          <div className="label"><Icon name="circle-check" /> Songs learned</div>
         </motion.div>
       </div>
 

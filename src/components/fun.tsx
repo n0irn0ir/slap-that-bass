@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useMotionValue, useSpring } from 'motion/react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { Burst } from './ui'
 
 /** A pink guitar pick that trails the pointer and tilts over anything clickable. Pointer devices only. */
@@ -151,9 +151,12 @@ export function Jiggle({ children, color = 'var(--hot)' }: { children: string; c
     <motion.span
       className="jiggle has-burst"
       style={{ color }}
+      initial="rest"
+      animate="rest"
       whileHover="hover"
       onHoverStart={() => setBurst(Date.now())}
       variants={{
+        rest: { scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 300, damping: 18 } },
         hover: { scale: 1.08, rotate: -3, transition: { type: 'spring', stiffness: 400, damping: 12 } },
       }}
     >
@@ -163,6 +166,7 @@ export function Jiggle({ children, color = 'var(--hot)' }: { children: string; c
           custom={i}
           style={{ display: 'inline-block', whiteSpace: 'pre' }}
           variants={{
+            rest: { y: 0, rotate: 0, color, transition: { duration: 0.25 } },
             hover: (n: number) => ({
               y: [0, -14, 0, -5, 0],
               rotate: [0, n % 2 ? 10 : -10, 0],
@@ -176,5 +180,30 @@ export function Jiggle({ children, color = 'var(--hot)' }: { children: string; c
       ))}
       <Burst id={burst} n={12} />
     </motion.span>
+  )
+}
+
+/** Coloured sound rings that expand from a point. Re-render with a new `id` to fire. */
+export function Rings({ id }: { id: number }) {
+  const [live, setLive] = useState<number | null>(null)
+  useEffect(() => {
+    if (!id) return
+    setLive(id)
+    const t = setTimeout(() => setLive(null), 1100)
+    return () => clearTimeout(t)
+  }, [id])
+  if (!live) return null
+  return (
+    <span className="rings" aria-hidden>
+      {RIPPLE.slice(0, 4).map((c, i) => (
+        <motion.i
+          key={`${live}-${i}`}
+          style={{ '--ring': c } as CSSProperties}
+          initial={{ scale: 0.5, opacity: 0.9 }}
+          animate={{ scale: 1.9, opacity: 0 }}
+          transition={{ duration: 0.9, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+        />
+      ))}
+    </span>
   )
 }
