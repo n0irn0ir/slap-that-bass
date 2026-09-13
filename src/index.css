@@ -1367,9 +1367,7 @@ button {
 .cal-binding {
   height: 18px;
   border-radius: 6px 6px 0 0;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-    var(--paper) url(/paper.jpg) center top / 170% auto;
+  background: var(--paper);
 }
 .cal-shadow {
   position: absolute;
@@ -1426,9 +1424,7 @@ button {
 }
 .cal-page {
   position: relative;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-    var(--paper) url(/paper.jpg) center -18px / 170% auto;
+  background: var(--paper);
   border-radius: 0 0 6px 6px;
   padding: 18px 18px 14px;
 }
