@@ -252,3 +252,46 @@ export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
     </svg>
   )
 }
+
+const GLYPHS = ['♪', '♫', '♩', '♬', '♭', '♯']
+
+/** Coloured music notes that fly out and drift up. Re-render with a new `id` to fire. */
+export function Notes({ id, n = 12 }: { id: number; n?: number }) {
+  const [live, setLive] = useState<number | null>(null)
+  useEffect(() => {
+    if (!id) return
+    setLive(id)
+    const t = setTimeout(() => setLive(null), 1400)
+    return () => clearTimeout(t)
+  }, [id])
+  if (!live) return null
+  let seed = live % 100003
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296)
+  return (
+    <span className="notes" aria-hidden>
+      {Array.from({ length: n }).map((_, i) => {
+        const a = -Math.PI / 2 + (rnd() - 0.5) * Math.PI * 1.6 // mostly upwards
+        const d = 70 + rnd() * 90
+        const x = Math.cos(a) * d
+        const y = Math.sin(a) * d
+        return (
+          <motion.i
+            key={`${live}-${i}`}
+            style={{ color: RIPPLE[i % 4], fontSize: 16 + rnd() * 14 }}
+            initial={{ x: 0, y: 0, scale: 0.4, opacity: 0, rotate: 0 }}
+            animate={{
+              x: [0, x, x * 1.15],
+              y: [0, y, y - 40],
+              scale: [0.4, 1.1, 0.9],
+              opacity: [0, 1, 0],
+              rotate: [0, (rnd() - 0.5) * 60, (rnd() - 0.5) * 90],
+            }}
+            transition={{ duration: 1.2, delay: rnd() * 0.12, times: [0, 0.45, 1], ease: 'easeOut' }}
+          >
+            {GLYPHS[i % GLYPHS.length]}
+          </motion.i>
+        )
+      })}
+    </span>
+  )
+}

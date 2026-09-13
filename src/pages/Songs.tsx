@@ -1,5 +1,6 @@
-import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
+import { AnimatePresence, motion, useAnimation } from 'motion/react'
+import { Notes } from '../components/fun'
+import { useEffect, useRef, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
 import { Burst, Counter, Jelly, listItem } from '../components/ui'
 import type { Song, SongSlot, SongStatus } from '../lib/types'
 import { isSpotify, spotifyMeta, type SpotifyMeta } from '../lib/spotify'
@@ -46,6 +47,19 @@ export function Songs() {
   const [link, setLink] = useState('')
   const [over, setOver] = useState<SongStatus | null>(null)
   const [cheer, setCheer] = useState(0)
+  const [notes, setNotes] = useState(0)
+  const spin = useAnimation()
+  const spins = useRef(0)
+
+  // Tap the disc: it spins up and notes fly out.
+  async function play() {
+    setNotes(Date.now())
+    spins.current += 1
+    await spin.start({
+      rotate: spins.current * 360,
+      transition: { type: 'spring', stiffness: 60, damping: 14 },
+    })
+  }
   const linkMeta = useSpotify(link)
   useEffect(() => {
     if (linkMeta && !title.trim()) setTitle(linkMeta.title)
@@ -90,6 +104,28 @@ export function Songs() {
           <h1 className="display">{t('songs.title')}</h1>
           <p className="muted">{t('songs.lead')}</p>
         </div>
+        <motion.div
+          className="disc-wrap has-burst"
+          initial={{ opacity: 0, rotate: -20, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, rotate: 0, y: 0, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 160, damping: 14, delay: 0.15 }}
+        >
+          <Notes id={notes} />
+          <motion.img
+            className="disc"
+            src={`${import.meta.env.BASE_URL}cd.png`}
+            alt=""
+            draggable={false}
+            drag
+            dragSnapToOrigin
+            dragElastic={0.6}
+            dragTransition={{ bounceStiffness: 300, bounceDamping: 14 }}
+            whileHover={{ scale: 1.05 }}
+            whileDrag={{ scale: 1.08 }}
+            animate={spin}
+            onTap={play}
+          />
+        </motion.div>
       </div>
 
       <form className="song-form" onSubmit={submit}>
