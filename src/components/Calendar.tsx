@@ -64,34 +64,44 @@ export function Calendar({ log, onPick, onNew }: Props) {
 
   return (
     <div className="cal">
-      <div className="cal-head">
-        <button type="button" className="cal-nav" onClick={() => { dir.current = -1; move(-1) }} aria-label={t('cal.prev')}>
-          ‹
-        </button>
-        <div className="cal-title">
-          <span className="h3" style={{ textTransform: 'capitalize' }}>{monthLabel}</span>
-          <span className="mono small muted">{monthTotal ? fmtMinutes(monthTotal) : ''}</span>
-        </div>
-        <button type="button" className="cal-nav" onClick={() => { dir.current = 1; move(1) }} aria-label={t('cal.next')}>
-          ›
-        </button>
+      <span className="cal-nail" aria-hidden />
+      <div className="cal-binding" aria-hidden>
+        <i className="ring" />
+        <i className="ring" />
       </div>
-
-      <div className="cal-weekdays">
-        {weekdays.map((w, i) => (
-          <span key={i}>{w}</span>
-        ))}
-      </div>
+      <button type="button" className="cal-nav prev" onClick={() => { dir.current = -1; move(-1) }} aria-label={t('cal.prev')}>
+        ‹
+      </button>
+      <button type="button" className="cal-nav next" onClick={() => { dir.current = 1; move(1) }} aria-label={t('cal.next')}>
+        ›
+      </button>
 
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={`${cursor.y}-${cursor.m}`}
-          className="cal-grid"
-          initial={{ opacity: 0, x: dir.current * 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: dir.current * -24, transition: { duration: 0.12 } }}
-          transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+          className="cal-page"
+          style={{ transformOrigin: '50% 0%' }}
+          initial={dir.current >= 0 ? { opacity: 0, y: -18, rotate: 0 } : { opacity: 0, y: 40, rotate: -4 }}
+          animate={{ opacity: 1, y: 0, rotate: 0 }}
+          exit={
+            dir.current >= 0
+              ? { opacity: 0, y: 70, rotate: 7, transition: { duration: 0.32, ease: [0.4, 0, 1, 1] } }
+              : { opacity: 0, y: -18, transition: { duration: 0.15 } }
+          }
+          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
         >
+          <div className="cal-head">
+            <span className="cal-month">{monthLabel}</span>
+            <span className="mono small muted">{monthTotal ? fmtMinutes(monthTotal) : ' '}</span>
+          </div>
+
+          <div className="cal-weekdays">
+            {weekdays.map((w, i) => (
+              <span key={i}>{w}</span>
+            ))}
+          </div>
+
+          <div className="cal-grid">
           {cells.map((iso, i) => {
             if (!iso) return <span key={`e${i}`} />
             const info = byDay.get(iso)
@@ -135,9 +145,7 @@ export function Calendar({ log, onPick, onNew }: Props) {
               </motion.button>
             )
           })}
-        </motion.div>
-      </AnimatePresence>
-
+          </div>
       <div className="cal-foot">
         {hovered && hover ? (
           <>
@@ -155,6 +163,9 @@ export function Calendar({ log, onPick, onNew }: Props) {
           <span className="faint small">{t('cal.hint')}</span>
         )}
       </div>
+          <span className="cal-perf" aria-hidden />
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
