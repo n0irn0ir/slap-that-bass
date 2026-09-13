@@ -70,7 +70,7 @@ export function Calendar({ log, onPick, onNew }: Props) {
       <svg className="cal-spiral" aria-hidden viewBox="0 -72 360 116" width="360" height="116">
           {/* the wire: horizontal through the coils, rising into the hanging loop */}
           <path
-            d="M 2 9 L 156 9 Q 166 9 166 -1 L 166 -40 A 14 14 0 0 1 194 -40 L 194 -1 Q 194 9 204 9 L 358 9"
+            d="M 2 9 L 144 9 C 158 9 166 6 166 -8 L 166 -40 A 14 14 0 0 1 194 -40 L 194 -8 C 194 6 202 9 216 9 L 358 9"
             fill="none"
             stroke="var(--hot)"
             strokeWidth="2.4"
