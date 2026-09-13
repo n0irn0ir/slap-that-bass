@@ -305,6 +305,7 @@ export function Sticker({
   delay = 0,
   className,
   lines,
+  bubble = 'above',
 }: {
   src: string
   width: number
@@ -314,6 +315,8 @@ export function Sticker({
   className?: string
   /** Optional lines to pop up in a speech bubble on tap. */
   lines?: string[]
+  /** Where the bubble goes; "below" for stickers near the top of the page. */
+  bubble?: 'above' | 'below'
 }) {
   const [kick, setKick] = useState(0)
   const [line, setLine] = useState<{ id: number; text: string } | null>(null)
@@ -323,7 +326,7 @@ export function Sticker({
   const bx = side === 'center' ? '-50%' : '0%'
   useEffect(() => {
     if (!line) return
-    const t = setTimeout(() => setLine(null), 2800)
+    const t = setTimeout(() => setLine(null), 2200)
     return () => clearTimeout(t)
   }, [line])
   function tap() {
@@ -369,10 +372,10 @@ export function Sticker({
         {line && (
           <motion.span
             key={line.id}
-            className={`bubble ${side}`}
-            initial={{ opacity: 0, y: 10, scale: 0.6, rotate: -6, x: bx }}
+            className={`bubble ${side} ${bubble}`}
+            initial={{ opacity: 0, y: bubble === 'below' ? -10 : 10, scale: 0.6, rotate: -6, x: bx }}
             animate={{ opacity: 1, y: 0, scale: 1, rotate: 0, x: bx }}
-            exit={{ opacity: 0, y: -8, scale: 0.8, x: bx, transition: { duration: 0.18 } }}
+            exit={{ opacity: 0, y: bubble === 'below' ? 8 : -8, scale: 0.8, x: bx, transition: { duration: 0.18 } }}
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
           >
             {line.text}

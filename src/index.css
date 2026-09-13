@@ -1044,6 +1044,18 @@ button {
   right: 0;
   transform-origin: 90% 100%;
 }
+.bubble.below {
+  bottom: auto;
+  top: calc(100% + 12px);
+  transform-origin: 50% 0%;
+}
+.bubble.below::after {
+  bottom: auto;
+  top: -7px;
+  border: 0;
+  border-left: 1.5px solid var(--ink);
+  border-top: 1.5px solid var(--ink);
+}
 .bubble.left::after {
   left: 22px;
 }

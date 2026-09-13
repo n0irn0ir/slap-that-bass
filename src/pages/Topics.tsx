@@ -76,13 +76,12 @@ export function Topics() {
   return (
     <>
       {/* stickers live in the empty space: right of the heading, and in the side margins on wide screens */}
-      <Sticker src={`${B}st-hand1.png`} width={118} rotate={8} style={{ right: 500, top: 22 }} lines={pep} />
-      <Sticker src={`${B}st-ritard.png`} width={160} rotate={-6} style={{ right: 320, top: 50 }} delay={0.15} lines={pep} />
+      <Sticker src={`${B}st-hand3.png`} width={140} rotate={8} bubble="below" style={{ right: 500, top: 22 }} lines={pep} />
+      <Sticker src={`${B}st-ritard.png`} width={160} rotate={-6} bubble="below" style={{ right: 320, top: 50 }} delay={0.15} lines={pep} />
       <Sticker src={`${B}st-short.png`} width={128} rotate={5} className="margin-only" style={{ left: -150, top: 420 }} delay={0.3} lines={pep} />
-      <Sticker src={`${B}st-hand3.png`} width={128} rotate={-4} className="margin-only" style={{ right: -150, top: 420 }} delay={0.4} lines={pep} />
+      <Sticker src={`${B}st-hand4.png`} width={128} rotate={-4} className="margin-only" style={{ right: -150, top: 420 }} delay={0.4} lines={pep} />
       <Sticker src={`${B}st-hand2.png`} width={128} rotate={6} className="margin-only" style={{ left: -150, top: 900 }} delay={0.5} lines={pep} />
       <Sticker src={`${B}st-veryhard.png`} width={128} rotate={-5} className="margin-only" style={{ right: -150, top: 900 }} delay={0.6} lines={pep} />
-      <Sticker src={`${B}st-hand4.png`} width={128} rotate={4} className="margin-only" style={{ left: -150, top: 1380 }} delay={0.7} lines={pep} />
       <div className="page-head">
         <div>
           <h1 className="display">{t('topics.title')}</h1>
