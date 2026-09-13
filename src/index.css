@@ -736,13 +736,20 @@ button {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 320px;
-  height: 320px;
-  margin: -160px 0 0 -160px;
+  width: 480px;
+  height: 480px;
+  margin: -240px 0 0 -240px;
   pointer-events: none;
   overflow: visible;
-  z-index: 3;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
+  z-index: 0;
+}
+.sticker-wrap .sticker {
+  position: relative;
+  z-index: 1;
+}
+.dash-head .right > :last-child {
+  position: relative;
+  z-index: 2;
 }
 .sticker-wrap {
   z-index: 1;

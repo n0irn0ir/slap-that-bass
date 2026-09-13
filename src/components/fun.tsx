@@ -190,7 +190,7 @@ export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
   useEffect(() => {
     if (!id) return
     setLive(id)
-    const t = setTimeout(() => setLive(null), 700)
+    const t = setTimeout(() => setLive(null), 800)
     return () => clearTimeout(t)
   }, [id])
   if (!live) return null
@@ -201,7 +201,7 @@ export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
 
   const bolts = Array.from({ length: n }).map((_, i) => {
     const angle = (i / n) * Math.PI * 2 + rnd() * 0.6
-    const len = 70 + rnd() * 70
+    const len = 90 + rnd() * 90
     const segs = 4 + Math.floor(rnd() * 3)
     const ux = Math.cos(angle)
     const uy = Math.sin(angle)
@@ -218,24 +218,32 @@ export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
   })
 
   return (
-    <svg className="bolts" viewBox="-160 -160 320 320" aria-hidden>
-      {bolts.map((b, i) => (
-        <motion.path
-          key={`${live}-${i}`}
-          d={b.d}
-          fill="none"
-          stroke={b.color}
-          strokeWidth={b.width}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 1 }}
-          animate={{ pathLength: 1, opacity: 0 }}
-          transition={{
-            pathLength: { duration: 0.18, delay: b.delay, ease: 'easeOut' },
-            opacity: { duration: 0.3, delay: b.delay + 0.25, ease: 'easeIn' },
-          }}
-        />
-      ))}
+    <svg className="bolts" viewBox="-240 -240 480 480" aria-hidden>
+      {/* the whole strike drifts outward while the bolts draw in and fade */}
+      <motion.g
+        initial={{ scale: 0.55 }}
+        animate={{ scale: 1.25 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        style={{ transformOrigin: '0px 0px' }}
+      >
+        {bolts.map((b, i) => (
+          <motion.path
+            key={`${live}-${i}`}
+            d={b.d}
+            fill="none"
+            stroke={b.color}
+            strokeWidth={b.width}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ pathLength: 0, opacity: 1 }}
+            animate={{ pathLength: 1, opacity: 0 }}
+            transition={{
+              pathLength: { duration: 0.2, delay: b.delay, ease: 'easeOut' },
+              opacity: { duration: 0.35, delay: b.delay + 0.3, ease: 'easeIn' },
+            }}
+          />
+        ))}
+      </motion.g>
     </svg>
   )
 }
