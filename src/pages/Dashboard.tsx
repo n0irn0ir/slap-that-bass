@@ -5,7 +5,7 @@ import { Rhythm, TopTopics, WeeklyBars } from '../components/Charts'
 import { Icon } from '../components/Icon'
 import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
-import { Jiggle, Rings, Wave, useTypedWord } from '../components/fun'
+import { Bolts, Jiggle, Wave, useTypedWord } from '../components/fun'
 import { Burst, Counter } from '../components/ui'
 import { CATEGORY_BY_ID } from '../lib/categories'
 import { daysAgoISO, fmtDate, fmtMinutes } from '../lib/format'
@@ -130,7 +130,6 @@ export function Dashboard() {
             transition={{ type: 'spring', stiffness: 160, damping: 14, delay: 0.15 }}
             style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
           >
-            <Rings id={ring} />
             <motion.div
               className="sticker-wrap"
               drag
@@ -142,6 +141,7 @@ export function Dashboard() {
               animate={strum}
               onTap={pluck}
             >
+              <Bolts id={ring} />
               <img
                 className="sticker"
                 src={`${import.meta.env.BASE_URL}bass.png`}

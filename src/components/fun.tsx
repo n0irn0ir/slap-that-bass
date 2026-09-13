@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useMotionValue, useSpring } from 'motion/react'
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Burst } from './ui'
 
 /** A pink guitar pick that trails the pointer and tilts over anything clickable. Pointer devices only. */
@@ -183,27 +183,58 @@ export function Jiggle({ children, color = 'var(--hot)' }: { children: string; c
   )
 }
 
-/** Coloured sound rings that expand from a point. Re-render with a new `id` to fire. */
-export function Rings({ id }: { id: number }) {
+/** Coloured lightning bolts that crack out from a point. Re-render with a new `id` to fire. */
+export function Bolts({ id, n = 7 }: { id: number; n?: number }) {
   const [live, setLive] = useState<number | null>(null)
   useEffect(() => {
     if (!id) return
     setLive(id)
-    const t = setTimeout(() => setLive(null), 1100)
+    const t = setTimeout(() => setLive(null), 700)
     return () => clearTimeout(t)
   }, [id])
   if (!live) return null
+
+  // Cheap seeded randomness so each strike looks different but stays stable while it plays.
+  let seed = live % 100003
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296)
+
+  const bolts = Array.from({ length: n }).map((_, i) => {
+    const angle = (i / n) * Math.PI * 2 + rnd() * 0.6
+    const len = 70 + rnd() * 70
+    const segs = 4 + Math.floor(rnd() * 3)
+    const ux = Math.cos(angle)
+    const uy = Math.sin(angle)
+    let d = 'M 0 0'
+    for (let k = 1; k <= segs; k++) {
+      const t = (k / segs) * len
+      // zig-zag: alternate sides each segment, straighten out at the tip
+      const jit = (k % 2 ? 1 : -1) * (8 + rnd() * 16) * (k < segs ? 1 : 0.2)
+      const x = ux * t - uy * jit
+      const y = uy * t + ux * jit
+      d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`
+    }
+    return { d, color: RIPPLE[i % 4], delay: rnd() * 0.08, width: 2.5 + rnd() * 2 }
+  })
+
   return (
-    <span className="rings" aria-hidden>
-      {RIPPLE.slice(0, 4).map((c, i) => (
-        <motion.i
+    <svg className="bolts" viewBox="-160 -160 320 320" aria-hidden>
+      {bolts.map((b, i) => (
+        <motion.path
           key={`${live}-${i}`}
-          style={{ '--ring': c } as CSSProperties}
-          initial={{ scale: 0.5, opacity: 0.9 }}
-          animate={{ scale: 1.9, opacity: 0 }}
-          transition={{ duration: 0.9, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+          d={b.d}
+          fill="none"
+          stroke={b.color}
+          strokeWidth={b.width}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 1 }}
+          animate={{ pathLength: 1, opacity: 0 }}
+          transition={{
+            pathLength: { duration: 0.18, delay: b.delay, ease: 'easeOut' },
+            opacity: { duration: 0.3, delay: b.delay + 0.25, ease: 'easeIn' },
+          }}
         />
       ))}
-    </span>
+    </svg>
   )
 }

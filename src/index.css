@@ -729,24 +729,17 @@ button {
   pointer-events: none;
   white-space: nowrap;
 }
-.rings {
+.bolts {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 0;
-  height: 0;
+  width: 320px;
+  height: 320px;
+  margin: -160px 0 0 -160px;
   pointer-events: none;
-  z-index: -1;
-}
-.rings i {
-  position: absolute;
-  left: -110px;
-  top: -70px;
-  width: 220px;
-  height: 140px;
-  border-radius: 50%;
-  border: 3px solid var(--ring, var(--hot));
-  display: block;
+  overflow: visible;
+  z-index: 3;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
 }
 .sticker-wrap {
   z-index: 1;
