@@ -734,8 +734,8 @@ button {
 }
 .bolts {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 22%; /* behind the body, not the neck */
+  top: 52%;
   width: 480px;
   height: 480px;
   margin: -240px 0 0 -240px;
