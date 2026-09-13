@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type CSSProperties, type DragEvent, type FormEvent } from 'react'
-import { Bounce } from '../components/fun'
 import { Burst, Counter, Jelly, listItem } from '../components/ui'
 import type { Song, SongSlot, SongStatus } from '../lib/types'
 import { isSpotify, spotifyMeta, type SpotifyMeta } from '../lib/spotify'
@@ -163,9 +162,7 @@ export function Songs() {
               {items.length === 0 && (
                 <div className="drop-slot">
                   <span className="cover placeholder" aria-hidden />
-                  <span className="small">
-                    <Bounce>↓</Bounce> Drop a song here
-                  </span>
+                  <span className="small">Drop a song here</span>
                 </div>
               )}
             </div>
