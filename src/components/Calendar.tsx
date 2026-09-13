@@ -102,21 +102,31 @@ export function Calendar({ log, onPick, onNew }: Props) {
         ›
       </button>
 
-      <AnimatePresence mode="popLayout" initial={false}>
+      {/* `custom` carries the direction to the exiting page too, so both pages agree on the move. */}
+      <AnimatePresence mode="popLayout" initial={false} custom={dir.current}>
         <motion.div
           key={`${cursor.y}-${cursor.m}`}
           className="cal-page"
           style={{ transformOrigin: '50% 0%', transformPerspective: 900 }}
-          // Forward: the old page flips up over the spiral and the next one is underneath.
-          // Back: the previous page swings down from the top.
-          initial={dir.current >= 0 ? { opacity: 0.6, rotateX: 0 } : { opacity: 0, rotateX: -100 }}
-          animate={{ opacity: 1, rotateX: 0 }}
-          exit={
-            dir.current >= 0
-              ? { opacity: 0, rotateX: -100, transition: { duration: 0.38, ease: [0.4, 0, 0.8, 1] } }
-              : { opacity: 0, transition: { duration: 0.12 } }
-          }
-          transition={dir.current >= 0 ? { duration: 0.25 } : { type: 'spring', stiffness: 220, damping: 22 }}
+          custom={dir.current}
+          variants={{
+            // Forward: the old page flips up over the spiral; the next one is already underneath.
+            // Back: the previous page swings down from the top onto the current one.
+            enter: (d: number) => (d > 0 ? { opacity: 1, rotateX: 0 } : { opacity: 0, rotateX: -100 }),
+            show: (d: number) => ({
+              opacity: 1,
+              rotateX: 0,
+              zIndex: 1,
+              transition: d > 0 ? { duration: 0.2 } : { type: 'spring', stiffness: 220, damping: 22 },
+            }),
+            leave: (d: number) =>
+              d > 0
+                ? { opacity: [1, 1, 0], rotateX: -100, zIndex: 2, transition: { duration: 0.42, ease: [0.4, 0, 0.8, 1] } }
+                : { opacity: 0, zIndex: 0, transition: { duration: 0.1 } },
+          }}
+          initial="enter"
+          animate="show"
+          exit="leave"
         >
           <div className="cal-head">
             <span className="cal-month">{monthLabel}</span>
