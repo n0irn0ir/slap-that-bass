@@ -8,7 +8,7 @@ import { Rose } from '../components/Rose'
 import { Jiggle, Rings, Wave, useTypedWord } from '../components/fun'
 import { Burst, Counter } from '../components/ui'
 import { CATEGORY_BY_ID } from '../lib/categories'
-import { daysAgoISO, fmtDate, fmtMinutes, todayISO } from '../lib/format'
+import { daysAgoISO, fmtDate, fmtMinutes } from '../lib/format'
 import { STRINGS, pluck as play } from '../lib/pluck'
 import { face } from '../lib/rating'
 import { countByStatus, minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
@@ -90,18 +90,6 @@ export function Dashboard() {
   const topicName = (id: string | null) => topics.find((t) => t.id === id)?.title
   const recent = log.slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.created_at.localeCompare(a.created_at))).slice(0, 6)
 
-  const lastDate = recent[0]?.date
-  const daysSince = lastDate
-    ? Math.round((new Date(todayISO()).getTime() - new Date(lastDate).getTime()) / 86_400_000)
-    : null
-  const lastLine =
-    daysSince === null
-      ? null
-      : daysSince === 0
-        ? 'Already played today. Rest counts too.'
-        : daysSince === 1
-          ? 'Last time: yesterday.'
-          : `Last time: ${daysSince} days ago. No rush.`
 
   if (loading) return null
 
@@ -133,11 +121,6 @@ export function Dashboard() {
               </>
             )}
           </h1>
-          {lastLine && (
-            <motion.p className="muted" style={{ margin: '16px 0 0' }} {...fadeUp(1)}>
-              {lastLine}
-            </motion.p>
-          )}
         </motion.div>
         <div className="right has-burst">
           <Burst id={slapBurst} n={18} />
@@ -197,21 +180,21 @@ export function Dashboard() {
               {weekSessions} {weekSessions === 1 ? 'session' : 'sessions'}
             </span>
           </div>
-          <div className="label"><Icon name="calendar-week" /> Last 7 days</div>
+          <div className="label">Last 7 days</div>
         </motion.div>
         <motion.div className="stat" {...fadeUp(2)}>
           <div className="num">
             <Counter value={touched} />
             <span className="suffix">of {topics.length}</span>
           </div>
-          <div className="label"><Icon name="compass" /> Topics touched</div>
+          <div className="label">Topics touched</div>
         </motion.div>
         <motion.div className="stat" {...fadeUp(3)}>
           <div className="num">
             <Counter value={status.learned} />
             <span className="suffix">of {songs.length}</span>
           </div>
-          <div className="label"><Icon name="circle-check" /> Songs learned</div>
+          <div className="label">Songs learned</div>
         </motion.div>
       </div>
 
