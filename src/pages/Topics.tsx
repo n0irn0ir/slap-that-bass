@@ -5,12 +5,26 @@ import { Icon } from '../components/Icon'
 import { Jelly, listItem } from '../components/ui'
 import { CATEGORIES, type Category } from '../lib/categories'
 import { fmtMinutes, pct } from '../lib/format'
+import type { CategoryId } from '../lib/types'
 import type { Topic } from '../lib/types'
 import { minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
 
 export function Topics() {
-  const { topics, log, loading } = useData()
+  const { topics, log, loading, addTopic } = useData()
   const { hash } = useLocation()
+  const [open, setOpen] = useState(false)
+  const [newCat, setNewCat] = useState<CategoryId>('technique')
+  const [newTitle, setNewTitle] = useState('')
+
+  async function submitNew(e: FormEvent) {
+    e.preventDefault()
+    const title = newTitle.trim()
+    if (!title) return
+    await addTopic({ category: newCat, title, sort: topics.filter((t) => t.category === newCat).length })
+    setNewTitle('')
+    setOpen(false)
+    document.getElementById(newCat)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
   const byCat = minutesByCategory(log)
   const byTopic = minutesByTopic(log)
   const total = Object.values(byCat).reduce((a, b) => a + b, 0)
@@ -32,6 +46,56 @@ export function Topics() {
             A map of what there is to learn, not a checklist. A topic is never finished — only
             time goes into it. Rename, add or remove anything.
           </p>
+        </div>
+        <div className="add-topic">
+          <Jelly type="button" className="btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+            <span className="plus" aria-hidden>
+              +
+            </span>
+            Add topic
+          </Jelly>
+          <AnimatePresence>
+            {open && (
+              <motion.form
+                className="add-topic-panel"
+                onSubmit={submitNew}
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.97, transition: { duration: 0.12 } }}
+                transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+              >
+                <label className="field">
+                  <span className="label">Category</span>
+                  <select className="select" value={newCat} onChange={(e) => setNewCat(e.target.value as CategoryId)}>
+                    {CATEGORIES.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="field">
+                  <span className="label">Topic</span>
+                  <input
+                    className="input"
+                    autoFocus
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    placeholder="e.g. Ghost notes at 90 bpm"
+                    onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
+                  />
+                </label>
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                  <button type="button" className="btn ghost sm" onClick={() => setOpen(false)}>
+                    Cancel
+                  </button>
+                  <Jelly type="submit" className="btn sm" disabled={!newTitle.trim()}>
+                    Add
+                  </Jelly>
+                </div>
+              </motion.form>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
