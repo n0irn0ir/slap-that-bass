@@ -70,7 +70,7 @@ export function Calendar({ log, onPick, onNew }: Props) {
         <img className="cal-nail" src={`${import.meta.env.BASE_URL}nail.png`} alt="" draggable={false} />
         <svg className="cal-hook" viewBox="-18 0 36 64">
           <path
-            d="M -5 64 C -5 44, -14 38, -14 16 A 14 14 0 1 1 14 16 C 14 38, 5 44, 5 64"
+            d="M -11 64 L -11 15 A 11 11 0 0 1 11 15 L 11 64"
             fill="none"
             stroke="#c6ccca"
             strokeWidth="2.4"

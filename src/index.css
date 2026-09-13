@@ -1352,14 +1352,14 @@ button {
   left: 50%;
   top: 0;
   width: 36px;
-  height: 72px;
+  height: 90px;
   margin-left: -18px;
   z-index: 3;
 }
 .cal-hook {
   position: absolute;
   left: 0;
-  top: 6px;
+  top: 8px;
   width: 36px;
   height: 64px;
   overflow: visible;
@@ -1368,7 +1368,7 @@ button {
 .cal-nail {
   position: absolute;
   left: 50%;
-  top: 13px;
+  top: 14px;
   width: 18px;
   height: 18px;
   margin-left: -9px;
@@ -1387,10 +1387,24 @@ button {
   background: var(--paper);
   z-index: 2;
 }
+/* the semicircular notch the hanger passes through */
+.cal-binding::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  width: 44px;
+  height: 22px;
+  margin-left: -22px;
+  border-radius: 0 0 22px 22px;
+  background: var(--bg);
+  box-shadow: inset 0 -1px 0 var(--line-2);
+}
 .cal-spiral {
   position: absolute;
-  left: 22px;
-  right: 22px;
+  left: 50%;
+  width: 324px; /* 18 loops × 18px, so no loop is cut */
+  margin-left: -162px;
   top: -14px;
   height: 40px;
   overflow: visible;
