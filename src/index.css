@@ -690,9 +690,12 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 32px;
-  align-items: end;
+  align-items: start;
   margin-bottom: 40px;
   perspective: 900px;
+}
+.dash-head > :first-child {
+  margin-top: 22px;
 }
 .dash-head .right {
   display: flex;

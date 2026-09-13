@@ -50,7 +50,7 @@ export function CursorDot() {
 export function Wave({ children, className }: { children: string; className?: string }) {
   let n = 0
   return (
-    <motion.span className={className} whileHover="wave">
+    <motion.span className={className} initial="rest" animate="rest" whileHover="wave">
       {children.split(' ').map((word, w) => (
         <span key={w}>
           <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
@@ -61,6 +61,7 @@ export function Wave({ children, className }: { children: string; className?: st
                   key={i}
                   custom={i}
                   variants={{
+                    rest: { y: 0, rotate: 0, transition: { type: 'spring', stiffness: 400, damping: 22 } },
                     wave: (k: number) => ({
                       y: [0, -10, 0],
                       rotate: [0, k % 2 ? 6 : -6, 0],
