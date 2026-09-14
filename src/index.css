@@ -252,11 +252,20 @@ button {
   background: linear-gradient(90deg, color-mix(in srgb, var(--hot) 10%, var(--paper)), var(--paper));
   color: var(--ink);
   text-align: left;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 .rank-btn:hover {
+  background: var(--hot);
   border-color: var(--hot);
-  box-shadow: 0 8px 20px -12px var(--hot);
+}
+.rank-btn:hover .rank-level {
+  color: var(--ink);
+}
+.rank-btn:hover .rank-ring circle:first-child {
+  stroke: rgba(255, 255, 255, 0.45);
+}
+.rank-btn:hover .rank-ring circle:last-child {
+  stroke: var(--ink);
 }
 .rank-ring {
   position: relative;
