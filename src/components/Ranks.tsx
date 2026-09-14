@@ -33,8 +33,9 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
         )}
       </g>
       <path d={BADGE_PATH} fill="none" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
-      <circle cx="72" cy="72" r="58" fill="var(--paper)" stroke="var(--line-2)" strokeWidth="4" />
-      <text x="72" y="74" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
+      <circle cx="52" cy="50" r="44" fill="var(--paper)" />
+      <circle cx="52" cy="50" r="37" fill="var(--line)" stroke="var(--line-2)" strokeWidth="3" />
+      <text x="52" y="52" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
         {n}
       </text>
       <text x="166" y="165" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
@@ -275,17 +276,19 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
               <div>
                 <span className="label">{t('rank.map')}</span>
                 <div className="rank-summary">
-                  <strong>{current.name}</strong>
-                  <span className="muted">
-                    {' · '}
-                    {fmtMinutes(totalMinutes)}
-                    {next && (
-                      <>
-                        {' · '}
-                        {t('rank.next', { name: next.name, h: next.hours })}
-                      </>
-                    )}
+                  <span className="rank-summary-level">
+                    {t('rank.level')} {current.n}
                   </span>
+                  <strong>{current.name}</strong>
+                </div>
+                <div className="rank-summary-sub muted">
+                  {fmtMinutes(totalMinutes)}
+                  {next && (
+                    <>
+                      {' '}
+                      <span className="faint">·</span> {t('rank.next', { name: next.name, h: next.hours })}
+                    </>
+                  )}
                 </div>
                 {next && (
                   <div className="rank-track">

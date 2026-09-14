@@ -302,8 +302,26 @@ button {
   font-weight: 600;
 }
 .rank-summary {
+  margin-top: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.rank-summary strong {
+  font-weight: 500;
+}
+.rank-summary-level {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.rank-summary-sub {
   margin-top: 4px;
-  font-size: 15px;
+  font-size: 13px;
 }
 .rank-track {
   margin-top: 10px;
@@ -347,9 +365,9 @@ button {
 }
 .rank-mystery-n {
   font-family: var(--font);
-  font-size: 56px;
+  font-size: 40px;
   font-weight: 700;
-  fill: var(--ink-3);
+  fill: var(--ink-2);
 }
 .rank-mystery-q {
   font-family: var(--font);
