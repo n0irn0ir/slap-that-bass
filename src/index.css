@@ -241,6 +241,78 @@ button {
   align-items: center;
   gap: 10px;
 }
+.rank-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px 3px 3px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 6px;
+}
+.rank-btn img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
+}
+.rank-summary {
+  margin-top: 4px;
+  font-size: 15px;
+}
+.rank-track {
+  margin-top: 10px;
+  height: 6px;
+  width: 260px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.rank-fill {
+  height: 100%;
+  background: var(--hot);
+  transform-origin: left;
+  border-radius: 3px;
+}
+.modal.rank-map {
+  width: min(900px, 100%);
+}
+.rank-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+}
+.rank-cell {
+  position: relative;
+  border-radius: 12px;
+  padding: 4px;
+}
+.rank-cell img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: filter 0.3s, opacity 0.3s;
+}
+.rank-cell.locked img {
+  filter: grayscale(1) contrast(0.6) brightness(1.15);
+  opacity: 0.35;
+}
+.rank-cell.current img {
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
+}
+@media (max-width: 720px) {
+  .rank-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .rank-btn .rank-name {
+    display: none;
+  }
+}
 .avatar {
   border-radius: 50%;
   overflow: hidden;
