@@ -8,13 +8,13 @@ import { Burst, Jelly } from './ui'
 
 // Silhouette of the real badges (332×411 box: disc centred (165,167) r157, pill 20..310 × 300..404).
 const BADGE_PATH =
-  'M 20 352 A 52 52 0 0 1 72 300 L 82 300 A 157 157 0 1 1 248 300 L 258 300 A 52 52 0 0 1 310 352 A 52 52 0 0 1 258 404 L 72 404 A 52 52 0 0 1 20 352 Z'
+  'M 15 341 A 51 51 0 0 1 66 290 L 84 290 A 157 157 0 1 1 250 290 L 264 290 A 51 51 0 0 1 315 341 A 51 51 0 0 1 264 392 L 66 392 A 51 51 0 0 1 15 341 Z'
 
 /** Locked rank: the badge's own shape, muted, with a question mark. */
 function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: number; peel?: string }) {
   const clip = `mystery-clip-${n}`
   return (
-    <svg className={`rank-mystery${peel ? ' peel' : ''}`} viewBox="0 0 332 411" aria-hidden>
+    <svg className={`rank-mystery${peel ? ' peel' : ''}`} viewBox="0 0 332 400" aria-hidden>
       <defs>
         <clipPath id={clip}>
           <path d={BADGE_PATH} />
@@ -22,7 +22,7 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
       </defs>
       {/* everything lives inside the badge silhouette */}
       <g clipPath={`url(#${clip})`}>
-        {peel && <image href={peel} x="0" y="0" width="332" height="411" preserveAspectRatio="xMidYMid slice" />}
+        {peel && <image href={peel} x="0" y="0" width="332" height="400" preserveAspectRatio="xMidYMid slice" />}
         {/* cover sheet; for the next rank its top-right corner is cut away along a curve (see .rank-cover-sheet) */}
         <path className="rank-cover-sheet" d={BADGE_PATH} fill="var(--bg)" />
       </g>
@@ -40,10 +40,10 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
           <path className="rank-flap" d="M 160 10 Q 225 100 332 190 C 245 220 160 200 160 10 Z" />
         </g>
       )}
-      <text x="165" y="336" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
+      <text x="165" y="326" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
         {name}
       </text>
-      <text x="165" y="372" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
+      <text x="165" y="361" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
         {hours} h
       </text>
     </svg>

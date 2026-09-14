@@ -420,7 +420,7 @@ button {
 
 /* the next rank: the cover sheet's top-right corner curls back to show the badge underneath */
 .rank-mystery.peel .rank-cover-sheet {
-  clip-path: path('M 0 0 L 160 10 Q 225 100 332 190 L 332 411 L 0 411 Z');
+  clip-path: path('M 0 0 L 160 10 Q 225 100 332 190 L 332 400 L 0 400 Z');
   transition: clip-path 0.5s var(--ease-out);
 }
 .rank-flap {
@@ -435,7 +435,7 @@ button {
   transition: d 0.5s var(--ease-out);
 }
 .rank-cell.next:hover .rank-mystery.peel .rank-cover-sheet {
-  clip-path: path('M 0 0 L 95 0 Q 180 150 332 270 L 332 411 L 0 411 Z');
+  clip-path: path('M 0 0 L 95 0 Q 180 150 332 270 L 332 400 L 0 400 Z');
 }
 .rank-cell.next:hover .rank-flap {
   d: path('M 95 0 Q 180 150 332 270 C 210 320 95 290 95 0 Z');
