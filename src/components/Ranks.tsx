@@ -276,20 +276,12 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
               <div>
                 <span className="label">{t('rank.map')}</span>
                 <div className="rank-summary">
+                  <strong>{current.name}</strong>
                   <span className="rank-summary-level">
                     {t('rank.level')} {current.n}
                   </span>
-                  <strong>{current.name}</strong>
                 </div>
-                <div className="rank-summary-sub muted">
-                  {fmtMinutes(totalMinutes)}
-                  {next && (
-                    <>
-                      {' '}
-                      <span className="faint">·</span> {t('rank.next', { name: next.name, h: next.hours })}
-                    </>
-                  )}
-                </div>
+                <div className="rank-summary-sub muted">{fmtMinutes(totalMinutes)}</div>
                 {next && (
                   <div className="rank-track">
                     <motion.div
