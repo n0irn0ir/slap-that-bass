@@ -50,7 +50,7 @@ export function Shell() {
             ))}
           </nav>
           <span className="who">
-            <RankBadge totalMinutes={totalMinutes} />
+            {!loading && <RankBadge totalMinutes={totalMinutes} />}
             <Avatar size={40} />
           </span>
         </div>
