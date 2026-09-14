@@ -140,10 +140,18 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                     initial={{ opacity: 0, y: 14, scale: 0.85 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.05 + i * 0.05 }}
-                    whileHover={earned ? { scale: 1.06, rotate: i % 2 ? 2 : -2 } : undefined}
-                    title={earned ? r.name : `${r.name} · ${r.hours} h`}
+                    whileHover={earned ? { scale: 1.06, rotate: i % 2 ? 2 : -2 } : { scale: 1.03 }}
+                    title={earned ? r.name : `${t('rank.level')} ${r.n} · ${r.hours} h`}
                   >
-                    <img src={badgeSrc(r.n)} alt={`${r.n} ${r.name}`} draggable={false} />
+                    {earned ? (
+                      <img src={badgeSrc(r.n)} alt={`${r.n} ${r.name}`} draggable={false} />
+                    ) : (
+                      <div className="rank-mystery" aria-label={`${t('rank.level')} ${r.n}`}>
+                        <span className="rank-mystery-n">{r.n}</span>
+                        <span className="rank-mystery-q">?</span>
+                        <span className="rank-mystery-h">{r.hours} h</span>
+                      </div>
+                    )}
                     {isCurrent && <Burst id={burst} n={14} />}
                   </motion.div>
                 )

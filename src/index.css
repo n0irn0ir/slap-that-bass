@@ -333,9 +333,44 @@ button {
   display: block;
   transition: filter 0.3s, opacity 0.3s;
 }
-.rank-cell.locked img {
-  filter: grayscale(1) contrast(0.6) brightness(1.15);
-  opacity: 0.35;
+.rank-mystery {
+  position: relative;
+  aspect-ratio: 316 / 356;
+  border-radius: 46% 46% 24% 24% / 42% 42% 20% 20%;
+  border: 2px dashed var(--line-2);
+  background: color-mix(in srgb, var(--bg) 70%, var(--paper));
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+}
+.rank-mystery-n {
+  position: absolute;
+  left: 8%;
+  top: 6%;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid var(--line-2);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--paper);
+}
+.rank-mystery-q {
+  font-size: 44px;
+  font-weight: 300;
+  line-height: 1;
+  margin-top: -14%;
+  color: var(--line-2);
+}
+.rank-mystery-h {
+  position: absolute;
+  bottom: 12%;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-3);
 }
 .rank-cell.current img {
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
