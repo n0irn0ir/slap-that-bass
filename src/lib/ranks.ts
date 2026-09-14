@@ -6,7 +6,7 @@ export interface Rank {
 }
 
 export const RANKS: Rank[] = [
-  { n: 1, name: 'Negative Creep', hours: 0 },
+  { n: 1, name: 'Dreamer', hours: 0 },
   { n: 2, name: 'Badbadnotgood', hours: 25 },
   { n: 3, name: 'Hopeful', hours: 75 },
   { n: 4, name: 'Slap Intern', hours: 150 },
@@ -20,7 +20,7 @@ export const RANKS: Rank[] = [
   { n: 12, name: 'Les Claypool', hours: 10000 },
 ]
 
-export const badgeSrc = (n: number) => `${import.meta.env.BASE_URL}rank4-${String(n).padStart(2, '0')}.png`
+export const badgeSrc = (n: number) => `${import.meta.env.BASE_URL}rank5-${String(n).padStart(2, '0')}.png`
 
 export function rankFor(totalMinutes: number): { current: Rank; next: Rank | null; progress: number } {
   const h = totalMinutes / 60
