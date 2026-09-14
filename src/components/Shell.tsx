@@ -49,7 +49,7 @@ export function Shell() {
           </nav>
           <span className="who">
             <RankBadge totalMinutes={log.reduce((a, l) => a + l.minutes, 0)} />
-            <Avatar />
+            <Avatar size={32} />
           </span>
         </div>
       </header>

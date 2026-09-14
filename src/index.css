@@ -245,7 +245,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 3px 10px 3px 3px;
+  height: 32px;
+  padding: 0 10px 0 3px;
   border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--paper);
@@ -254,8 +255,8 @@ button {
   font-weight: 600;
 }
 .rank-btn img {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   display: block;
 }
