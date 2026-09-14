@@ -438,10 +438,10 @@ button {
   clip-path: path('M 0 0 L 90 0 Q 170 130 316 240 L 316 356 L 0 356 Z');
 }
 .rank-cell.next:hover .rank-flap {
-  d: path('M 90 0 Q 170 130 316 240 Q 230 245 150 250 Q 95 255 92 210 Q 88 110 90 0 Z');
+  d: path('M 90 0 Q 170 130 316 240 C 200 285 90 260 90 0 Z');
 }
 .rank-cell.next:hover .rank-flap-shadow {
-  d: path('M 90 0 Q 170 130 316 240 Q 210 275 120 255 Q 80 235 90 0 Z');
+  d: path('M 90 0 Q 170 130 316 240 C 215 305 90 280 90 0 Z');
 }
 .avatar {
   border-radius: 50%;

@@ -37,9 +37,9 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
       </text>
       {peel && (
         <g clipPath={`url(#${clip})`}>
-          <path className="rank-flap-shadow" d="M 150 0 Q 210 90 316 170 Q 250 195 175 180 Q 140 165 150 0 Z" fill="rgba(0,0,0,0.18)" />
-          {/* folded corner: mirrored across the cut, with a rounded tip */}
-          <path className="rank-flap" d="M 150 0 Q 210 90 316 170 Q 260 170 200 176 Q 160 180 152 150 Q 148 80 150 0 Z" />
+          <path className="rank-flap-shadow" d="M 150 0 Q 210 90 316 170 C 250 215 150 200 150 0 Z" fill="rgba(0,0,0,0.18)" />
+          {/* folded corner: a soft curl with no sharp tip */}
+          <path className="rank-flap" d="M 150 0 Q 210 90 316 170 C 235 200 150 180 150 0 Z" />
         </g>
       )}
       <text x="158" y="283" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
