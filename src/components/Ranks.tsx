@@ -8,22 +8,56 @@ import { Burst } from './ui'
 
 /** Current-rank badge for the top bar; opens the full map on click. */
 export function RankBadge({ totalMinutes }: { totalMinutes: number }) {
-  const { current } = rankFor(totalMinutes)
+  const { current, next, progress } = rankFor(totalMinutes)
   const [open, setOpen] = useState(false)
   const { t } = useT()
+  const R = 15
+  const C = 2 * Math.PI * R
   return (
     <>
       <motion.button
         type="button"
         className="rank-btn"
         onClick={() => setOpen(true)}
-        title={`${t('rank.level')} ${current.n} · ${current.name}`}
-        whileHover={{ scale: 1.1, rotate: -6 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: 'spring', stiffness: 500, damping: 18 }}
+        title={next ? `${current.name} · ${t('rank.next', { name: next.name, h: next.hours })}` : current.name}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 20 }}
       >
-        <img src={badgeSrc(current.n)} alt="" draggable={false} />
-        <span className="rank-name">{current.name}</span>
+        <span className="rank-ring">
+          <svg viewBox="0 0 36 36" aria-hidden>
+            <circle cx="18" cy="18" r={R} fill="none" stroke="var(--line)" strokeWidth="2.5" />
+            <motion.circle
+              cx="18"
+              cy="18"
+              r={R}
+              fill="none"
+              stroke="var(--hot)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeDasharray={C}
+              initial={{ strokeDashoffset: C }}
+              animate={{ strokeDashoffset: C * (1 - progress) }}
+              transition={{ type: 'spring', stiffness: 80, damping: 20, delay: 0.3 }}
+              transform="rotate(-90 18 18)"
+            />
+          </svg>
+          <motion.img
+            key={current.n}
+            src={badgeSrc(current.n)}
+            alt=""
+            draggable={false}
+            initial={{ scale: 0.5, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 16 }}
+          />
+        </span>
+        <span className="rank-text">
+          <span className="rank-level">
+            {t('rank.level')} {current.n}
+          </span>
+          <span className="rank-name">{current.name}</span>
+        </span>
       </motion.button>
       <RankMap open={open} onClose={() => setOpen(false)} totalMinutes={totalMinutes} />
     </>
