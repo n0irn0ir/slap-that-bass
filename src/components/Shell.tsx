@@ -3,7 +3,6 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Avatar } from './Avatar'
 import { RankBadge } from './Ranks'
 import { CursorDot } from './fun'
-import { useAuth } from '../state/AuthContext'
 import { useData } from '../state/DataContext'
 import { useT } from '../lib/i18n'
 
@@ -16,7 +15,6 @@ const LINKS = [
 ] as const
 
 export function Shell() {
-  const { user } = useAuth()
   const { error, log } = useData()
   const location = useLocation()
   const { t, lang } = useT()
@@ -51,7 +49,6 @@ export function Shell() {
           </nav>
           <span className="who">
             <RankBadge totalMinutes={log.reduce((a, l) => a + l.minutes, 0)} />
-            {user?.id === 'local' ? t('nav.local') : user?.email}
             <Avatar />
           </span>
         </div>

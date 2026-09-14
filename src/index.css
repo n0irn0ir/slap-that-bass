@@ -252,7 +252,6 @@ button {
   color: var(--ink);
   font-size: 12px;
   font-weight: 600;
-  margin-right: 6px;
 }
 .rank-btn img {
   width: 26px;
