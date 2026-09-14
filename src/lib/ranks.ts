@@ -20,7 +20,7 @@ export const RANKS: Rank[] = [
   { n: 12, name: 'Les Claypool', hours: 10000 },
 ]
 
-export const badgeSrc = (n: number) => `${import.meta.env.BASE_URL}rank-${String(n).padStart(2, '0')}.png`
+export const badgeSrc = (n: number) => `${import.meta.env.BASE_URL}rank2-${String(n).padStart(2, '0')}.png`
 
 export function rankFor(totalMinutes: number): { current: Rank; next: Rank | null; progress: number } {
   const h = totalMinutes / 60

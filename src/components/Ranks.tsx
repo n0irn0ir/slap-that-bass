@@ -6,15 +6,15 @@ import { useT } from '../lib/i18n'
 import { RANKS, badgeSrc, rankFor } from '../lib/ranks'
 import { Burst, Jelly } from './ui'
 
-// Silhouette of the real badges (316×356 box, same disc, pill and number circle).
+// Silhouette of the real badges (332×411 box: disc centred (165,167) r157, pill 20..310 × 300..404).
 const BADGE_PATH =
-  'M 8 298 A 48 48 0 0 1 56 250 L 63 250 A 139 139 0 1 1 269 250 L 258 250 A 48 48 0 0 1 306 298 A 48 48 0 0 1 258 346 L 56 346 A 48 48 0 0 1 8 298 Z'
+  'M 20 352 A 52 52 0 0 1 72 300 L 82 300 A 157 157 0 1 1 248 300 L 258 300 A 52 52 0 0 1 310 352 A 52 52 0 0 1 258 404 L 72 404 A 52 52 0 0 1 20 352 Z'
 
 /** Locked rank: the badge's own shape, muted, with a question mark. */
 function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: number; peel?: string }) {
   const clip = `mystery-clip-${n}`
   return (
-    <svg className={`rank-mystery${peel ? ' peel' : ''}`} viewBox="0 0 316 356" aria-hidden>
+    <svg className={`rank-mystery${peel ? ' peel' : ''}`} viewBox="0 0 332 411" aria-hidden>
       <defs>
         <clipPath id={clip}>
           <path d={BADGE_PATH} />
@@ -22,30 +22,28 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
       </defs>
       {/* everything lives inside the badge silhouette */}
       <g clipPath={`url(#${clip})`}>
-        {peel && <image href={peel} x="0" y="0" width="316" height="356" preserveAspectRatio="xMidYMid slice" />}
+        {peel && <image href={peel} x="0" y="0" width="332" height="411" preserveAspectRatio="xMidYMid slice" />}
         {/* cover sheet; for the next rank its top-right corner is cut away along a curve (see .rank-cover-sheet) */}
         <path className="rank-cover-sheet" d={BADGE_PATH} fill="var(--bg)" />
       </g>
       <path d={BADGE_PATH} fill="none" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
-      <circle cx="52" cy="50" r="44" fill="var(--paper)" />
-      <circle cx="52" cy="50" r="37" fill="var(--line)" stroke="var(--line-2)" strokeWidth="3" />
-      <text x="52" y="52" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
+      <text x="165" y="70" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
         {n}
       </text>
-      <text x="166" y="165" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
+      <text x="165" y="180" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
         ?
       </text>
       {peel && (
         <g clipPath={`url(#${clip})`}>
-          <path className="rank-flap-shadow" d="M 150 0 Q 210 90 316 170 C 250 215 150 200 150 0 Z" fill="rgba(0,0,0,0.18)" />
+          <path className="rank-flap-shadow" d="M 160 10 Q 225 100 332 190 C 260 240 160 220 160 10 Z" fill="rgba(0,0,0,0.18)" />
           {/* folded corner: a soft curl with no sharp tip */}
-          <path className="rank-flap" d="M 150 0 Q 210 90 316 170 C 235 200 150 180 150 0 Z" />
+          <path className="rank-flap" d="M 160 10 Q 225 100 332 190 C 245 220 160 200 160 10 Z" />
         </g>
       )}
-      <text x="158" y="283" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
+      <text x="165" y="336" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
         {name}
       </text>
-      <text x="158" y="316" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
+      <text x="165" y="372" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
         {hours} h
       </text>
     </svg>
