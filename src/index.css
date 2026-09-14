@@ -431,16 +431,17 @@ button {
   transition: d 0.5s var(--ease-out);
 }
 .rank-flap-shadow {
+  filter: blur(4px);
   transition: d 0.5s var(--ease-out);
 }
 .rank-cell.next:hover .rank-mystery.peel .rank-cover-sheet {
   clip-path: path('M 0 0 L 90 0 Q 170 130 316 240 L 316 356 L 0 356 Z');
 }
 .rank-cell.next:hover .rank-flap {
-  d: path('M 90 0 Q 170 130 316 240 Q 300 90 90 0 Z');
+  d: path('M 90 0 Q 170 130 316 240 Q 220 250 90 240 Q 110 130 90 0 Z');
 }
 .rank-cell.next:hover .rank-flap-shadow {
-  d: path('M 90 0 Q 170 130 316 240 L 316 0 Z');
+  d: path('M 90 0 Q 170 130 316 240 Q 210 270 90 240 Z');
 }
 .avatar {
   border-radius: 50%;
