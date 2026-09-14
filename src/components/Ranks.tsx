@@ -6,6 +6,34 @@ import { useT } from '../lib/i18n'
 import { RANKS, badgeSrc, rankFor } from '../lib/ranks'
 import { Burst } from './ui'
 
+// Silhouette of the real badges (316×356 box, same disc, pill and number circle).
+const BADGE_PATH =
+  'M 8 298 A 48 48 0 0 1 56 250 L 63 250 A 139 139 0 1 1 269 250 L 258 250 A 48 48 0 0 1 306 298 A 48 48 0 0 1 258 346 L 56 346 A 48 48 0 0 1 8 298 Z'
+
+/** Locked rank: the badge's own shape, muted, with a question mark. */
+function Mystery({ n, hours, remaining }: { n: number; hours: number; remaining: string | null }) {
+  return (
+    <svg className="rank-mystery" viewBox="0 0 316 356" aria-hidden>
+      <path d={BADGE_PATH} fill="var(--bg)" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
+      <circle cx="72" cy="72" r="58" fill="var(--paper)" stroke="var(--line-2)" strokeWidth="4" />
+      <text x="72" y="74" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
+        {n}
+      </text>
+      <text x="166" y="170" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
+        ?
+      </text>
+      <text x="158" y={remaining ? 280 : 298} textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
+        {remaining ?? `${hours} h`}
+      </text>
+      {remaining && (
+        <text x="158" y="316" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
+          {hours} h
+        </text>
+      )}
+    </svg>
+  )
+}
+
 /** Current-rank badge for the top bar; opens the full map on click. */
 export function RankBadge({ totalMinutes }: { totalMinutes: number }) {
   const { current, next, progress } = rankFor(totalMinutes)
@@ -133,10 +161,12 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
               {RANKS.map((r, i) => {
                 const earned = r.n <= current.n
                 const isCurrent = r.n === current.n
+                const isNext = next?.n === r.n
+                const left = isNext ? Math.max(0, r.hours * 60 - totalMinutes) : 0
                 return (
                   <motion.div
                     key={r.n}
-                    className={`rank-cell${earned ? ' earned' : ' locked'}${isCurrent ? ' current has-burst' : ''}`}
+                    className={`rank-cell${earned ? ' earned' : ' locked'}${isCurrent ? ' current has-burst' : ''}${isNext ? ' next' : ''}`}
                     initial={{ opacity: 0, y: 14, scale: 0.85 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.05 + i * 0.05 }}
@@ -145,12 +175,17 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                   >
                     {earned ? (
                       <img src={badgeSrc(r.n)} alt={`${r.n} ${r.name}`} draggable={false} />
-                    ) : (
-                      <div className="rank-mystery" aria-label={`${t('rank.level')} ${r.n}`}>
-                        <span className="rank-mystery-n">{r.n}</span>
-                        <span className="rank-mystery-q">?</span>
-                        <span className="rank-mystery-h">{r.hours} h</span>
+                    ) : isNext ? (
+                      <div className="rank-peel">
+                        {/* the real badge underneath, only its corner showing */}
+                        <img src={badgeSrc(r.n)} alt="" draggable={false} className="rank-peel-under" />
+                        <div className="rank-peel-cover">
+                          <Mystery n={r.n} hours={r.hours} remaining={t('rank.left', { t: fmtMinutes(left) })} />
+                        </div>
+                        <span className="rank-peel-flap" aria-hidden />
                       </div>
+                    ) : (
+                      <Mystery n={r.n} hours={r.hours} remaining={null} />
                     )}
                     {isCurrent && <Burst id={burst} n={14} />}
                   </motion.div>

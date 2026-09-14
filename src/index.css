@@ -340,57 +340,98 @@ button {
   transition: filter 0.3s, opacity 0.3s;
 }
 .rank-mystery {
-  position: relative;
-  aspect-ratio: 316 / 356;
-  border-radius: 46% 46% 24% 24% / 42% 42% 20% 20%;
-  border: 2px dashed var(--line-2);
-  background: color-mix(in srgb, var(--bg) 70%, var(--paper));
-  display: grid;
-  place-items: center;
-  color: var(--ink-3);
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
 .rank-mystery-n {
-  position: absolute;
-  left: 8%;
-  top: 6%;
-  width: 22%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 2px solid var(--line-2);
-  display: grid;
-  place-items: center;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--paper);
+  font-family: var(--font);
+  font-size: 56px;
+  font-weight: 700;
+  fill: var(--ink-3);
 }
 .rank-mystery-q {
-  font-size: 44px;
+  font-family: var(--font);
+  font-size: 120px;
   font-weight: 300;
-  line-height: 1;
-  margin-top: -14%;
-  color: var(--line-2);
+  fill: var(--line-2);
 }
 .rank-mystery-h {
-  position: absolute;
-  bottom: 12%;
+  font-family: var(--font);
+  font-size: 28px;
+  font-weight: 600;
+  fill: var(--ink-2);
+}
+.rank-mystery-sub {
   font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-3);
+  font-size: 22px;
+  fill: var(--ink-3);
 }
-.rank-cell.current img {
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.25));
+
+/* the next rank: cover sheet with one corner peeled back, badge peeking out */
+.rank-peel {
+  position: relative;
+  aspect-ratio: 316 / 356;
 }
-@media (max-width: 720px) {
-  .rank-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .rank-btn .rank-text {
-    display: none;
-  }
-  .rank-btn {
-    padding-right: 4px;
-  }
+.rank-cell .rank-peel-under {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  z-index: 0;
+  /* only the top-right corner is ever visible */
+  clip-path: polygon(45% 0, 100% 0, 100% 55%);
+}
+.rank-peel-cover {
+  z-index: 1;
+}
+.rank-peel-flap {
+  z-index: 2;
+}
+.rank-peel-cover {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 55% 0, 100% 45%, 100% 100%, 0 100%);
+}
+.rank-peel-cover .rank-mystery path {
+  fill: var(--paper);
+  stroke-dasharray: none;
+}
+.rank-peel-flap {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 45%;
+  height: 45%;
+  /* a curled sliver of the cover sheet, folded back along the cut edge */
+  clip-path: polygon(0 0, 100% 100%, 78% 100%, 0 22%);
+  background: linear-gradient(45deg, var(--paper) 0%, var(--line) 55%, color-mix(in srgb, var(--ink) 22%, var(--paper)) 100%);
+  filter: drop-shadow(-2px 2px 4px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+}
+.rank-cell.next:hover .rank-peel-cover {
+  clip-path: polygon(0 0, 30% 0, 100% 70%, 100% 100%, 0 100%);
+}
+.rank-cell.next:hover .rank-peel-flap {
+  width: 70%;
+  height: 70%;
+}
+.rank-cell.next:hover .rank-peel-under {
+  clip-path: polygon(20% 0, 100% 0, 100% 80%);
+}
+.rank-peel-under {
+  transition: clip-path 0.45s var(--ease-out);
+}
+.rank-peel-cover,
+.rank-peel-flap {
+  transition:
+    clip-path 0.45s var(--ease-out),
+    width 0.45s var(--ease-out),
+    height 0.45s var(--ease-out);
 }
 .avatar {
   border-radius: 50%;
