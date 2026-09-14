@@ -27,9 +27,6 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
         <path className="rank-cover-sheet" d={BADGE_PATH} fill="var(--bg)" />
       </g>
       <path d={BADGE_PATH} fill="none" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
-      <text x="165" y="70" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
-        {n}
-      </text>
       <text x="165" y="180" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
         ?
       </text>
