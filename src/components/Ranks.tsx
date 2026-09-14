@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fmtMinutes } from '../lib/format'
 import { useT } from '../lib/i18n'
 import { RANKS, badgeSrc, rankFor } from '../lib/ranks'
-import { Burst } from './ui'
+import { Burst, Jelly } from './ui'
 
 // Silhouette of the real badges (316×356 box, same disc, pill and number circle).
 const BADGE_PATH =
@@ -31,6 +31,136 @@ function Mystery({ n, hours, remaining }: { n: number; hours: number; remaining:
         </text>
       )}
     </svg>
+  )
+}
+
+const CONFETTI_COLORS = ['var(--hot)', 'var(--hot-cyan)', 'var(--hot-lime)', 'var(--violet)', 'var(--teal)', 'var(--orange)']
+
+/** Full-screen confetti rain. Re-render with a new `id` to fire. */
+export function Confetti({ id, n = 90 }: { id: number; n?: number }) {
+  const [live, setLive] = useState<number | null>(null)
+  useEffect(() => {
+    if (!id) return
+    setLive(id)
+    const t = setTimeout(() => setLive(null), 4200)
+    return () => clearTimeout(t)
+  }, [id])
+  if (!live) return null
+  let seed = live % 100003
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296)
+  return (
+    <div className="confetti" aria-hidden>
+      {Array.from({ length: n }).map((_, i) => {
+        const x = rnd() * 100
+        const drift = (rnd() - 0.5) * 30
+        const dur = 2.6 + rnd() * 1.6
+        const delay = rnd() * 0.9
+        const spin = 360 + rnd() * 720
+        return (
+          <motion.i
+            key={`${live}-${i}`}
+            style={{ left: `${x}vw`, background: CONFETTI_COLORS[i % CONFETTI_COLORS.length], width: 6 + rnd() * 8, height: 10 + rnd() * 10 }}
+            initial={{ y: -20, x: 0, rotate: 0, opacity: 1 }}
+            animate={{ y: '110vh', x: `${drift}vw`, rotate: spin, opacity: [1, 1, 0.9, 0] }}
+            transition={{ duration: dur, delay, ease: [0.2, 0.6, 0.4, 1] }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+const SEEN_KEY = 'rank.seen'
+
+/** Watches total minutes; when a new rank is crossed, celebrates once. */
+export function LevelUpWatcher({ totalMinutes, ready }: { totalMinutes: number; ready: boolean }) {
+  const { t } = useT()
+  const { current } = rankFor(totalMinutes)
+  const [show, setShow] = useState<number | null>(null)
+  const [confetti, setConfetti] = useState(0)
+  const primed = useRef(false)
+
+  useEffect(() => {
+    if (!ready) return
+    let seen = 0
+    try {
+      seen = Number(localStorage.getItem(SEEN_KEY) ?? '0')
+    } catch {
+      /* no storage */
+    }
+    // First load with no record: adopt the current rank silently (no popup for old progress).
+    if (!primed.current) {
+      primed.current = true
+      if (!seen) {
+        try {
+          localStorage.setItem(SEEN_KEY, String(current.n))
+        } catch {
+          /* fine */
+        }
+        return
+      }
+    }
+    if (current.n > seen) {
+      try {
+        localStorage.setItem(SEEN_KEY, String(current.n))
+      } catch {
+        /* fine */
+      }
+      setShow(current.n)
+      setConfetti(Date.now())
+    }
+  }, [current.n, ready])
+
+  const rank = RANKS.find((r) => r.n === show)
+  return (
+    <>
+      <Confetti id={confetti} />
+      {createPortal(
+        <AnimatePresence>
+          {rank && (
+            <motion.div
+              className="modal-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.15 } }}
+              onClick={() => setShow(null)}
+            >
+              <motion.div
+                className="modal levelup"
+                role="dialog"
+                aria-label={t('rank.up')}
+                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, y: 40, scale: 0.9, rotate: -3 }}
+                animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, y: 20, scale: 0.95, transition: { duration: 0.15 } }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+              >
+                <span className="label" style={{ justifyContent: 'center' }}>
+                  {t('rank.up')} · {t('rank.level')} {rank.n}
+                </span>
+                <motion.div
+                  className="rank-cell has-burst"
+                  initial={{ scale: 0.3, rotate: -25, filter: 'blur(8px)', opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, filter: 'blur(0px)', opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 220, damping: 14, delay: 0.25 }}
+                >
+                  <img src={badgeSrc(rank.n)} alt="" draggable={false} />
+                  <Burst id={confetti} n={18} />
+                </motion.div>
+                <h2 className="h2">{rank.name}</h2>
+                <p className="muted small" style={{ margin: '0 0 20px' }}>
+                  {t('rank.upSub')}
+                </p>
+                <Jelly type="button" className="btn" onClick={() => setShow(null)}>
+                  {t('rank.upOk')}
+                </Jelly>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+    </>
   )
 }
 

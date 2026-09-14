@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Avatar } from './Avatar'
-import { RankBadge } from './Ranks'
+import { LevelUpWatcher, RankBadge } from './Ranks'
 import { CursorDot } from './fun'
 import { useData } from '../state/DataContext'
 import { useT } from '../lib/i18n'
@@ -15,13 +15,15 @@ const LINKS = [
 ] as const
 
 export function Shell() {
-  const { error, log } = useData()
+  const { error, log, loading } = useData()
+  const totalMinutes = log.reduce((a, l) => a + l.minutes, 0)
   const location = useLocation()
   const { t, lang } = useT()
 
   return (
     <div className="shell">
       <CursorDot />
+      <LevelUpWatcher totalMinutes={totalMinutes} ready={!loading} />
       <header className="topbar">
         <div className="topbar-inner">
           <nav className="nav" aria-label="Main">
@@ -48,7 +50,7 @@ export function Shell() {
             ))}
           </nav>
           <span className="who">
-            <RankBadge totalMinutes={log.reduce((a, l) => a + l.minutes, 0)} />
+            <RankBadge totalMinutes={totalMinutes} />
             <Avatar size={40} />
           </span>
         </div>
