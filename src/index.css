@@ -278,13 +278,13 @@ button {
   border-radius: 3px;
 }
 .modal.rank-map {
-  width: min(900px, 100%);
+  width: min(880px, 100%);
 }
 .rank-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-top: 20px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-top: 18px;
 }
 .rank-cell {
   position: relative;
@@ -306,7 +306,7 @@ button {
 }
 @media (max-width: 720px) {
   .rank-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
   .rank-btn .rank-name {
     display: none;
