@@ -400,69 +400,29 @@ button {
   display: block;
 }
 
-/* the next rank: cover sheet with one corner peeled back, badge peeking out */
-.rank-peel {
-  position: relative;
-  aspect-ratio: 316 / 356;
+/* the next rank: the cover sheet's top-right corner curls back to show the badge underneath */
+.rank-mystery.peel .rank-cover-sheet {
+  clip-path: path('M 0 0 L 150 0 Q 210 90 316 170 L 316 356 L 0 356 Z');
+  transition: clip-path 0.5s var(--ease-out);
 }
-.rank-cell .rank-peel-under {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  z-index: 0;
-  /* only the top-right corner is ever visible */
-  clip-path: polygon(45% 0, 100% 0, 100% 55%);
-}
-.rank-peel-cover {
-  z-index: 1;
-}
-.rank-peel-flap {
-  z-index: 2;
-}
-.rank-peel-cover {
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(0 0, 55% 0, 100% 45%, 100% 100%, 0 100%);
-}
-.rank-peel-cover .rank-mystery path {
+.rank-flap {
   fill: var(--paper);
-  stroke-dasharray: none;
+  stroke: var(--line-2);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  transition: d 0.5s var(--ease-out);
 }
-.rank-peel-flap {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 45%;
-  height: 45%;
-  /* a curled sliver of the cover sheet, folded back along the cut edge */
-  clip-path: polygon(0 0, 100% 100%, 78% 100%, 0 22%);
-  background: linear-gradient(45deg, var(--paper) 0%, var(--line) 55%, color-mix(in srgb, var(--ink) 22%, var(--paper)) 100%);
-  filter: drop-shadow(-2px 2px 4px rgba(0, 0, 0, 0.25));
-  pointer-events: none;
+.rank-flap-shadow {
+  transition: d 0.5s var(--ease-out);
 }
-.rank-cell.next:hover .rank-peel-cover {
-  clip-path: polygon(0 0, 30% 0, 100% 70%, 100% 100%, 0 100%);
+.rank-cell.next:hover .rank-mystery.peel .rank-cover-sheet {
+  clip-path: path('M 0 0 L 90 0 Q 170 130 316 240 L 316 356 L 0 356 Z');
 }
-.rank-cell.next:hover .rank-peel-flap {
-  width: 70%;
-  height: 70%;
+.rank-cell.next:hover .rank-flap {
+  d: path('M 90 0 Q 170 130 316 240 Q 300 90 90 0 Z');
 }
-.rank-cell.next:hover .rank-peel-under {
-  clip-path: polygon(20% 0, 100% 0, 100% 80%);
-}
-.rank-peel-under {
-  transition: clip-path 0.45s var(--ease-out);
-}
-.rank-peel-cover,
-.rank-peel-flap {
-  transition:
-    clip-path 0.45s var(--ease-out),
-    width 0.45s var(--ease-out),
-    height 0.45s var(--ease-out);
+.rank-cell.next:hover .rank-flap-shadow {
+  d: path('M 90 0 Q 170 130 316 240 L 316 0 Z');
 }
 .avatar {
   border-radius: 50%;

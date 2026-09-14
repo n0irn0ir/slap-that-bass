@@ -11,25 +11,41 @@ const BADGE_PATH =
   'M 8 298 A 48 48 0 0 1 56 250 L 63 250 A 139 139 0 1 1 269 250 L 258 250 A 48 48 0 0 1 306 298 A 48 48 0 0 1 258 346 L 56 346 A 48 48 0 0 1 8 298 Z'
 
 /** Locked rank: the badge's own shape, muted, with a question mark. */
-function Mystery({ n, hours, remaining }: { n: number; hours: number; remaining: string | null }) {
+function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: number; peel?: string }) {
+  const clip = `mystery-clip-${n}`
   return (
-    <svg className="rank-mystery" viewBox="0 0 316 356" aria-hidden>
-      <path d={BADGE_PATH} fill="var(--bg)" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
+    <svg className={`rank-mystery${peel ? ' peel' : ''}`} viewBox="0 0 316 356" aria-hidden>
+      <defs>
+        <clipPath id={clip}>
+          <path d={BADGE_PATH} />
+        </clipPath>
+      </defs>
+      {/* everything lives inside the badge silhouette */}
+      <g clipPath={`url(#${clip})`}>
+        {peel && <image href={peel} x="0" y="0" width="316" height="356" preserveAspectRatio="xMidYMid slice" />}
+        {/* cover sheet; for the next rank its top-right corner is cut away along a curve (see .rank-cover-sheet) */}
+        <path className="rank-cover-sheet" d={BADGE_PATH} fill="var(--bg)" />
+        {peel && (
+          <>
+            <path className="rank-flap-shadow" d="M 150 0 Q 210 90 316 170 L 316 0 Z" fill="rgba(0,0,0,0.16)" />
+            <path className="rank-flap" d="M 150 0 Q 210 90 316 170 Q 300 60 150 0 Z" />
+          </>
+        )}
+      </g>
+      <path d={BADGE_PATH} fill="none" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
       <circle cx="72" cy="72" r="58" fill="var(--paper)" stroke="var(--line-2)" strokeWidth="4" />
       <text x="72" y="74" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-n">
         {n}
       </text>
-      <text x="166" y="170" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
+      <text x="166" y="165" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
         ?
       </text>
-      <text x="158" y={remaining ? 280 : 298} textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
-        {remaining ?? `${hours} h`}
+      <text x="158" y="283" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
+        {name}
       </text>
-      {remaining && (
-        <text x="158" y="316" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
-          {hours} h
-        </text>
-      )}
+      <text x="158" y="316" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
+        {hours} h
+      </text>
     </svg>
   )
 }
@@ -292,7 +308,6 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                 const earned = r.n <= current.n
                 const isCurrent = r.n === current.n
                 const isNext = next?.n === r.n
-                const left = isNext ? Math.max(0, r.hours * 60 - totalMinutes) : 0
                 return (
                   <motion.div
                     key={r.n}
@@ -305,17 +320,8 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                   >
                     {earned ? (
                       <img src={badgeSrc(r.n)} alt={`${r.n} ${r.name}`} draggable={false} />
-                    ) : isNext ? (
-                      <div className="rank-peel">
-                        {/* the real badge underneath, only its corner showing */}
-                        <img src={badgeSrc(r.n)} alt="" draggable={false} className="rank-peel-under" />
-                        <div className="rank-peel-cover">
-                          <Mystery n={r.n} hours={r.hours} remaining={t('rank.left', { t: fmtMinutes(left) })} />
-                        </div>
-                        <span className="rank-peel-flap" aria-hidden />
-                      </div>
                     ) : (
-                      <Mystery n={r.n} hours={r.hours} remaining={null} />
+                      <Mystery n={r.n} name={r.name} hours={r.hours} peel={isNext ? badgeSrc(r.n) : undefined} />
                     )}
                     {isCurrent && <Burst id={burst} n={14} />}
                   </motion.div>
