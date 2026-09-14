@@ -293,7 +293,7 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                   </div>
                 )}
               </div>
-              <button type="button" className="link-btn" onClick={onClose} aria-label={t('log.cancel')}>
+              <button type="button" className="modal-close" onClick={onClose} aria-label={t('log.cancel')}>
                 ✕
               </button>
             </div>

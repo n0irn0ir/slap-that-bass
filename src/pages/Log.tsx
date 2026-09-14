@@ -304,7 +304,7 @@ function LogModal({
           >
             <div className="modal-head">
               <span className="label">{editing ? t('log.editing') : t('log.new')}</span>
-              <button type="button" className="link-btn" onClick={onClose} aria-label={t('log.cancel')}>
+              <button type="button" className="modal-close" onClick={onClose} aria-label={t('log.cancel')}>
                 ✕
               </button>
             </div>
