@@ -2675,24 +2675,6 @@ button {
   border-color: #2a2418;
   transform: scale(1.15);
 }
-/* one goofy face per note */
-.sticky.f-shantell textarea {
-  font-family: 'Shantell Sans', 'Segoe Print', cursive;
-  font-variation-settings: 'BNCE' 100, 'INFM' 100;
-  font-size: 17px;
-}
-.sticky.f-comic textarea {
-  font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Segoe Print', cursive;
-  font-size: 16px;
-}
-.sticky.f-neucha textarea {
-  font-family: 'Neucha', 'Segoe Print', cursive;
-  font-size: 21px;
-}
-.sticky.f-pangolin textarea {
-  font-family: 'Pangolin', 'Segoe Print', cursive;
-  font-size: 17px;
-}
 .sticky .tape {
   position: absolute;
   left: 50%;
@@ -2714,6 +2696,8 @@ button {
   background: transparent;
   outline: none;
   font-family: 'Shantell Sans', 'Segoe Print', cursive;
+  font-variation-settings: 'BNCE' 100, 'INFM' 100;
+  font-size: 17px;
   line-height: 1.3;
   color: #2a2418;
   cursor: text;
