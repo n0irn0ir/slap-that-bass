@@ -60,7 +60,7 @@ export function StickyNotes() {
 
       <div className="notes-pad-wrap">
         <AnimatePresence>
-          {pocketOpen && (
+          {pocketOpen && peeled.length > 0 && (
             <motion.div
               className="notes-pocket"
               initial={{ opacity: 0, y: 10, scale: 0.96 }}
@@ -71,21 +71,17 @@ export function StickyNotes() {
               <div className="label" style={{ marginBottom: 8 }}>
                 {t('notes.pocket')}
               </div>
-              {peeled.length === 0 ? (
-                <div className="small faint">{t('notes.empty')}</div>
-              ) : (
-                peeled.map((n) => (
-                  <div key={n.id} className={`pocket-row c-${n.color}`}>
-                    <span className="pocket-text">{n.text.trim() || t('notes.blank')}</span>
-                    <button type="button" className="link-btn" onClick={() => stick(n)}>
-                      {t('notes.stick')}
-                    </button>
-                    <button type="button" className="link-btn danger" onClick={() => deleteNote(n.id)}>
-                      {t('notes.toss')}
-                    </button>
-                  </div>
-                ))
-              )}
+              {peeled.map((n) => (
+                <div key={n.id} className={`pocket-row c-${n.color}`}>
+                  <span className="pocket-text">{n.text.trim() || t('notes.blank')}</span>
+                  <button type="button" className="link-btn" onClick={() => stick(n)}>
+                    {t('notes.stick')}
+                  </button>
+                  <button type="button" className="link-btn danger" onClick={() => deleteNote(n.id)}>
+                    {t('notes.toss')}
+                  </button>
+                </div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
