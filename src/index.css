@@ -107,6 +107,12 @@ button {
   letter-spacing: -0.035em;
   margin: 0;
 }
+/* the dashboard headline only; falls back to Onest for Cyrillic, which Bricolage does not cover */
+.display.hero {
+  font-family: 'Bricolage Grotesque', var(--font);
+  font-optical-sizing: auto;
+  letter-spacing: -0.03em;
+}
 .display strong {
   font-weight: 500;
 }

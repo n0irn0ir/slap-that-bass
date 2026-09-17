@@ -119,7 +119,7 @@ export function Dashboard() {
     <>
       <div className="dash-head" onMouseMove={lean} onMouseLeave={unlean}>
         <motion.div {...fadeUp(0)}>
-          <h1 className="display">
+          <h1 className="display hero">
             {totalMin === 0 ? (
               <>
                 <Wave>{t('dash.empty1')}</Wave>
