@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useAnimation, useMotionValue, useSpring } from 'motion/react'
-import { useCallback, useRef, useState, type MouseEvent } from 'react'
+import { useCallback, useRef, useState, type CSSProperties, type MouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Rhythm, WeeklyBars } from '../components/Charts'
 import { Icon } from '../components/Icon'
@@ -82,6 +82,11 @@ export function Dashboard() {
   const since = daysAgoISO(6)
   const weekMin = log.filter((l) => l.date >= since).reduce((a, l) => a + l.minutes, 0)
   const weekSessions = allSessions.filter((s) => s.date >= since).length
+  // one dot per day, oldest first; filled when something was logged
+  const weekDays = Array.from({ length: 7 }, (_, i) => daysAgoISO(6 - i)).map((iso) => ({
+    iso,
+    on: log.some((l) => l.date === iso),
+  }))
   const byCat = minutesByCategory(log)
   const byTopic = minutesByTopic(log)
   const touched = topics.filter((t) => (byTopic[t.id] ?? 0) > 0).length
@@ -170,7 +175,10 @@ export function Dashboard() {
       </div>
 
       <div className="stat-row">
-        <motion.div className="stat" {...fadeUp(1)}>
+        <motion.div className="stat" style={tint('cyan')} {...fadeUp(1)}>
+          <span className="stat-ic">
+            <Icon name="calendar-week" />
+          </span>
           <div className="num">
             <Counter value={weekMin} format={fmtMinutes} />
             <span className="suffix">
@@ -178,20 +186,39 @@ export function Dashboard() {
             </span>
           </div>
           <div className="label">{t('dash.last7')}</div>
+          <div className="stat-days" aria-hidden>
+            {weekDays.map((d, i) => (
+              <motion.span
+                key={d.iso}
+                className={d.on ? 'on' : ''}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 16, delay: 0.3 + i * 0.05 }}
+              />
+            ))}
+          </div>
         </motion.div>
-        <motion.div className="stat" {...fadeUp(2)}>
+        <motion.div className="stat" style={tint('violet')} {...fadeUp(2)}>
+          <span className="stat-ic">
+            <Icon name="book" />
+          </span>
           <div className="num">
             <Counter value={touched} />
             <span className="suffix">{t('dash.of')} {topics.length}</span>
           </div>
           <div className="label">{t('dash.topicsTouched')}</div>
+          <Track part={touched} total={topics.length} />
         </motion.div>
-        <motion.div className="stat" {...fadeUp(3)}>
+        <motion.div className="stat" style={tint('magenta')} {...fadeUp(3)}>
+          <span className="stat-ic">
+            <Icon name="headphones" />
+          </span>
           <div className="num">
             <Counter value={status.learned} />
             <span className="suffix">{t('dash.of')} {songs.length}</span>
           </div>
           <div className="label">{t('dash.songsLearned')}</div>
+          <Track part={status.learned} total={songs.length} />
         </motion.div>
       </div>
 
@@ -234,5 +261,22 @@ export function Dashboard() {
         <WeeklyBars log={log} />
       </motion.section>
     </>
+  )
+}
+
+const tint = (c: 'cyan' | 'violet' | 'magenta') =>
+  ({ '--c': `var(--${c})`, '--cd': `var(--${c}-d)` }) as CSSProperties
+
+/** Thin progress track under a "part of total" number. */
+function Track({ part, total }: { part: number; total: number }) {
+  const w = total > 0 ? Math.min(1, part / total) : 0
+  return (
+    <div className="stat-track" aria-hidden>
+      <motion.span
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: w }}
+        transition={{ type: 'spring', stiffness: 120, damping: 20, delay: 0.35 }}
+      />
+    </div>
   )
 }
