@@ -6,7 +6,7 @@ import { useData } from '../state/DataContext'
 
 const COLORS: NoteColor[] = ['yellow', 'pink', 'cyan', 'lime', 'orange', 'violet']
 // Each note gets one of these by its id, so the same note always looks the same.
-const FONTS = ['f-shantell', 'f-underdog', 'f-neucha', 'f-pangolin']
+const FONTS = ['f-shantell', 'f-comic', 'f-neucha', 'f-pangolin']
 const fontOf = (id: string) => FONTS[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % FONTS.length]
 const W = 200 // note width; height grows with the text
 

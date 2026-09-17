@@ -2681,9 +2681,9 @@ button {
   font-variation-settings: 'BNCE' 100, 'INFM' 100;
   font-size: 17px;
 }
-.sticky.f-underdog textarea {
-  font-family: 'Underdog', 'Segoe Print', cursive;
-  font-size: 19px;
+.sticky.f-comic textarea {
+  font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Segoe Print', cursive;
+  font-size: 16px;
 }
 .sticky.f-neucha textarea {
   font-family: 'Neucha', 'Segoe Print', cursive;
