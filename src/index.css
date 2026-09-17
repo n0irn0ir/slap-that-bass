@@ -804,18 +804,33 @@ button {
   z-index: 100;
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.18));
 }
-.toast {
+/* .has-burst sets position: relative, so the toast wins by specificity */
+.toast.has-burst {
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: 32px;
-  transform: translateX(-50%);
-  z-index: 50;
-  background: var(--hot);
+  width: max-content;
+  max-width: calc(100vw - 48px);
+  margin-inline: auto;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--paper);
   color: var(--ink);
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: 12px 18px 12px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
   font-weight: 600;
-  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 0 var(--hot), 0 16px 40px -16px rgba(0, 0, 0, 0.35);
+}
+.toast-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--hot);
+  flex: none;
 }
 /* ---------- burst ---------- */
 
@@ -2077,6 +2092,9 @@ button {
   border-radius: 0;
   background: transparent;
   font-family: var(--mono);
+}
+.minutes-big input::placeholder {
+  color: var(--line-2);
 }
 .minutes-big input:focus {
   outline: none;

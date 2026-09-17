@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useMotionValue, useSpring } from 'motion/react'
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { Burst } from './ui'
@@ -91,22 +92,25 @@ export function Toast({ id, children }: { id: number; children: ReactNode }) {
     const t = setTimeout(() => setShow(false), 3200)
     return () => clearTimeout(t)
   }, [id])
-  return (
+  // In a portal: page transitions set a filter on <main>, which would pin a fixed toast to it.
+  return createPortal(
     <AnimatePresence>
       {show && (
         <motion.div
           className="toast has-burst"
           role="status"
-          initial={{ opacity: 0, y: 30, scale: 0.9, rotate: -3 }}
-          animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-          exit={{ opacity: 0, y: 12, scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 380, damping: 20 }}
+          initial={{ opacity: 0, y: 40, scale: 0.8, rotate: -4 }}
+          animate={{ opacity: 1, y: 0, scale: 1, rotate: [4, -2, 0] }}
+          exit={{ opacity: 0, y: 16, scale: 0.9, transition: { duration: 0.18 } }}
+          transition={{ type: 'spring', stiffness: 420, damping: 18 }}
         >
+          <span className="toast-dot" aria-hidden />
           {children}
-          <Burst id={id} n={16} color="var(--ink)" />
+          <Burst id={id} n={16} color="var(--hot)" />
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 

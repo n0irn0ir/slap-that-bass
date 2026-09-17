@@ -456,7 +456,7 @@ function EntryModal({
                     inputMode="numeric"
                     min={0}
                     max={59}
-                    placeholder="45"
+                    placeholder="0"
                     value={mins}
                     onChange={(e) => setMins(e.target.value)}
                     aria-label={t('journal.minutesField')}
@@ -716,7 +716,8 @@ function LineRow({
           inputMode="numeric"
           min={0}
           max={600}
-          placeholder={String(share)}
+          placeholder="0"
+          title={String(share)}
           value={line.minutes}
           onChange={(e) => onChange({ minutes: e.target.value })}
           aria-label={t('journal.min')}
