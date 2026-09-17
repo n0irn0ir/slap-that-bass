@@ -7,10 +7,8 @@ import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
 import { Bolts, Jiggle, Wave, useTypedWord } from '../components/fun'
 import { Burst, Counter } from '../components/ui'
-import { daysAgoISO, fmtDate, fmtMinutes } from '../lib/format'
+import { daysAgoISO, fmtMinutes } from '../lib/format'
 import { STRINGS, pluck as play } from '../lib/pluck'
-import { face } from '../lib/rating'
-import { sessionLabel } from '../lib/sessions'
 import { countByStatus, minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
 import { plural, useT } from '../lib/i18n'
 
@@ -88,10 +86,6 @@ export function Dashboard() {
   const byTopic = minutesByTopic(log)
   const touched = topics.filter((t) => (byTopic[t.id] ?? 0) > 0).length
   const status = countByStatus(songs)
-  const recent = allSessions
-    .slice()
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.created_at.localeCompare(a.created_at)))
-    .slice(0, 6)
 
 
   if (loading) return null
@@ -209,46 +203,19 @@ export function Dashboard() {
           <Rose minutes={byCat} onPick={(id) => nav(`/topics#${id}`)} />
         </motion.section>
 
-        <div style={{ display: 'grid', gap: 24 }}>
-          <motion.section className="panel tight" {...fadeUp(5)}>
-            <div className="label" style={{ marginBottom: 14 }}>
-              <Icon name="headphones" /> {t('dash.songs')}
-            </div>
-            <div className="songs-mini">
-              {(['backlog', 'learning', 'learned'] as const).map((s) => (
-                <Link key={s} to={`/songs#${s}`}>
-                  <div className="n mono">{status[s]}</div>
-                  <div className="small muted">{t(`songs.${s}`)}</div>
-                </Link>
-              ))}
-            </div>
-          </motion.section>
-
-          <motion.section className="panel tight" {...fadeUp(6)}>
-            <div className="label" style={{ marginBottom: 10 }}>
-              <Icon name="clock" /> {t('dash.recent')}
-            </div>
-            {recent.length === 0 ? (
-              <div className="empty small">{t('dash.recentEmpty')}</div>
-            ) : (
-              <div className="recent">
-                {recent.map((s) => (
-                  <div key={s.id} className="recent-row">
-                    <span className="t">{fmtDate(s.date)}</span>
-                    <span className="recent-title">{sessionLabel(s)}</span>
-                    <span className="mono small">
-                      {face(s.rating) && <span className="face-sm">{face(s.rating)}</span>}
-                      {fmtMinutes(s.minutes)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-            <Link to="/journal" className="link-btn" style={{ display: 'inline-block', marginTop: 12 }}>
-              {t('dash.fullLog')}
-            </Link>
-          </motion.section>
-        </div>
+        <motion.section className="panel tight songs-panel" {...fadeUp(5)}>
+          <div className="label" style={{ marginBottom: 14 }}>
+            <Icon name="headphones" /> {t('dash.songs')}
+          </div>
+          <div className="songs-mini">
+            {(['backlog', 'learning', 'learned'] as const).map((s) => (
+              <Link key={s} to={`/songs#${s}`}>
+                <div className="n mono">{status[s]}</div>
+                <div className="small muted">{t(`songs.${s}`)}</div>
+              </Link>
+            ))}
+          </div>
+        </motion.section>
       </div>
 
       <motion.section className="panel" style={{ marginTop: 24 }} {...fadeUp(7)}>

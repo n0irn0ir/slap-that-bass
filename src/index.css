@@ -965,7 +965,7 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
 }
 .stat-row {
   display: grid;
@@ -1086,26 +1086,28 @@ button {
   line-height: 1;
   margin-bottom: 6px;
 }
-
-.recent {
+/* alone in the right column: the three counts stack and fill the panel's height */
+.songs-panel {
   display: flex;
   flex-direction: column;
 }
-.recent-row {
-  display: grid;
-  grid-template-columns: 84px 1fr auto;
-  gap: 16px;
-  padding: 12px 0;
-  border-top: 1px solid var(--line);
-  align-items: baseline;
+.songs-panel .songs-mini {
+  flex: 1;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
 }
-.recent-row:first-child {
-  border-top: 0;
+.songs-panel .songs-mini a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
 }
-.recent-row .t {
-  color: var(--ink-2);
-  font-size: 13px;
+.songs-panel .songs-mini .n {
+  font-size: 52px;
+  margin: 0;
+  order: 2;
 }
+
 
 /* ---------- charts ---------- */
 
@@ -2200,12 +2202,6 @@ button {
 .sess:focus-within .acts {
   opacity: 1;
 }
-.recent-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* the entry form */
 .modal.entry-form {
   width: min(640px, 100%);
