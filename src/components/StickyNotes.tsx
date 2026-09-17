@@ -32,6 +32,13 @@ export function StickyNotes() {
   // Only the notes stuck to this page show; the pocket holds peeled ones from everywhere.
   const stuck = notes.filter((n) => n.stuck && n.page === page)
   const peeled = notes.filter((n) => !n.stuck)
+  // the pad bumps when it catches a note
+  const [caught, setCaught] = useState(0)
+  const prevPeeled = useRef(peeled.length)
+  useEffect(() => {
+    if (peeled.length > prevPeeled.current) setCaught(Date.now())
+    prevPeeled.current = peeled.length
+  }, [peeled.length])
 
   async function create() {
     // near the pad, each new one a little further in so they do not pile up exactly
@@ -119,11 +126,14 @@ export function StickyNotes() {
             </button>
           )}
           <motion.button
+            key={caught}
             type="button"
             className="pad"
             onClick={create}
             title={t('notes.new')}
             aria-label={t('notes.new')}
+            initial={caught ? { scale: 1.25, rotate: -8 } : false}
+            animate={{ scale: 1, rotate: 0 }}
             whileHover={{ y: -3, rotate: -3 }}
             whileTap={{ scale: 0.92, rotate: 2 }}
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
@@ -161,6 +171,7 @@ function StickyNote({
   const areaRef = useRef<HTMLTextAreaElement>(null)
   const [text, setText] = useState(note.text)
   const [tossing, setTossing] = useState(false)
+  const [peeling, setPeeling] = useState(false)
 
   useEffect(() => setText(note.text), [note.text])
   useEffect(() => {
@@ -183,18 +194,25 @@ function StickyNote({
     setTossing(true)
     setTimeout(onToss, 420)
   }
+  function peel() {
+    setPeeling(true)
+    setTimeout(onPeel, 680)
+  }
 
   // Keep it on screen after a resize. A drag moves the transform; on release the offset is
   // folded into the stored position and the transform reset in the same frame.
   const x = Math.min(note.x, Math.max(16, window.innerWidth - W - 16))
   const y = Math.min(note.y, Math.max(72, window.innerHeight - 120))
+  // where the pad sits (bottom-right corner): the peel animation flies there
+  const padX = window.innerWidth - 28 - 28 - W / 2
+  const padY = window.innerHeight - 28 - 28 - 40
 
   return (
     <motion.div
       className={`sticky c-${note.color}${tossing ? ' tossing' : ''}`}
       style={{ left: x, top: y, width: W, x: mx, y: my, zIndex: 30 + z }}
       onPointerDownCapture={onRaise}
-      drag={!tossing}
+      drag={!tossing && !peeling}
       dragMomentum={false}
       onDragEnd={() => {
         onChange({ x: Math.round(x + mx.get()), y: Math.round(y + my.get()) })
@@ -205,7 +223,17 @@ function StickyNote({
       animate={
         tossing
           ? { opacity: 0, scale: 0.15, rotate: note.rotate + 540, marginTop: 260, transition: { duration: 0.42, ease: [0.4, 0, 1, 1] } }
-          : { opacity: 1, scale: 1, rotate: note.rotate, marginTop: 0 }
+          : peeling
+            ? {
+                // lifts off a corner, then sails into the pocket and shrinks
+                x: [mx.get(), mx.get() - 30, padX - x],
+                y: [my.get(), my.get() - 60, padY - y],
+                scale: [1, 1.06, 0.12],
+                rotate: [note.rotate, note.rotate - 14, note.rotate + 30],
+                opacity: [1, 1, 0],
+                transition: { duration: 0.68, times: [0, 0.32, 1], ease: [0.3, 0, 0.2, 1] },
+              }
+            : { opacity: 1, scale: 1, rotate: note.rotate, marginTop: 0 }
       }
       exit={{ opacity: 0, scale: 0.8, rotate: note.rotate + 18, transition: { duration: 0.2 } }}
       transition={{ type: 'spring', stiffness: 380, damping: 18 }}
@@ -234,7 +262,7 @@ function StickyNote({
         spellCheck={false}
       />
       <div className="sticky-acts">
-        <button type="button" onPointerDown={(e) => e.stopPropagation()} onClick={onPeel} title={t('notes.peel')}>
+        <button type="button" onPointerDown={(e) => e.stopPropagation()} onClick={peel} title={t('notes.peel')}>
           {t('notes.peel').toLowerCase()}
         </button>
         <button type="button" className="danger" onPointerDown={(e) => e.stopPropagation()} onClick={toss} title={t('notes.toss')}>
