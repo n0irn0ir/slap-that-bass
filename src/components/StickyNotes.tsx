@@ -28,6 +28,9 @@ export function StickyNotes() {
   const [pocketOpen, setPocketOpen] = useState(false)
   const [focusId, setFocusId] = useState<string | null>(null)
   const page = useLocation().pathname
+  // Whatever was touched last sits on top: a running counter per note id.
+  const [order, setOrder] = useState<Record<string, number>>({})
+  const raise = (id: string) => setOrder((o) => ({ ...o, [id]: (Math.max(0, ...Object.values(o)) || 0) + 1 }))
 
   // Only the notes stuck to this page show; the pocket holds peeled ones from everywhere.
   const stuck = notes.filter((n) => n.stuck && n.page === page)
@@ -67,6 +70,8 @@ export function StickyNotes() {
             key={n.id}
             note={n}
             autoFocus={focusId === n.id}
+            z={order[n.id] ?? 0}
+            onRaise={() => raise(n.id)}
             onChange={(p) => updateNote(n.id, p)}
             onPeel={() => updateNote(n.id, { stuck: false })}
             onToss={() => deleteNote(n.id)}
@@ -139,12 +144,16 @@ export function StickyNotes() {
 function StickyNote({
   note,
   autoFocus,
+  z,
+  onRaise,
   onChange,
   onPeel,
   onToss,
 }: {
   note: Note
   autoFocus: boolean
+  z: number
+  onRaise: () => void
   onChange: (p: Partial<Note>) => void
   onPeel: () => void
   onToss: () => void
@@ -186,7 +195,8 @@ function StickyNote({
   return (
     <motion.div
       className={`sticky c-${note.color} ${fontOf(note.id)}${tossing ? ' tossing' : ''}`}
-      style={{ left: x, top: y, width: W, x: mx, y: my }}
+      style={{ left: x, top: y, width: W, x: mx, y: my, zIndex: 30 + z }}
+      onPointerDownCapture={onRaise}
       drag={!tossing}
       dragMomentum={false}
       onDragEnd={() => {
