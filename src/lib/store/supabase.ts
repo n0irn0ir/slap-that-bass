@@ -27,7 +27,7 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
       ])
       fail(t.error)
       fail(s.error)
-      if (ss.error?.code === '42P01') {
+      if (ss.error?.code === '42P01' || ss.error?.code === 'PGRST205') {
         // the sessions table is missing: the SQL migration was not run yet
         throw new Error('Run supabase/migrations/003_sessions.sql in the Supabase SQL editor, then reload.')
       }
