@@ -2652,9 +2652,10 @@ button {
   border: 0;
   background: transparent;
   outline: none;
-  font-family: 'Neucha', 'Caveat', 'Segoe Print', cursive;
-  font-size: 21px;
-  line-height: 1.2;
+  font-family: 'Shantell Sans', 'Segoe Print', cursive;
+  font-variation-settings: 'BNCE' 100, 'INFM' 100;
+  font-size: 17px;
+  line-height: 1.3;
   color: #2a2418;
   cursor: text;
 }
@@ -2785,9 +2786,10 @@ button {
   border-left-color: #c5f24a;
 }
 .pocket-text {
-  font-family: 'Neucha', 'Caveat', cursive;
-  font-size: 17px;
-  line-height: 1.2;
+  font-family: 'Shantell Sans', cursive;
+  font-variation-settings: 'BNCE' 100, 'INFM' 100;
+  font-size: 14px;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
