@@ -170,7 +170,7 @@ function StickyNote({
 
   return (
     <motion.div
-      className={`note c-${note.color}${tossing ? ' tossing' : ''}`}
+      className={`sticky c-${note.color}${tossing ? ' tossing' : ''}`}
       style={{ left: x, top: y, width: W, x: mx, y: my }}
       drag={!tossing}
       dragMomentum={false}
@@ -199,7 +199,7 @@ function StickyNote({
         onPointerDown={(e) => e.stopPropagation()}
         spellCheck={false}
       />
-      <div className="note-acts">
+      <div className="sticky-acts">
         <button type="button" onPointerDown={(e) => e.stopPropagation()} onClick={onPeel} title={t('notes.peel')}>
           {t('notes.peel').toLowerCase()}
         </button>

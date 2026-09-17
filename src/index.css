@@ -2606,7 +2606,7 @@ button {
 
 /* ---------- sticky notes ---------- */
 
-.note {
+.sticky {
   --paper-note: #fff59d;
   --paper-note-d: #f2df4a;
   position: fixed;
@@ -2617,22 +2617,22 @@ button {
   cursor: grab;
   touch-action: none;
 }
-.note:active {
+.sticky:active {
   cursor: grabbing;
 }
-.note.c-pink {
+.sticky.c-pink {
   --paper-note: #ffc8ec;
   --paper-note-d: #ff8fd8;
 }
-.note.c-cyan {
+.sticky.c-cyan {
   --paper-note: #c4f0ff;
   --paper-note-d: #7fdcff;
 }
-.note.c-lime {
+.sticky.c-lime {
   --paper-note: #e4ff9e;
   --paper-note-d: #c5f24a;
 }
-.note .tape {
+.sticky .tape {
   position: absolute;
   left: 50%;
   top: -9px;
@@ -2644,7 +2644,7 @@ button {
   transform: rotate(-2deg);
   backdrop-filter: blur(1px);
 }
-.note textarea {
+.sticky textarea {
   display: block;
   width: 100%;
   min-height: 72px;
@@ -2658,10 +2658,10 @@ button {
   color: #2a2418;
   cursor: text;
 }
-.note textarea::placeholder {
+.sticky textarea::placeholder {
   color: rgba(42, 36, 24, 0.35);
 }
-.note-acts {
+.sticky-acts {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -2669,21 +2669,21 @@ button {
   opacity: 0;
   transition: opacity 0.2s;
 }
-.note:hover .note-acts,
-.note:focus-within .note-acts {
+.sticky:hover .sticky-acts,
+.sticky:focus-within .sticky-acts {
   opacity: 1;
 }
-.note-acts button {
+.sticky-acts button {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.04em;
   color: rgba(42, 36, 24, 0.6);
 }
-.note-acts button:hover {
+.sticky-acts button:hover {
   color: #2a2418;
   text-decoration: underline;
 }
-.note-acts button.danger:hover {
+.sticky-acts button.danger:hover {
   color: var(--orange-d);
 }
 
