@@ -131,6 +131,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
     [refresh],
   )
 
+  // A song that gets practised is no longer waiting: backlog → learning.
+  const startSongs = useCallback(
+    async (items: NewItem[]) => {
+      const ids = new Set(items.map((it) => it.song_id).filter((x): x is string => !!x))
+      for (const song of snap.songs) {
+        if (ids.has(song.id) && song.status === 'backlog') await store.updateSong(song.id, { status: 'learning' })
+      }
+    },
+    [snap.songs],
+  )
+
   const value = useMemo<DataValue>(
     () => ({
       ...snap,
@@ -162,15 +173,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
         let created: Session | null = null
         await run(async () => {
           created = await store.addSession(sess, items)
+          await startSongs(items)
         })
         return created
       },
-      updateSession: (id, p, items) => run(() => store.updateSession(id, p, items)),
+      updateSession: (id, p, items) =>
+        run(async () => {
+          await store.updateSession(id, p, items)
+          await startSongs(items)
+        }),
       deleteSession: (id) => run(() => store.deleteSession(id)),
 
       importSnapshot: (s) => run(async () => store.replaceAll?.(s)),
     }),
-    [snap, loading, error, run],
+    [snap, loading, error, run, startSongs],
   )
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>

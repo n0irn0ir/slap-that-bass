@@ -1,7 +1,6 @@
 import { motion } from 'motion/react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Avatar } from './Avatar'
-import { AchievementWatcher } from './Achievements'
 import { LevelUpWatcher, RankBadge } from './Ranks'
 import { CursorDot } from './fun'
 import { useData } from '../state/DataContext'
@@ -25,7 +24,6 @@ export function Shell() {
     <div className="shell">
       <CursorDot />
       <LevelUpWatcher totalMinutes={totalMinutes} ready={!loading} />
-      <AchievementWatcher ready={!loading} />
       <header className="topbar">
         <div className="topbar-inner">
           <nav className="nav" aria-label="Main">
