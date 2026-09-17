@@ -1,5 +1,5 @@
 -- Run once in Supabase → SQL editor.
--- Four tables, each row owned by the signed-in user. RLS hides everyone else's rows.
+-- Five tables, each row owned by the signed-in user. RLS hides everyone else's rows.
 
 create table if not exists public.topics (
   id uuid primary key default gen_random_uuid(),
@@ -52,7 +52,21 @@ create table if not exists public.log_entries (
   created_at timestamptz not null default now()
 );
 
+-- Sticky notes: free text pinned to the screen (stuck) or kept in the pocket.
+create table if not exists public.notes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  text text not null default '',
+  color text not null default 'yellow' check (color in ('yellow','pink','cyan','lime')),
+  x integer not null default 0,
+  y integer not null default 0,
+  rotate real not null default 0,
+  stuck boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
 alter table public.topics enable row level security;
+alter table public.notes enable row level security;
 alter table public.songs enable row level security;
 alter table public.sessions enable row level security;
 alter table public.log_entries enable row level security;
@@ -62,6 +76,8 @@ create policy "own topics" on public.topics
 create policy "own songs" on public.songs
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "own sessions" on public.sessions
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "own notes" on public.notes
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "own log" on public.log_entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

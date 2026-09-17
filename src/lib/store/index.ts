@@ -4,4 +4,4 @@ import { createSupabaseStore } from './supabase'
 import type { DataStore } from './types'
 
 export const store: DataStore = supabase ? createSupabaseStore(supabase) : localStore
-export type { DataStore, NewItem, NewLog, NewSession, NewSong, NewTopic } from './types'
+export type { DataStore, NewItem, NewLog, NewNote, NewSession, NewSong, NewTopic } from './types'

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { LogEntry, Session, Song, Topic } from '../types'
-import type { DataStore, NewItem, NewLog, NewSession, NewSong, NewTopic } from './types'
+import type { LogEntry, Note, Session, Song, Topic } from '../types'
+import type { DataStore, NewItem, NewLog, NewNote, NewSession, NewSong, NewTopic } from './types'
 
-// Tables: topics, songs, sessions, log_entries. See supabase/schema.sql.
+// Tables: topics, songs, sessions, log_entries, notes. See supabase/schema.sql.
 // user_id is filled by a column default (auth.uid()) and scoped by RLS.
 export function createSupabaseStore(sb: SupabaseClient): DataStore {
   const fail = (e: { message: string } | null) => {
@@ -11,7 +11,7 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
 
   return {
     async load() {
-      const [t, s, ss, l] = await Promise.all([
+      const [t, s, ss, l, n] = await Promise.all([
         sb.from('topics').select('*').order('sort').order('created_at'),
         sb.from('songs').select('*').order('sort').order('created_at'),
         sb
@@ -24,6 +24,7 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
           .select('*')
           .order('date', { ascending: false })
           .order('created_at', { ascending: false }),
+        sb.from('notes').select('*').order('created_at'),
       ])
       fail(t.error)
       fail(s.error)
@@ -33,11 +34,16 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
       }
       fail(ss.error)
       fail(l.error)
+      if (n.error?.code === '42P01' || n.error?.code === 'PGRST205') {
+        throw new Error('Run supabase/migrations/005_notes.sql in the Supabase SQL editor, then reload.')
+      }
+      fail(n.error)
       return {
         topics: (t.data ?? []) as Topic[],
         songs: (s.data ?? []) as Song[],
         sessions: (ss.data ?? []) as Session[],
         log: (l.data ?? []) as LogEntry[],
+        notes: (n.data ?? []) as Note[],
       }
     },
 
@@ -95,6 +101,18 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
     async deleteSession(id) {
       // lines go with it (on delete cascade)
       fail((await sb.from('sessions').delete().eq('id', id)).error)
+    },
+
+    async addNote(item: NewNote) {
+      const { data, error } = await sb.from('notes').insert(item).select('*').single()
+      fail(error)
+      return data as Note
+    },
+    async updateNote(id, patch) {
+      fail((await sb.from('notes').update(patch).eq('id', id)).error)
+    },
+    async deleteNote(id) {
+      fail((await sb.from('notes').delete().eq('id', id)).error)
     },
 
     async addLog(item: NewLog) {

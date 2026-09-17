@@ -56,9 +56,23 @@ export interface LogEntry {
   created_at: string
 }
 
+/** A sticky note on the screen. Stuck ones float over every page; peeled ones wait in the pocket. */
+export interface Note {
+  id: string
+  text: string
+  color: NoteColor
+  x: number // viewport px from the left
+  y: number // viewport px from the top
+  rotate: number // degrees, a little askew
+  stuck: boolean
+  created_at: string
+}
+export type NoteColor = 'yellow' | 'pink' | 'cyan' | 'lime'
+
 export interface Snapshot {
   topics: Topic[]
   songs: Song[]
   sessions: Session[]
   log: LogEntry[]
+  notes: Note[]
 }

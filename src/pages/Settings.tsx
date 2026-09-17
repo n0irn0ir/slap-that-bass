@@ -9,13 +9,13 @@ import { useData } from '../state/DataContext'
 
 export function Settings() {
   const { user, mode, signOut, avatar, setAvatar } = useAuth()
-  const { topics, songs, sessions, log, restoreSampleTopics, importSnapshot } = useData()
+  const { topics, songs, sessions, log, notes, restoreSampleTopics, importSnapshot } = useData()
   const { t, lang, setLang } = useT()
   const [msg, setMsg] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   function exportJSON() {
-    const snap: Snapshot = { topics, songs, sessions, log }
+    const snap: Snapshot = { topics, songs, sessions, log, notes }
     const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -156,7 +156,7 @@ export function Settings() {
               <button
                 className="btn ghost sm"
                 onClick={() => {
-                  if (confirm(t('settings.clearConfirm'))) importSnapshot({ topics: [], songs: [], sessions: [], log: [] })
+                  if (confirm(t('settings.clearConfirm'))) importSnapshot({ topics: [], songs: [], sessions: [], log: [], notes: [] })
                 }}
               >
                 {t('settings.clearBtn')}

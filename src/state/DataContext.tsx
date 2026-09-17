@@ -10,8 +10,8 @@ import {
 } from 'react'
 import { CATEGORIES } from '../lib/categories'
 import { SEED_TOPICS } from '../lib/seedTopics'
-import { store, type NewItem, type NewSession, type NewSong, type NewTopic } from '../lib/store'
-import type { LogEntry, Session, Snapshot, Song, Topic } from '../lib/types'
+import { store, type NewItem, type NewNote, type NewSession, type NewSong, type NewTopic } from '../lib/store'
+import type { LogEntry, Note, Session, Snapshot, Song, Topic } from '../lib/types'
 import { useAuth } from './AuthContext'
 
 interface DataValue extends Snapshot {
@@ -33,6 +33,10 @@ interface DataValue extends Snapshot {
   updateSession(id: string, patch: Partial<NewSession>, items: NewItem[]): Promise<void>
   deleteSession(id: string): Promise<void>
 
+  addNote(n: NewNote): Promise<Note | null>
+  updateNote(id: string, patch: Partial<NewNote>): Promise<void>
+  deleteNote(id: string): Promise<void>
+
   importSnapshot(snap: Snapshot): Promise<void>
 }
 
@@ -53,7 +57,7 @@ function seedItems(existing: Topic[]): NewTopic[] {
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
-  const [snap, setSnap] = useState<Snapshot>({ topics: [], songs: [], sessions: [], log: [] })
+  const [snap, setSnap] = useState<Snapshot>({ topics: [], songs: [], sessions: [], log: [], notes: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -183,6 +187,24 @@ export function DataProvider({ children }: { children: ReactNode }) {
           await startSongs(items)
         }),
       deleteSession: (id) => run(() => store.deleteSession(id)),
+
+      addNote: async (n) => {
+        let created: Note | null = null
+        await run(async () => {
+          created = await store.addNote(n)
+        })
+        return created
+      },
+      // Position and text edits are frequent and already applied on screen: no reload afterwards.
+      updateNote: async (id, p) => {
+        setSnap((s) => ({ ...s, notes: s.notes.map((n) => (n.id === id ? { ...n, ...p } : n)) }))
+        try {
+          await store.updateNote(id, p)
+        } catch (e) {
+          setError(e instanceof Error ? e.message : String(e))
+        }
+      },
+      deleteNote: (id) => run(() => store.deleteNote(id)),
 
       importSnapshot: (s) => run(async () => store.replaceAll?.(s)),
     }),

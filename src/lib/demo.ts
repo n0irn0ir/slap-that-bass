@@ -94,5 +94,5 @@ export function buildDemo(topics: Topic[]): Snapshot {
     })
   }
 
-  return { topics, songs, sessions, log }
+  return { topics, songs, sessions, log, notes: [] }
 }

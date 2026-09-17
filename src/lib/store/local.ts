@@ -1,5 +1,5 @@
-import type { LogEntry, Session, Snapshot, Song, Topic } from '../types'
-import type { DataStore, NewItem, NewLog, NewSession, NewSong, NewTopic } from './types'
+import type { LogEntry, Note, Session, Snapshot, Song, Topic } from '../types'
+import type { DataStore, NewItem, NewLog, NewNote, NewSession, NewSong, NewTopic } from './types'
 
 const KEY = 'slapthatbass.v1'
 const OLD_KEY = 'lowend.v1'
@@ -11,7 +11,7 @@ function read(): Snapshot {
   } catch {
     /* corrupted or blocked storage: start empty */
   }
-  return { topics: [], songs: [], sessions: [], log: [] }
+  return { topics: [], songs: [], sessions: [], log: [], notes: [] }
 }
 
 // Older snapshots (exports included) have no sessions and no song/fixed fields on lines.
@@ -20,6 +20,7 @@ function normalize(raw: Partial<Snapshot>): Snapshot {
     topics: raw.topics ?? [],
     songs: (raw.songs ?? []).map((x) => ({ ...x, tab: x.tab ?? null })),
     sessions: raw.sessions ?? [],
+    notes: raw.notes ?? [],
     log: (raw.log ?? []).map((l) => ({
       ...l,
       song_id: l.song_id ?? null,
@@ -107,6 +108,24 @@ export const localStore: DataStore = {
     const snap = read()
     snap.sessions = snap.sessions.filter((s) => s.id !== id)
     snap.log = snap.log.filter((l) => l.session_id !== id)
+    write(snap)
+  },
+
+  async addNote(item: NewNote) {
+    const snap = read()
+    const n: Note = { ...item, id: uid(), created_at: now() }
+    snap.notes.push(n)
+    write(snap)
+    return n
+  },
+  async updateNote(id, patch) {
+    const snap = read()
+    snap.notes = snap.notes.map((n) => (n.id === id ? { ...n, ...patch } : n))
+    write(snap)
+  },
+  async deleteNote(id) {
+    const snap = read()
+    snap.notes = snap.notes.filter((n) => n.id !== id)
     write(snap)
   },
 

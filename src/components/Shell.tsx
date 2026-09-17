@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Avatar } from './Avatar'
 import { LevelUpWatcher, RankBadge } from './Ranks'
 import { CursorDot } from './fun'
+import { StickyNotes } from './StickyNotes'
 import { useData } from '../state/DataContext'
 import { useT } from '../lib/i18n'
 
@@ -24,6 +25,7 @@ export function Shell() {
     <div className="shell">
       <CursorDot />
       <LevelUpWatcher totalMinutes={totalMinutes} ready={!loading} />
+      {!loading && <StickyNotes />}
       <header className="topbar">
         <div className="topbar-inner">
           <nav className="nav" aria-label="Main">
