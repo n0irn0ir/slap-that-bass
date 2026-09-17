@@ -2127,6 +2127,226 @@ button {
   opacity: 1;
 }
 
+/* one journal entry (a session) in the timeline */
+.sess {
+  padding: 12px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.sess:last-child {
+  border-bottom: 0;
+}
+.sess-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.sess-title {
+  font-weight: 500;
+}
+.sess-meta {
+  flex: none;
+  color: var(--ink-2);
+}
+.sess-meta .face-sm {
+  margin: 0 8px 0 0;
+}
+.sess-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.line-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px 0 8px;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line));
+  background: color-mix(in srgb, var(--c) 10%, var(--paper));
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.line-chip .cat-dot {
+  margin-right: 6px;
+}
+.line-min {
+  font-family: var(--mono);
+  color: var(--ink-2);
+  margin-left: 7px;
+}
+.sess .note {
+  color: var(--ink-2);
+  margin-top: 8px;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+.sess .acts {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sess:hover .acts,
+.sess:focus-within .acts {
+  opacity: 1;
+}
+.recent-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* the entry form */
+.modal.entry-form {
+  width: min(640px, 100%);
+}
+.entry-title {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line-2);
+  border-radius: 0;
+  padding: 4px 0 8px;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  background: transparent;
+}
+.entry-title:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.entry-title::placeholder {
+  color: var(--ink-3);
+}
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.line {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr) 92px 28px;
+  gap: 8px;
+  align-items: center;
+}
+.cat-pick {
+  position: relative;
+}
+.cat-pick-btn {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line-2);
+  background: color-mix(in srgb, var(--c) 10%, var(--paper));
+  color: var(--cd);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: border-color 0.2s, background 0.2s;
+}
+.cat-pick-btn .cat-dot {
+  margin-right: 7px;
+  flex: none;
+}
+.cat-pick-btn:hover:not(:disabled) {
+  border-color: var(--c);
+}
+.cat-pick-btn:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+.cat-list {
+  min-width: 200px;
+  right: auto;
+}
+.cat-list li {
+  display: flex;
+  align-items: center;
+}
+.combo-list li.group {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 8px 10px 4px;
+  cursor: default;
+}
+.combo-list li.group:hover {
+  background: none;
+}
+.combo-list li.song {
+  display: flex;
+  align-items: center;
+}
+.line-min-in {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.line-min-in input {
+  width: 54px;
+  height: 40px;
+  padding: 0 8px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  font-family: var(--mono);
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.line-min-in input::-webkit-outer-spin-button,
+.line-min-in input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.line-min-in input::placeholder {
+  color: var(--line-2);
+}
+.line-min-in input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.line-x {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  font-size: 13px;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+.line-x:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+.line-x.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.lines-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+.lines-foot .plus {
+  font-weight: 600;
+}
+
 /* ---------- settings ---------- */
 
 .settings {

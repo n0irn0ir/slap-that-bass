@@ -282,7 +282,7 @@ function TopicRow({ topic, minutes, max }: { topic: Topic; minutes: number; max:
         <button
           type="button"
           className="link-btn"
-          onClick={() => nav('/log', { state: { category: topic.category, topic_id: topic.id } })}
+          onClick={() => nav('/journal', { state: { category: topic.category, topic_id: topic.id } })}
         >
           {t('topics.log')}
         </button>

@@ -1,5 +1,5 @@
-import type { LogEntry, Snapshot, Song, Topic } from '../types'
-import type { DataStore, NewLog, NewSong, NewTopic } from './types'
+import type { LogEntry, Session, Snapshot, Song, Topic } from '../types'
+import type { DataStore, NewItem, NewLog, NewSession, NewSong, NewTopic } from './types'
 
 const KEY = 'slapthatbass.v1'
 const OLD_KEY = 'lowend.v1'
@@ -7,11 +7,26 @@ const OLD_KEY = 'lowend.v1'
 function read(): Snapshot {
   try {
     const raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY)
-    if (raw) return JSON.parse(raw) as Snapshot
+    if (raw) return normalize(JSON.parse(raw) as Partial<Snapshot>)
   } catch {
     /* corrupted or blocked storage: start empty */
   }
-  return { topics: [], songs: [], log: [] }
+  return { topics: [], songs: [], sessions: [], log: [] }
+}
+
+// Older snapshots (exports included) have no sessions and no song/fixed fields on lines.
+function normalize(raw: Partial<Snapshot>): Snapshot {
+  return {
+    topics: raw.topics ?? [],
+    songs: raw.songs ?? [],
+    sessions: raw.sessions ?? [],
+    log: (raw.log ?? []).map((l) => ({
+      ...l,
+      song_id: l.song_id ?? null,
+      fixed: l.fixed ?? false,
+      session_id: l.session_id ?? null,
+    })),
+  }
 }
 
 function write(snap: Snapshot) {
@@ -62,6 +77,36 @@ export const localStore: DataStore = {
   async deleteSong(id) {
     const snap = read()
     snap.songs = snap.songs.filter((s) => s.id !== id)
+    snap.log = snap.log.map((l) => (l.song_id === id ? { ...l, song_id: null } : l))
+    write(snap)
+  },
+
+  async addSession(session: NewSession, items: NewItem[]) {
+    const snap = read()
+    const s: Session = { ...session, id: uid(), created_at: now() }
+    snap.sessions.push(s)
+    snap.log.push(...items.map((it) => lineOf(s, it)))
+    write(snap)
+    return s
+  },
+  async updateSession(id, patch, items) {
+    const snap = read()
+    snap.sessions = snap.sessions.map((s) => (s.id === id ? { ...s, ...patch } : s))
+    const s = snap.sessions.find((x) => x.id === id)
+    if (!s) return
+    const keep = new Set(items.map((it) => it.id).filter(Boolean))
+    snap.log = snap.log.filter((l) => l.session_id !== id || keep.has(l.id))
+    for (const it of items) {
+      const { id: lid, ...fields } = it
+      if (lid) snap.log = snap.log.map((l) => (l.id === lid ? { ...l, ...fields, date: s.date } : l))
+      else snap.log.push(lineOf(s, it))
+    }
+    write(snap)
+  },
+  async deleteSession(id) {
+    const snap = read()
+    snap.sessions = snap.sessions.filter((s) => s.id !== id)
+    snap.log = snap.log.filter((l) => l.session_id !== id)
     write(snap)
   },
 
@@ -84,6 +129,22 @@ export const localStore: DataStore = {
   },
 
   async replaceAll(snap) {
-    write(snap)
+    write(normalize(snap))
   },
+}
+
+function lineOf(s: Session, it: NewItem): LogEntry {
+  return {
+    id: uid(),
+    date: s.date,
+    category: it.category,
+    topic_id: it.topic_id,
+    song_id: it.song_id,
+    minutes: it.minutes,
+    fixed: it.fixed,
+    note: null,
+    rating: null,
+    session_id: s.id,
+    created_at: now(),
+  }
 }

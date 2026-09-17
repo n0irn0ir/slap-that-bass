@@ -1,6 +1,6 @@
 import { CATEGORIES } from './categories'
 import { daysAgoISO } from './format'
-import type { CategoryId, Snapshot, Song, Topic } from './types'
+import type { CategoryId, Session, Snapshot, Song, Topic } from './types'
 
 // Sample data for looking around in local mode. Not anyone's real preferences.
 const SAMPLE_SONGS: Array<Pick<Song, 'artist' | 'title' | 'status' | 'slot'>> = [
@@ -42,27 +42,6 @@ export function buildDemo(topics: Topic[]): Snapshot {
     return 'technique'
   }
 
-  const log: Snapshot['log'] = []
-  for (let d = 34; d >= 0; d--) {
-    if (rand() < 0.35) continue // rest days
-    const blocks = 1 + Math.floor(rand() * 3)
-    for (let b = 0; b < blocks; b++) {
-      const category = pickCat()
-      const pool = topics.filter((t) => t.category === category)
-      const topic = pool.length && rand() < 0.8 ? pool[Math.floor(rand() * Math.min(pool.length, 5))] : null
-      log.push({
-        id: crypto.randomUUID(),
-        date: daysAgoISO(d),
-        category,
-        topic_id: topic?.id ?? null,
-        minutes: [5, 8, 10, 10, 12, 15, 20, 25][Math.floor(rand() * 8)],
-        note: rand() < 0.3 ? 'Kept it slow. Clean attacks before speed.' : null,
-        rating: rand() < 0.7 ? 2 + Math.floor(rand() * 4) : null,
-        created_at: now,
-      })
-    }
-  }
-
   const songs: Song[] = SAMPLE_SONGS.map((s, i) => ({
     ...s,
     id: crypto.randomUUID(),
@@ -72,5 +51,47 @@ export function buildDemo(topics: Topic[]): Snapshot {
     updated_at: now,
   }))
 
-  return { topics, songs, log }
+  const TITLES = ['Slow and clean', 'Groove night', 'Fretboard drill', 'Song day', null, null, null]
+  const sessions: Session[] = []
+  const log: Snapshot['log'] = []
+  for (let d = 34; d >= 0; d--) {
+    if (rand() < 0.35) continue // rest days
+    const date = daysAgoISO(d)
+    const sid = crypto.randomUUID()
+    const blocks = 1 + Math.floor(rand() * 3)
+    let total = 0
+    for (let b = 0; b < blocks; b++) {
+      const minutes = [5, 8, 10, 10, 12, 15, 20, 25][Math.floor(rand() * 8)]
+      total += minutes
+      const isSong = rand() < 0.2
+      const category = isSong ? 'fun' : pickCat()
+      const pool = topics.filter((t) => t.category === category)
+      const topic = !isSong && pool.length && rand() < 0.8 ? pool[Math.floor(rand() * Math.min(pool.length, 5))] : null
+      const song = isSong ? songs[Math.floor(rand() * songs.length)] : null
+      log.push({
+        id: crypto.randomUUID(),
+        date,
+        category,
+        topic_id: topic?.id ?? null,
+        song_id: song?.id ?? null,
+        minutes,
+        fixed: true,
+        note: null,
+        rating: null,
+        session_id: sid,
+        created_at: now,
+      })
+    }
+    sessions.push({
+      id: sid,
+      date,
+      title: TITLES[Math.floor(rand() * TITLES.length)],
+      note: rand() < 0.3 ? 'Kept it slow. Clean attacks before speed.' : null,
+      rating: rand() < 0.7 ? 2 + Math.floor(rand() * 4) : null,
+      minutes: total,
+      created_at: now,
+    })
+  }
+
+  return { topics, songs, sessions, log }
 }

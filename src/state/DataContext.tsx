@@ -10,8 +10,8 @@ import {
 } from 'react'
 import { CATEGORIES } from '../lib/categories'
 import { SEED_TOPICS } from '../lib/seedTopics'
-import { store, type NewLog, type NewSong, type NewTopic } from '../lib/store'
-import type { LogEntry, Snapshot, Song, Topic } from '../lib/types'
+import { store, type NewItem, type NewSession, type NewSong, type NewTopic } from '../lib/store'
+import type { LogEntry, Session, Snapshot, Song, Topic } from '../lib/types'
 import { useAuth } from './AuthContext'
 
 interface DataValue extends Snapshot {
@@ -29,9 +29,9 @@ interface DataValue extends Snapshot {
   updateSong(id: string, patch: Partial<NewSong>): Promise<void>
   deleteSong(id: string): Promise<void>
 
-  addLog(l: NewLog): Promise<void>
-  updateLog(id: string, patch: Partial<NewLog>): Promise<void>
-  deleteLog(id: string): Promise<void>
+  addSession(s: NewSession, items: NewItem[]): Promise<Session | null>
+  updateSession(id: string, patch: Partial<NewSession>, items: NewItem[]): Promise<void>
+  deleteSession(id: string): Promise<void>
 
   importSnapshot(snap: Snapshot): Promise<void>
 }
@@ -53,7 +53,7 @@ function seedItems(existing: Topic[]): NewTopic[] {
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
-  const [snap, setSnap] = useState<Snapshot>({ topics: [], songs: [], log: [] })
+  const [snap, setSnap] = useState<Snapshot>({ topics: [], songs: [], sessions: [], log: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -81,6 +81,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
         })
         if (dupes.length) {
           for (const d of dupes) await store.deleteTopic(d.id)
+          s = await store.load()
+        }
+        // Lines logged before sessions existed each become a one-line session (they were
+        // separate sittings), keeping their note and rating.
+        const orphans = s.log.filter((l) => !l.session_id)
+        if (orphans.length) {
+          for (const l of orphans) {
+            const sess = await store.addSession(
+              { date: l.date, title: null, note: l.note, rating: l.rating, minutes: Math.max(1, l.minutes) },
+              [],
+            )
+            await store.updateLog(l.id, { session_id: sess.id, fixed: true })
+          }
           s = await store.load()
         }
         setSnap(s)
@@ -145,9 +158,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
       updateSong: (id, p) => run(() => store.updateSong(id, p)),
       deleteSong: (id) => run(() => store.deleteSong(id)),
 
-      addLog: (l) => run(() => store.addLog(l)),
-      updateLog: (id, p) => run(() => store.updateLog(id, p)),
-      deleteLog: (id) => run(() => store.deleteLog(id)),
+      addSession: async (sess, items) => {
+        let created: Session | null = null
+        await run(async () => {
+          created = await store.addSession(sess, items)
+        })
+        return created
+      },
+      updateSession: (id, p, items) => run(() => store.updateSession(id, p, items)),
+      deleteSession: (id) => run(() => store.deleteSession(id)),
 
       importSnapshot: (s) => run(async () => store.replaceAll?.(s)),
     }),

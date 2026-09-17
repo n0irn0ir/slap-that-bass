@@ -10,7 +10,7 @@ const LINKS = [
   { to: '/', key: 'nav.progress' },
   { to: '/topics', key: 'nav.topics' },
   { to: '/songs', key: 'nav.songs' },
-  { to: '/log', key: 'nav.log' },
+  { to: '/journal', key: 'nav.journal' },
   { to: '/settings', key: 'nav.settings' },
 ] as const
 

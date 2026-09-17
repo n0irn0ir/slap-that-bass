@@ -1,7 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Shell } from './components/Shell'
 import { Dashboard } from './pages/Dashboard'
-import { Log } from './pages/Log'
+import { Journal } from './pages/Journal'
 import { Login } from './pages/Login'
 import { Settings } from './pages/Settings'
 import { Songs } from './pages/Songs'
@@ -21,7 +21,8 @@ function Gate() {
           <Route index element={<Dashboard />} />
           <Route path="topics" element={<Topics />} />
           <Route path="songs" element={<Songs />} />
-          <Route path="log" element={<Log />} />
+          <Route path="journal" element={<Journal />} />
+          <Route path="log" element={<Navigate to="/journal" replace />} />
           <Route path="settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { LogEntry, Song, Topic } from '../types'
-import type { DataStore, NewLog, NewSong, NewTopic } from './types'
+import type { LogEntry, Session, Song, Topic } from '../types'
+import type { DataStore, NewItem, NewLog, NewSession, NewSong, NewTopic } from './types'
 
-// Tables: topics, songs, log_entries. See supabase/schema.sql.
+// Tables: topics, songs, sessions, log_entries. See supabase/schema.sql.
 // user_id is filled by a column default (auth.uid()) and scoped by RLS.
 export function createSupabaseStore(sb: SupabaseClient): DataStore {
   const fail = (e: { message: string } | null) => {
@@ -11,9 +11,14 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
 
   return {
     async load() {
-      const [t, s, l] = await Promise.all([
+      const [t, s, ss, l] = await Promise.all([
         sb.from('topics').select('*').order('sort').order('created_at'),
         sb.from('songs').select('*').order('sort').order('created_at'),
+        sb
+          .from('sessions')
+          .select('*')
+          .order('date', { ascending: false })
+          .order('created_at', { ascending: false }),
         sb
           .from('log_entries')
           .select('*')
@@ -22,10 +27,16 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
       ])
       fail(t.error)
       fail(s.error)
+      if (ss.error?.code === '42P01') {
+        // the sessions table is missing: the SQL migration was not run yet
+        throw new Error('Run supabase/migrations/003_sessions.sql in the Supabase SQL editor, then reload.')
+      }
+      fail(ss.error)
       fail(l.error)
       return {
         topics: (t.data ?? []) as Topic[],
         songs: (s.data ?? []) as Song[],
+        sessions: (ss.data ?? []) as Session[],
         log: (l.data ?? []) as LogEntry[],
       }
     },
@@ -58,6 +69,34 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
       fail((await sb.from('songs').delete().eq('id', id)).error)
     },
 
+    async addSession(session: NewSession, items: NewItem[]) {
+      const { data, error } = await sb.from('sessions').insert(session).select('*').single()
+      fail(error)
+      const s = data as Session
+      if (items.length) fail((await sb.from('log_entries').insert(items.map((it) => lineOf(s, it)))).error)
+      return s
+    },
+    async updateSession(id, patch, items) {
+      const { data, error } = await sb.from('sessions').update(patch).eq('id', id).select('*').single()
+      fail(error)
+      const s = data as Session
+      const keep = items.map((it) => it.id).filter((x): x is string => !!x)
+      let del = sb.from('log_entries').delete().eq('session_id', id)
+      if (keep.length) del = del.not('id', 'in', `(${keep.join(',')})`)
+      fail((await del).error)
+      const fresh = items.filter((it) => !it.id).map((it) => lineOf(s, it))
+      if (fresh.length) fail((await sb.from('log_entries').insert(fresh)).error)
+      for (const it of items) {
+        if (!it.id) continue
+        const { id: lid, ...fields } = it
+        fail((await sb.from('log_entries').update({ ...fields, date: s.date }).eq('id', lid)).error)
+      }
+    },
+    async deleteSession(id) {
+      // lines go with it (on delete cascade)
+      fail((await sb.from('sessions').delete().eq('id', id)).error)
+    },
+
     async addLog(item: NewLog) {
       const { data, error } = await sb.from('log_entries').insert(item).select('*').single()
       fail(error)
@@ -69,5 +108,19 @@ export function createSupabaseStore(sb: SupabaseClient): DataStore {
     async deleteLog(id) {
       fail((await sb.from('log_entries').delete().eq('id', id)).error)
     },
+  }
+}
+
+function lineOf(s: Session, it: NewItem): NewLog {
+  return {
+    date: s.date,
+    category: it.category,
+    topic_id: it.topic_id,
+    song_id: it.song_id,
+    minutes: it.minutes,
+    fixed: it.fixed,
+    note: null,
+    rating: null,
+    session_id: s.id,
   }
 }

@@ -7,12 +7,12 @@ import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
 import { Bolts, Jiggle, Wave, useTypedWord } from '../components/fun'
 import { Burst, Counter } from '../components/ui'
-import { CATEGORY_BY_ID } from '../lib/categories'
 import { daysAgoISO, fmtDate, fmtMinutes } from '../lib/format'
 import { STRINGS, pluck as play } from '../lib/pluck'
 import { face } from '../lib/rating'
+import { sessionLabel } from '../lib/sessions'
 import { countByStatus, minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
-import { catText, plural, useT } from '../lib/i18n'
+import { plural, useT } from '../lib/i18n'
 
 const fadeUp = (i: number) => ({
   initial: { opacity: 0, y: 10 },
@@ -21,7 +21,7 @@ const fadeUp = (i: number) => ({
 })
 
 export function Dashboard() {
-  const { log, songs, topics, loading } = useData()
+  const { log, sessions: allSessions, songs, topics, loading } = useData()
   const nav = useNavigate()
   const { t } = useT()
   const strum = useAnimation()
@@ -80,17 +80,18 @@ export function Dashboard() {
   }
 
   const totalMin = log.reduce((a, l) => a + l.minutes, 0)
-  const sessions = new Set(log.map((l) => l.date)).size
+  const sessions = allSessions.length
   const since = daysAgoISO(6)
-  const week = log.filter((l) => l.date >= since)
-  const weekMin = week.reduce((a, l) => a + l.minutes, 0)
-  const weekSessions = new Set(week.map((l) => l.date)).size
+  const weekMin = log.filter((l) => l.date >= since).reduce((a, l) => a + l.minutes, 0)
+  const weekSessions = allSessions.filter((s) => s.date >= since).length
   const byCat = minutesByCategory(log)
   const byTopic = minutesByTopic(log)
   const touched = topics.filter((t) => (byTopic[t.id] ?? 0) > 0).length
   const status = countByStatus(songs)
-  const topicName = (id: string | null) => topics.find((t) => t.id === id)?.title
-  const recent = log.slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.created_at.localeCompare(a.created_at))).slice(0, 6)
+  const recent = allSessions
+    .slice()
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.created_at.localeCompare(a.created_at)))
+    .slice(0, 6)
 
 
   if (loading) return null
@@ -167,7 +168,7 @@ export function Dashboard() {
           </AnimatePresence>
           <motion.div {...fadeUp(2)} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <Pep />
-            <Link to="/log" state={{ open: true }} className="btn">
+            <Link to="/journal" state={{ open: true }} className="btn">
               {t('dash.logTime')}
             </Link>
           </motion.div>
@@ -231,25 +232,19 @@ export function Dashboard() {
               <div className="empty small">{t('dash.recentEmpty')}</div>
             ) : (
               <div className="recent">
-                {recent.map((l) => (
-                  <div key={l.id} className="recent-row">
-                    <span className="t">{fmtDate(l.date)}</span>
-                    <span>
-                      <span className="cat-dot" style={{ background: CATEGORY_BY_ID[l.category].color }} />
-                      {catText(l.category).short}
-                      {l.topic_id && topicName(l.topic_id) && (
-                        <span className="muted"> · {topicName(l.topic_id)}</span>
-                      )}
-                    </span>
+                {recent.map((s) => (
+                  <div key={s.id} className="recent-row">
+                    <span className="t">{fmtDate(s.date)}</span>
+                    <span className="recent-title">{sessionLabel(s)}</span>
                     <span className="mono small">
-                      {face(l.rating) && <span className="face-sm">{face(l.rating)}</span>}
-                      {fmtMinutes(l.minutes)}
+                      {face(s.rating) && <span className="face-sm">{face(s.rating)}</span>}
+                      {fmtMinutes(s.minutes)}
                     </span>
                   </div>
                 ))}
               </div>
             )}
-            <Link to="/log" className="link-btn" style={{ display: 'inline-block', marginTop: 12 }}>
+            <Link to="/journal" className="link-btn" style={{ display: 'inline-block', marginTop: 12 }}>
               {t('dash.fullLog')}
             </Link>
           </motion.section>

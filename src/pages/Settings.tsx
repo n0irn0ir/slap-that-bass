@@ -9,13 +9,13 @@ import { useData } from '../state/DataContext'
 
 export function Settings() {
   const { user, mode, signOut, avatar, setAvatar } = useAuth()
-  const { topics, songs, log, restoreSampleTopics, importSnapshot } = useData()
+  const { topics, songs, sessions, log, restoreSampleTopics, importSnapshot } = useData()
   const { t, lang, setLang } = useT()
   const [msg, setMsg] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   function exportJSON() {
-    const snap: Snapshot = { topics, songs, log }
+    const snap: Snapshot = { topics, songs, sessions, log }
     const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -29,6 +29,8 @@ export function Settings() {
     try {
       const snap = JSON.parse(await file.text()) as Snapshot
       if (!Array.isArray(snap.topics) || !Array.isArray(snap.songs) || !Array.isArray(snap.log))
+        throw new Error(t('settings.notExport'))
+      if (snap.sessions !== undefined && !Array.isArray(snap.sessions))
         throw new Error(t('settings.notExport'))
       if (!confirm(t('settings.importConfirm'))) return
       await importSnapshot(snap)
@@ -88,7 +90,7 @@ export function Settings() {
             <span>
               {t('settings.export')}
               <div className="small muted">
-                {t('settings.counts', { t: topics.length, s: songs.length, l: log.length })}
+                {t('settings.counts', { t: topics.length, s: songs.length, l: sessions.length })}
               </div>
             </span>
             <button className="btn ghost sm" onClick={exportJSON}>
@@ -154,7 +156,7 @@ export function Settings() {
               <button
                 className="btn ghost sm"
                 onClick={() => {
-                  if (confirm(t('settings.clearConfirm'))) importSnapshot({ topics: [], songs: [], log: [] })
+                  if (confirm(t('settings.clearConfirm'))) importSnapshot({ topics: [], songs: [], sessions: [], log: [] })
                 }}
               >
                 {t('settings.clearBtn')}
