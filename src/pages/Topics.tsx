@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react'
+import { createContext, useContext, useEffect, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Sticker } from '../components/fun'
 import { Icon } from '../components/Icon'
+import { TopicHistory } from '../components/TopicHistory'
 import { Jelly, listItem } from '../components/ui'
 import { CATEGORIES, type Category } from '../lib/categories'
 import { fmtMinutes, pct } from '../lib/format'
@@ -41,8 +42,12 @@ const PEP_RU = [
   'ты не отстаёшь. тут нет очереди.',
 ]
 
+// Which topic's history is open; set from any row, rendered once at page level.
+const HistoryCtx = createContext<(id: string) => void>(() => {})
+
 export function Topics() {
   const { topics, log, loading, addTopic } = useData()
+  const [history, setHistory] = useState<string | null>(null)
   const { hash } = useLocation()
   const { t, lang } = useT()
   const [open, setOpen] = useState(false)
@@ -74,7 +79,8 @@ export function Topics() {
   const pep = lang === 'ru' ? PEP_RU : PEP_EN
 
   return (
-    <>
+    <HistoryCtx.Provider value={setHistory}>
+      <TopicHistory topicId={history} onClose={() => setHistory(null)} />
       {/* stickers live in the empty space: right of the heading, and in the side margins on wide screens */}
       <Sticker src={`${B}st-hand3b.png`} width={140} rotate={8} bubble="below" className="over-bar" style={{ right: 500, top: -30 }} lines={pep} />
       <Sticker src={`${B}st-ritard.png`} width={160} rotate={-6} bubble="below" style={{ right: 320, top: 50 }} delay={0.15} lines={pep} />
@@ -152,7 +158,7 @@ export function Topics() {
           />
         ))}
       </div>
-    </>
+    </HistoryCtx.Provider>
   )
 }
 
@@ -239,6 +245,7 @@ function CategoryBlock({
 
 function TopicRow({ topic, minutes, max }: { topic: Topic; minutes: number; max: number }) {
   const { updateTopic, deleteTopic } = useData()
+  const openHistory = useContext(HistoryCtx)
   const nav = useNavigate()
   const { t } = useT()
   const [editing, setEditing] = useState(false)
@@ -275,10 +282,15 @@ function TopicRow({ topic, minutes, max }: { topic: Topic; minutes: number; max:
             aria-label={t('topics.titleAria')}
           />
         ) : (
-          <span onDoubleClick={() => setEditing(true)}>{topic.title}</span>
+          <button type="button" className="topic-open" onClick={() => openHistory(topic.id)} onDoubleClick={() => setEditing(true)}>
+            {topic.title}
+          </button>
         )}
       </div>
       <div className="acts">
+        <button type="button" className="link-btn" onClick={() => openHistory(topic.id)}>
+          {t('topics.history')}
+        </button>
         <button
           type="button"
           className="link-btn"

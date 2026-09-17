@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Calendar } from '../components/Calendar'
 import { Toast } from '../components/fun'
+import { Icon } from '../components/Icon'
+import { TopicHistory } from '../components/TopicHistory'
 import { Burst, Jelly, listItem } from '../components/ui'
 import { CATEGORIES, CATEGORY_BY_ID } from '../lib/categories'
 import { fmtDate, fmtMinutes, todayISO } from '../lib/format'
@@ -37,6 +39,8 @@ export function Journal() {
   const [burst, setBurst] = useState(0)
   const [toast, setToast] = useState<{ id: number; text: string }>({ id: 0, text: '' })
   const [flash, setFlash] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [history, setHistory] = useState<string | null>(null)
 
   function jumpTo(iso: string) {
     document.getElementById(`day-${iso}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -55,9 +59,28 @@ export function Journal() {
     if (state) nav('.', { replace: true, state: null })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Search matches the title, the note, and the names of topics / songs on the lines.
+  const q = query.trim().toLowerCase()
+  const shown = useMemo(() => {
+    if (!q) return sessions
+    const topicName = new Map(topics.map((x) => [x.id, x.title.toLowerCase()]))
+    const songNm = new Map(songs.map((x) => [x.id, songName(x).toLowerCase()]))
+    return sessions.filter((s) => {
+      if (s.title?.toLowerCase().includes(q) || s.note?.toLowerCase().includes(q)) return true
+      if (!s.title && sessionLabel(s).toLowerCase().includes(q)) return true
+      return log.some(
+        (l) =>
+          l.session_id === s.id &&
+          ((l.topic_id && topicName.get(l.topic_id)?.includes(q)) ||
+            (l.song_id && songNm.get(l.song_id)?.includes(q)) ||
+            catText(l.category).name.toLowerCase().includes(q)),
+      )
+    })
+  }, [q, sessions, log, topics, songs])
+
   const days = useMemo(() => {
     const map = new Map<string, Session[]>()
-    for (const s of sessions) {
+    for (const s of shown) {
       const arr = map.get(s.date) ?? []
       arr.push(s)
       map.set(s.date, arr)
@@ -69,7 +92,7 @@ export function Journal() {
         items: items.sort((a, b) => b.created_at.localeCompare(a.created_at)),
         total: items.reduce((sum, s) => sum + s.minutes, 0),
       }))
-  }, [sessions])
+  }, [shown])
 
   function openNew() {
     setEditing(null)
@@ -133,10 +156,29 @@ export function Journal() {
       </div>
 
       <Toast id={toast.id}>{toast.text}</Toast>
+      <TopicHistory topicId={history} onClose={() => setHistory(null)} />
 
       <div className="log-layout">
+        <div>
+          {sessions.length > 0 && (
+            <label className="search">
+              <Icon name="search" />
+              <input
+                type="search"
+                value={query}
+                placeholder={t('journal.search')}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label={t('journal.search')}
+              />
+              {q && (
+                <span className="small faint">
+                  {t('journal.found', { n: shown.length })}
+                </span>
+              )}
+            </label>
+          )}
         {days.length === 0 ? (
-          <div className="empty">{t('journal.empty')}</div>
+          <div className="empty">{q ? t('journal.noMatch') : t('journal.empty')}</div>
         ) : (
           <div className="timeline">
             {days.map((d, di) => (
@@ -168,15 +210,18 @@ export function Journal() {
                         {lines.length > 0 && (
                           <div className="sess-lines">
                             {lines.map((l) => (
-                              <span
+                              <button
                                 key={l.id}
-                                className="line-chip"
+                                type="button"
+                                className={`line-chip${l.topic_id ? ' clickable' : ''}`}
                                 style={{ '--c': CATEGORY_BY_ID[l.category].color } as CSSProperties}
+                                onClick={() => l.topic_id && setHistory(l.topic_id)}
+                                tabIndex={l.topic_id ? 0 : -1}
                               >
                                 <span className="cat-dot" style={{ background: CATEGORY_BY_ID[l.category].color }} />
                                 {lineName(l)}
                                 {lines.length > 1 && <span className="line-min">{l.minutes}{t('unit.m')}</span>}
-                              </span>
+                              </button>
                             ))}
                           </div>
                         )}
@@ -201,6 +246,7 @@ export function Journal() {
             ))}
           </div>
         )}
+        </div>
         <aside className="log-side">
           <Calendar log={log} onPick={jumpTo} onNew={newOn} />
         </aside>

@@ -45,6 +45,7 @@ export function Songs() {
   const [status, setStatus] = useState<SongStatus>('backlog')
   const [slot, setSlot] = useState<SongSlot>(null)
   const [link, setLink] = useState('')
+  const [tab, setTab] = useState('')
   const [over, setOver] = useState<SongStatus | null>(null)
   const [cheer, setCheer] = useState(0)
   const [notes, setNotes] = useState(0)
@@ -81,11 +82,13 @@ export function Songs() {
       status,
       slot,
       link: link.trim() || null,
+      tab: tab.trim() || null,
       sort: songs.length,
     })
     setArtist('')
     setTitle('')
     setLink('')
+    setTab('')
     setSlot(null)
   }
 
@@ -161,6 +164,10 @@ export function Songs() {
           <span className="label">{t('songs.link')}</span>
           <input className="input" type="url" placeholder={t('songs.linkPlaceholder')} value={link} onChange={(e) => setLink(e.target.value)} />
         </label>
+        <label className="field">
+          <span className="label">{t('songs.tab')}</span>
+          <input className="input" type="url" placeholder={t('songs.tabPlaceholder')} value={tab} onChange={(e) => setTab(e.target.value)} />
+        </label>
         <Jelly className="btn" type="submit" disabled={!artist.trim() || !title.trim()}>
           {t('songs.add')}
         </Jelly>
@@ -220,6 +227,7 @@ function SongCard({ song }: { song: Song }) {
   const [title, setTitle] = useState(song.title)
   const [slot, setSlot] = useState<SongSlot>(song.slot)
   const [link, setLink] = useState(song.link ?? '')
+  const [tab, setTab] = useState(song.tab ?? '')
 
   async function save(e: FormEvent) {
     e.preventDefault()
@@ -228,6 +236,7 @@ function SongCard({ song }: { song: Song }) {
       title: title.trim() || song.title,
       slot,
       link: link.trim() || null,
+      tab: tab.trim() || null,
     })
     setEditing(false)
   }
@@ -256,6 +265,7 @@ function SongCard({ song }: { song: Song }) {
             ))}
           </select>
           <input className="input" type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder={t('songs.link')} aria-label={t('songs.link')} />
+          <input className="input" type="url" value={tab} onChange={(e) => setTab(e.target.value)} placeholder={t('songs.tab')} aria-label={t('songs.tab')} />
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="btn sm" type="submit">
               {t('songs.save')}
@@ -297,6 +307,11 @@ function SongCard({ song }: { song: Song }) {
             {song.link && (
               <a className="link-btn" href={song.link} target="_blank" rel="noreferrer">
                 {isSpotify(song.link) ? t('songs.spotify') : t('songs.open')}
+              </a>
+            )}
+            {song.tab && (
+              <a className="link-btn" href={song.tab} target="_blank" rel="noreferrer">
+                {t('songs.tabShort')}
               </a>
             )}
             <button type="button" className="link-btn" onClick={() => setEditing(true)}>

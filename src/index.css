@@ -2473,3 +2473,179 @@ button {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ---------- topic history ---------- */
+
+.topic-open {
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.topic-open:hover {
+  color: var(--cd, var(--green));
+}
+.modal.topic-history {
+  width: min(600px, 100%);
+}
+.history {
+  margin-top: 20px;
+  max-height: 50vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+}
+.history-row {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.history-row .t {
+  color: var(--ink-2);
+  padding-top: 2px;
+}
+.history-row .body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.history-row .ttl {
+  font-weight: 500;
+}
+.history-row .note {
+  color: var(--ink-2);
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+.history-row .m {
+  color: var(--ink-2);
+  padding-top: 2px;
+}
+.line-chip.clickable {
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.25s var(--ease-spring);
+}
+.line-chip.clickable:hover {
+  border-color: var(--c);
+  transform: translateY(-1px);
+}
+
+/* ---------- journal search ---------- */
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 640px;
+  height: 42px;
+  padding: 0 14px;
+  margin-bottom: 24px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  color: var(--ink-3);
+  transition: border-color 0.2s;
+}
+.search:focus-within {
+  border-color: var(--ink);
+}
+.search .icon {
+  color: var(--ink-3);
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: var(--ink);
+}
+.search input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* ---------- small segmented (dashboard period) ---------- */
+
+.seg.sm {
+  padding: 3px;
+  gap: 2px;
+}
+.seg.sm button {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+/* ---------- stickers (achievements) ---------- */
+
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.ach {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 14px 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--line-2);
+  color: var(--ink-3);
+}
+.ach.on {
+  border-style: solid;
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+.ach-stamp {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line-2);
+  background: var(--bg);
+  font-size: 22px;
+  line-height: 1;
+}
+.ach.on .ach-stamp {
+  border-color: var(--hot);
+  background: color-mix(in srgb, var(--hot-lime) 30%, var(--paper));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--hot) 14%, transparent);
+}
+.ach:not(.on) .ach-stamp .glyph {
+  font-family: var(--font);
+  font-weight: 300;
+  font-size: 26px;
+  color: var(--line-2);
+}
+.ach-stamp.big {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 14px auto 10px;
+  font-size: 60px;
+  border: 3px solid var(--hot);
+  background: color-mix(in srgb, var(--hot-lime) 30%, var(--paper));
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--hot) 14%, transparent);
+}
+.ach-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+.ach-desc {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--ink-3);
+}
+.ach.on .ach-desc {
+  color: var(--ink-2);
+}

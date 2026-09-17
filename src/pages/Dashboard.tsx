@@ -6,11 +6,14 @@ import { Icon } from '../components/Icon'
 import { Pep } from '../components/Pep'
 import { Rose } from '../components/Rose'
 import { Bolts, Jiggle, Wave, useTypedWord } from '../components/fun'
-import { Burst, Counter } from '../components/ui'
+import { Burst, Counter, Segmented } from '../components/ui'
 import { daysAgoISO, fmtMinutes } from '../lib/format'
 import { STRINGS, pluck as play } from '../lib/pluck'
 import { countByStatus, minutesByCategory, minutesByTopic, useData } from '../state/DataContext'
 import { plural, useT } from '../lib/i18n'
+
+type Period = '30' | '90' | 'all'
+const PERIOD_KEY = 'rose.period'
 
 const fadeUp = (i: number) => ({
   initial: { opacity: 0, y: 10 },
@@ -87,7 +90,24 @@ export function Dashboard() {
     iso,
     on: log.some((l) => l.date === iso),
   }))
-  const byCat = minutesByCategory(log)
+  const [period, setPeriod] = useState<Period>(() => {
+    try {
+      const v = localStorage.getItem(PERIOD_KEY)
+      return v === '30' || v === '90' ? v : 'all'
+    } catch {
+      return 'all'
+    }
+  })
+  const pickPeriod = (p: Period) => {
+    setPeriod(p)
+    try {
+      localStorage.setItem(PERIOD_KEY, p)
+    } catch {
+      /* fine */
+    }
+  }
+  const periodSince = period === 'all' ? '' : daysAgoISO(Number(period) - 1)
+  const byCat = minutesByCategory(period === 'all' ? log : log.filter((l) => l.date >= periodSince))
   const byTopic = minutesByTopic(log)
   const touched = topics.filter((t) => (byTopic[t.id] ?? 0) > 0).length
   const status = countByStatus(songs)
@@ -225,7 +245,17 @@ export function Dashboard() {
       <motion.section className="panel" {...fadeUp(4)}>
         <div className="panel-head">
           <div className="label"><Icon name="timer" /> {t('dash.whereTime')}</div>
-          <span className="small faint">{t('dash.whereTimeHint')}</span>
+          <Segmented
+            name="period"
+            className="sm"
+            value={period}
+            options={[
+              { value: '30', label: t('dash.p30') },
+              { value: '90', label: t('dash.p90') },
+              { value: 'all', label: t('dash.pAll') },
+            ]}
+            onChange={pickPeriod}
+          />
         </div>
         <Rose minutes={byCat} onPick={(id) => nav(`/topics#${id}`)} />
       </motion.section>

@@ -17,6 +17,7 @@ create table if not exists public.songs (
   title text not null,
   status text not null default 'backlog' check (status in ('backlog','learning','learned')),
   link text,
+  tab text,
   slot text check (slot in ('easy','growth','dream')),
   sort integer not null default 0,
   created_at timestamptz not null default now(),

@@ -46,6 +46,7 @@ export function buildDemo(topics: Topic[]): Snapshot {
     ...s,
     id: crypto.randomUUID(),
     link: null,
+    tab: null,
     sort: i,
     created_at: now,
     updated_at: now,

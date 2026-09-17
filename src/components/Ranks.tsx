@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import { fmtMinutes } from '../lib/format'
 import { useT } from '../lib/i18n'
 import { RANKS, badgeSrc, rankFor } from '../lib/ranks'
+import { AchievementGrid } from './Achievements'
 import { Burst, Jelly } from './ui'
 
 // Silhouette of the real badges (332×411 box: disc centred (165,167) r157, pill 20..310 × 300..404).
@@ -319,6 +320,11 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                 )
               })}
             </div>
+
+            <div className="label" style={{ marginTop: 28, marginBottom: 12 }}>
+              {t('ach.title')}
+            </div>
+            <AchievementGrid />
           </motion.div>
         </motion.div>
       )}

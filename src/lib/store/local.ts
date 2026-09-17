@@ -18,7 +18,7 @@ function read(): Snapshot {
 function normalize(raw: Partial<Snapshot>): Snapshot {
   return {
     topics: raw.topics ?? [],
-    songs: raw.songs ?? [],
+    songs: (raw.songs ?? []).map((x) => ({ ...x, tab: x.tab ?? null })),
     sessions: raw.sessions ?? [],
     log: (raw.log ?? []).map((l) => ({
       ...l,

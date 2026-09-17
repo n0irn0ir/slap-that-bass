@@ -23,6 +23,7 @@ export interface Song {
   title: string
   status: SongStatus
   link: string | null
+  tab: string | null // tab / sheet link
   slot: SongSlot
   sort: number
   created_at: string
