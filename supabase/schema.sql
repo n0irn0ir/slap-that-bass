@@ -62,6 +62,7 @@ create table if not exists public.notes (
   y integer not null default 0,
   rotate real not null default 0,
   stuck boolean not null default true,
+  page text not null default '/',
   created_at timestamptz not null default now()
 );
 

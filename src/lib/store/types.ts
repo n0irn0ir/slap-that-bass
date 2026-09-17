@@ -2,7 +2,7 @@ import type { LogEntry, Note, Session, Snapshot, Song, Topic } from '../types'
 
 export type NewTopic = Pick<Topic, 'category' | 'title' | 'sort'>
 export type NewSong = Pick<Song, 'artist' | 'title' | 'status' | 'link' | 'tab' | 'slot' | 'sort'>
-export type NewNote = Pick<Note, 'text' | 'color' | 'x' | 'y' | 'rotate' | 'stuck'>
+export type NewNote = Pick<Note, 'text' | 'color' | 'x' | 'y' | 'rotate' | 'stuck' | 'page'>
 export type NewSession = Pick<Session, 'date' | 'title' | 'note' | 'rating' | 'minutes'>
 /** A session line; `id` is set when it already exists (edit), absent for a new one. */
 export type NewItem = Pick<LogEntry, 'category' | 'topic_id' | 'song_id' | 'minutes' | 'fixed'> & { id?: string }

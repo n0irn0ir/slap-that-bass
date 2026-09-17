@@ -65,6 +65,7 @@ export interface Note {
   y: number // viewport px from the top
   rotate: number // degrees, a little askew
   stuck: boolean
+  page: string // route it is stuck to: '/', '/topics', '/songs', '/journal', '/settings'
   created_at: string
 }
 export type NoteColor = 'yellow' | 'pink' | 'cyan' | 'lime' | 'orange' | 'violet'

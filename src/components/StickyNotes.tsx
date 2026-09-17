@@ -1,12 +1,20 @@
 import { AnimatePresence, motion, useMotionValue } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
-import { useT } from '../lib/i18n'
+import { useLocation } from 'react-router-dom'
+import { useT, type Key } from '../lib/i18n'
 import type { Note, NoteColor } from '../lib/types'
 import { useData } from '../state/DataContext'
 
 const COLORS: NoteColor[] = ['yellow', 'pink', 'cyan', 'lime', 'orange', 'violet']
 // Each note gets one of these by its id, so the same note always looks the same.
 const FONTS = ['f-shantell', 'f-comic', 'f-neucha', 'f-pangolin']
+const PAGE_KEY: Record<string, Key> = {
+  '/': 'nav.progress',
+  '/topics': 'nav.topics',
+  '/songs': 'nav.songs',
+  '/journal': 'nav.journal',
+  '/settings': 'nav.settings',
+}
 const fontOf = (id: string) => FONTS[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % FONTS.length]
 const W = 200 // note width; height grows with the text
 
@@ -19,8 +27,10 @@ export function StickyNotes() {
   const { t } = useT()
   const [pocketOpen, setPocketOpen] = useState(false)
   const [focusId, setFocusId] = useState<string | null>(null)
+  const page = useLocation().pathname
 
-  const stuck = notes.filter((n) => n.stuck)
+  // Only the notes stuck to this page show; the pocket holds peeled ones from everywhere.
+  const stuck = notes.filter((n) => n.stuck && n.page === page)
   const peeled = notes.filter((n) => !n.stuck)
 
   async function create() {
@@ -33,13 +43,16 @@ export function StickyNotes() {
       y: Math.max(80, window.innerHeight - 260 - k * 30),
       rotate: Math.round((Math.random() * 8 - 4) * 10) / 10,
       stuck: true,
+      page,
     })
     if (n) setFocusId(n.id)
   }
 
   function stick(n: Note) {
+    // sticks to the page you are on now
     updateNote(n.id, {
       stuck: true,
+      page,
       x: Math.max(16, window.innerWidth - W - 140),
       y: Math.max(80, window.innerHeight - 300),
     })
@@ -76,7 +89,10 @@ export function StickyNotes() {
               </div>
               {peeled.map((n) => (
                 <div key={n.id} className={`pocket-row c-${n.color}`}>
-                  <span className="pocket-text">{n.text.trim() || t('notes.blank')}</span>
+                  <span className="pocket-text">
+                    {n.text.trim() || t('notes.blank')}
+                    {PAGE_KEY[n.page] && <span className="pocket-page">{t(PAGE_KEY[n.page])}</span>}
+                  </span>
                   <button type="button" className="link-btn" onClick={() => stick(n)}>
                     {t('notes.stick')}
                   </button>

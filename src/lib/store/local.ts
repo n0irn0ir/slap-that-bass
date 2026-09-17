@@ -20,7 +20,7 @@ function normalize(raw: Partial<Snapshot>): Snapshot {
     topics: raw.topics ?? [],
     songs: (raw.songs ?? []).map((x) => ({ ...x, tab: x.tab ?? null })),
     sessions: raw.sessions ?? [],
-    notes: raw.notes ?? [],
+    notes: (raw.notes ?? []).map((n) => ({ ...n, page: n.page ?? '/' })),
     log: (raw.log ?? []).map((l) => ({
       ...l,
       song_id: l.song_id ?? null,
