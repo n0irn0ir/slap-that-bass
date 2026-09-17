@@ -4,7 +4,10 @@ import { useT } from '../lib/i18n'
 import type { Note, NoteColor } from '../lib/types'
 import { useData } from '../state/DataContext'
 
-const COLORS: NoteColor[] = ['yellow', 'pink', 'cyan', 'lime']
+const COLORS: NoteColor[] = ['yellow', 'pink', 'cyan', 'lime', 'orange', 'violet']
+// Each note gets one of these by its id, so the same note always looks the same.
+const FONTS = ['f-shantell', 'f-underdog', 'f-neucha', 'f-pangolin']
+const fontOf = (id: string) => FONTS[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % FONTS.length]
 const W = 200 // note width; height grows with the text
 
 /**
@@ -166,7 +169,7 @@ function StickyNote({
 
   return (
     <motion.div
-      className={`sticky c-${note.color}${tossing ? ' tossing' : ''}`}
+      className={`sticky c-${note.color} ${fontOf(note.id)}${tossing ? ' tossing' : ''}`}
       style={{ left: x, top: y, width: W, x: mx, y: my }}
       drag={!tossing}
       dragMomentum={false}
@@ -186,6 +189,18 @@ function StickyNote({
       whileDrag={{ scale: 1.04, rotate: note.rotate + 2, boxShadow: '0 24px 40px -18px rgba(0,0,0,0.45)' }}
     >
       <span className="tape" aria-hidden />
+      <div className="sticky-colors" onPointerDown={(e) => e.stopPropagation()}>
+        {COLORS.map((c) => (
+          <button
+            key={c}
+            type="button"
+            className={`sw c-${c}${c === note.color ? ' on' : ''}`}
+            onClick={() => onChange({ color: c })}
+            aria-label={c}
+            title={c}
+          />
+        ))}
+      </div>
       <textarea
         ref={areaRef}
         value={text}

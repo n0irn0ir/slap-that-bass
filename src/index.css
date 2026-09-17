@@ -2611,7 +2611,7 @@ button {
   --paper-note-d: #f2df4a;
   position: fixed;
   z-index: 30;
-  padding: 18px 14px 10px;
+  padding: 22px 14px 10px;
   background: var(--paper-note);
   box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(0, 0, 0, 0.06);
   cursor: grab;
@@ -2631,6 +2631,67 @@ button {
 .sticky.c-lime {
   --paper-note: #e4ff9e;
   --paper-note-d: #c5f24a;
+}
+.sticky.c-orange {
+  --paper-note: #ffd9b3;
+  --paper-note-d: #ffb066;
+}
+.sticky.c-violet {
+  --paper-note: #ddd3ff;
+  --paper-note-d: #b8a4ff;
+}
+/* colour dots in the corner, shown on hover */
+.sticky-colors {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sticky:hover .sticky-colors,
+.sticky:focus-within .sticky-colors {
+  opacity: 1;
+}
+.sticky-colors .sw {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(42, 36, 24, 0.25);
+  background: var(--paper-note-d);
+  transition: transform 0.2s var(--ease-spring);
+}
+.sticky-colors .sw.c-yellow { --paper-note-d: #f2df4a; }
+.sticky-colors .sw.c-pink { --paper-note-d: #ff8fd8; }
+.sticky-colors .sw.c-cyan { --paper-note-d: #7fdcff; }
+.sticky-colors .sw.c-lime { --paper-note-d: #c5f24a; }
+.sticky-colors .sw.c-orange { --paper-note-d: #ffb066; }
+.sticky-colors .sw.c-violet { --paper-note-d: #b8a4ff; }
+.sticky-colors .sw:hover {
+  transform: scale(1.3);
+}
+.sticky-colors .sw.on {
+  border-color: #2a2418;
+  transform: scale(1.15);
+}
+/* one goofy face per note */
+.sticky.f-shantell textarea {
+  font-family: 'Shantell Sans', 'Segoe Print', cursive;
+  font-variation-settings: 'BNCE' 100, 'INFM' 100;
+  font-size: 17px;
+}
+.sticky.f-underdog textarea {
+  font-family: 'Underdog', 'Segoe Print', cursive;
+  font-size: 19px;
+}
+.sticky.f-neucha textarea {
+  font-family: 'Neucha', 'Segoe Print', cursive;
+  font-size: 21px;
+}
+.sticky.f-pangolin textarea {
+  font-family: 'Pangolin', 'Segoe Print', cursive;
+  font-size: 17px;
 }
 .sticky .tape {
   position: absolute;
@@ -2653,8 +2714,6 @@ button {
   background: transparent;
   outline: none;
   font-family: 'Shantell Sans', 'Segoe Print', cursive;
-  font-variation-settings: 'BNCE' 100, 'INFM' 100;
-  font-size: 17px;
   line-height: 1.3;
   color: #2a2418;
   cursor: text;
@@ -2784,6 +2843,12 @@ button {
 }
 .pocket-row.c-lime {
   border-left-color: #c5f24a;
+}
+.pocket-row.c-orange {
+  border-left-color: #ffb066;
+}
+.pocket-row.c-violet {
+  border-left-color: #b8a4ff;
 }
 .pocket-text {
   font-family: 'Shantell Sans', cursive;

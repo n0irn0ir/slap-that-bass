@@ -67,7 +67,7 @@ export interface Note {
   stuck: boolean
   created_at: string
 }
-export type NoteColor = 'yellow' | 'pink' | 'cyan' | 'lime'
+export type NoteColor = 'yellow' | 'pink' | 'cyan' | 'lime' | 'orange' | 'violet'
 
 export interface Snapshot {
   topics: Topic[]
