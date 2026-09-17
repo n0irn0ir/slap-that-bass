@@ -132,15 +132,15 @@ export function Songs() {
       </div>
 
       <form className="song-form" onSubmit={submit}>
-        <label className="field">
+        <label className="field" style={{ gridArea: 'artist' }}>
           <span className="label">{t('songs.artist')}</span>
           <input className="input" value={artist} onChange={(e) => setArtist(e.target.value)} required />
         </label>
-        <label className="field">
+        <label className="field" style={{ gridArea: 'title' }}>
           <span className="label">{t('songs.songTitle')}</span>
           <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} required />
         </label>
-        <label className="field">
+        <label className="field" style={{ gridArea: 'status' }}>
           <span className="label">{t('songs.status')}</span>
           <select className="select" value={status} onChange={(e) => setStatus(e.target.value as SongStatus)}>
             {STATUSES.map((s) => (
@@ -150,7 +150,7 @@ export function Songs() {
             ))}
           </select>
         </label>
-        <label className="field">
+        <label className="field" style={{ gridArea: 'slot' }}>
           <span className="label">{t('songs.slot')}</span>
           <select className="select" value={slot ?? ''} onChange={(e) => setSlot((e.target.value || null) as SongSlot)}>
             {SLOTS.map((s) => (
@@ -160,15 +160,15 @@ export function Songs() {
             ))}
           </select>
         </label>
-        <label className="field">
+        <label className="field" style={{ gridArea: 'link' }}>
           <span className="label">{t('songs.link')}</span>
           <input className="input" type="url" placeholder={t('songs.linkPlaceholder')} value={link} onChange={(e) => setLink(e.target.value)} />
         </label>
-        <label className="field">
+        <label className="field" style={{ gridArea: 'tab' }}>
           <span className="label">{t('songs.tab')}</span>
           <input className="input" type="url" placeholder={t('songs.tabPlaceholder')} value={tab} onChange={(e) => setTab(e.target.value)} />
         </label>
-        <Jelly className="btn" type="submit" disabled={!artist.trim() || !title.trim()}>
+        <Jelly className="btn" type="submit" style={{ gridArea: 'add', justifySelf: 'end' }} disabled={!artist.trim() || !title.trim()}>
           {t('songs.add')}
         </Jelly>
       </form>

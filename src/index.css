@@ -1548,10 +1548,14 @@ button {
   text-shadow: 0 1px 0 #fff;
 }
 
+/* two deliberate rows: what the song is, then where it lives, with the button closing the second */
 .song-form {
   display: grid;
-  grid-template-columns: 1fr 1fr 130px 150px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr 130px 150px;
+  grid-template-areas:
+    'artist title status slot'
+    'link   tab   tab    add';
+  gap: 12px 10px;
   align-items: end;
   margin-bottom: 40px;
 }
