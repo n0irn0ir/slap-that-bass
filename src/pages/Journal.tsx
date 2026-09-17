@@ -14,7 +14,7 @@ import type { NewItem, NewSession } from '../lib/store'
 import type { CategoryId, LogEntry, Session, Song } from '../lib/types'
 import { useData } from '../state/DataContext'
 
-const QUICK = [15, 20, 30, 45, 60, 90]
+const QUICK = [15, 30, 45, 60, 90, 120]
 
 interface Prefill {
   open?: boolean
@@ -250,7 +250,8 @@ function EntryModal({
   const { t } = useT()
   const [date, setDate] = useState(todayISO())
   const [title, setTitle] = useState('')
-  const [total, setTotal] = useState('')
+  const [hours, setHours] = useState('')
+  const [mins, setMins] = useState('')
   const [lines, setLines] = useState<Line[]>([blankLine()])
   const [note, setNote] = useState('')
   const [rating, setRating] = useState<number | null>(null)
@@ -262,7 +263,8 @@ function EntryModal({
     if (editing) {
       setDate(editing.date)
       setTitle(editing.title ?? '')
-      setTotal(String(editing.minutes))
+      setHours(editing.minutes >= 60 ? String(Math.floor(editing.minutes / 60)) : '')
+      setMins(editing.minutes % 60 ? String(editing.minutes % 60) : '')
       setNote(editing.note ?? '')
       setRating(editing.rating ?? null)
       const ls = linesOf(log, editing.id).map<Line>((l) => {
@@ -282,7 +284,8 @@ function EntryModal({
     } else {
       setDate(prefill?.date ?? todayISO())
       setTitle('')
-      setTotal('')
+      setHours('')
+      setMins('')
       setNote('')
       setRating(null)
       const topic = prefill?.topic_id ? topics.find((x) => x.id === prefill.topic_id) : null
@@ -297,7 +300,7 @@ function EntryModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  const totalNum = parseInt(total, 10) || 0
+  const totalNum = (parseInt(hours, 10) || 0) * 60 + (parseInt(mins, 10) || 0)
   const typed = lines.map((l) => (l.minutes.trim() === '' ? null : Math.max(0, parseInt(l.minutes, 10) || 0)))
   const typedSum = typed.reduce<number>((a, m) => a + (m ?? 0), 0)
   const effectiveTotal = Math.max(totalNum, typedSum)
@@ -393,13 +396,24 @@ function EntryModal({
                   <input
                     type="number"
                     inputMode="numeric"
-                    min={1}
-                    max={600}
+                    min={0}
+                    max={24}
+                    placeholder="0"
+                    value={hours}
+                    onChange={(e) => setHours(e.target.value)}
+                    aria-label={t('journal.hoursField')}
+                    className="hrs"
+                  />
+                  <span>{t('journal.h')}</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    max={59}
                     placeholder="45"
-                    value={total}
-                    onChange={(e) => setTotal(e.target.value)}
-                    aria-label={t('journal.total')}
-                    required
+                    value={mins}
+                    onChange={(e) => setMins(e.target.value)}
+                    aria-label={t('journal.minutesField')}
                   />
                   <span>{t('journal.min')}</span>
                 </div>
@@ -420,11 +434,14 @@ function EntryModal({
                 <motion.button
                   key={q}
                   type="button"
-                  className={`chip${total === String(q) ? ' on' : ''}`}
-                  onClick={() => setTotal(String(q))}
+                  className={`chip${totalNum === q ? ' on' : ''}`}
+                  onClick={() => {
+                    setHours(q >= 60 ? String(Math.floor(q / 60)) : '')
+                    setMins(q % 60 ? String(q % 60) : '')
+                  }}
                   whileTap={{ scale: 0.85, rotate: -6 }}
                 >
-                  {q}
+                  {fmtMinutes(q)}
                 </motion.button>
               ))}
             </div>

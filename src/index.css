@@ -2023,7 +2023,7 @@ button {
   gap: 8px;
 }
 .minutes-big input {
-  width: 110px;
+  width: 92px;
   height: 56px;
   font-size: 40px;
   font-weight: 300;
@@ -2042,6 +2042,12 @@ button {
 }
 .minutes-big span {
   color: var(--ink-2);
+}
+.minutes-big input.hrs {
+  width: 64px;
+}
+.minutes-big span + input {
+  margin-left: 10px;
 }
 
 .rates {
