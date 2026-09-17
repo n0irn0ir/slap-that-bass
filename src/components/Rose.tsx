@@ -187,9 +187,17 @@ export function Rose({ minutes, onPick }: Props) {
             onClick={() => onPick?.(c.id)}
           >
             <span className="sw" style={{ background: c.color }} />
-            <span>
+            <span className="nm">
               {catText(c.id).name}
               {i === lowest && <span className="low-tag">{t('rose.least')}</span>}
+            </span>
+            <span className="bar" aria-hidden>
+              <motion.span
+                style={{ background: c.color }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: total ? values[i] / max : 0 }}
+                transition={{ type: 'spring', stiffness: 120, damping: 20, delay: 0.3 + i * 0.05 }}
+              />
             </span>
             <span className="m">{fmtMinutes(values[i])}</span>
             <span className="p">{pct(values[i], total)}%</span>

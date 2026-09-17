@@ -222,28 +222,13 @@ export function Dashboard() {
         </motion.div>
       </div>
 
-      <div className="dash-grid">
-        <motion.section className="panel" {...fadeUp(4)}>
-          <div className="label" style={{ marginBottom: 20 }}>
-            <Icon name="timer" /> {t('dash.whereTime')}
-          </div>
-          <Rose minutes={byCat} onPick={(id) => nav(`/topics#${id}`)} />
-        </motion.section>
-
-        <motion.section className="panel tight songs-panel" {...fadeUp(5)}>
-          <div className="label" style={{ marginBottom: 14 }}>
-            <Icon name="headphones" /> {t('dash.songs')}
-          </div>
-          <div className="songs-mini">
-            {(['backlog', 'learning', 'learned'] as const).map((s) => (
-              <Link key={s} to={`/songs#${s}`}>
-                <div className="n mono">{status[s]}</div>
-                <div className="small muted">{t(`songs.${s}`)}</div>
-              </Link>
-            ))}
-          </div>
-        </motion.section>
-      </div>
+      <motion.section className="panel" {...fadeUp(4)}>
+        <div className="panel-head">
+          <div className="label"><Icon name="timer" /> {t('dash.whereTime')}</div>
+          <span className="small faint">{t('dash.whereTimeHint')}</span>
+        </div>
+        <Rose minutes={byCat} onPick={(id) => nav(`/topics#${id}`)} />
+      </motion.section>
 
       <motion.section className="panel" style={{ marginTop: 24 }} {...fadeUp(7)}>
         <div className="panel-head">
