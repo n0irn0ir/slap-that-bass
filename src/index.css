@@ -283,6 +283,8 @@ button {
   height: 100%;
 }
 .rank-ring img {
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #fff;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -361,6 +363,9 @@ button {
   width: 100%;
   height: auto;
   display: block;
+  border-radius: 50%;
+  /* die-cut sticker edge: a white rim and a faint line around it */
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--line-2);
   transition: filter 0.3s, opacity 0.3s;
 }
 .rank-mystery {
@@ -381,16 +386,16 @@ button {
   font-weight: 300;
   fill: var(--line-2);
 }
-.rank-mystery-h {
-  font-family: var(--font);
-  font-size: 30px;
-  font-weight: 600;
-  fill: var(--ink-2);
-}
-.rank-mystery-sub {
+.rank-caption {
+  display: block;
+  margin-top: 6px;
+  text-align: center;
   font-family: var(--mono);
-  font-size: 24px;
-  fill: var(--ink-3);
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.rank-cell.locked .rank-caption {
+  color: var(--ink-3);
 }
 
 /* level-up popup */

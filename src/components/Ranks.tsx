@@ -10,7 +10,7 @@ import { Burst, Jelly } from './ui'
 const BADGE_PATH = 'M 3 200 A 197 197 0 1 1 397 200 A 197 197 0 1 1 3 200 Z'
 
 /** Locked rank: the badge's own shape, muted, with a question mark. */
-function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: number; peel?: string }) {
+function Mystery({ n, peel }: { n: number; peel?: string }) {
   const clip = `mystery-clip-${n}`
   return (
     <svg className={`rank-mystery${peel ? ' peel' : ''}`} viewBox="0 0 400 400" aria-hidden>
@@ -26,7 +26,7 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
         <path className="rank-cover-sheet" d={BADGE_PATH} fill="var(--bg)" />
       </g>
       <path d={BADGE_PATH} fill="none" stroke="var(--line-2)" strokeWidth="4" strokeDasharray="12 9" />
-      <text x="200" y="185" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
+      <text x="200" y="210" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-q">
         ?
       </text>
       {peel && (
@@ -36,12 +36,6 @@ function Mystery({ n, name, hours, peel }: { n: number; name: string; hours: num
           <path className="rank-flap" d="M 234 6 Q 285 115 394 166 C 305 205 234 175 234 6 Z" />
         </g>
       )}
-      <text x="200" y="290" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-h">
-        {name}
-      </text>
-      <text x="200" y="328" textAnchor="middle" dominantBaseline="middle" className="rank-mystery-sub">
-        {hours} h
-      </text>
     </svg>
   )
 }
@@ -189,7 +183,7 @@ export function RankBadge({ totalMinutes }: { totalMinutes: number }) {
         type="button"
         className="rank-btn"
         onClick={() => setOpen(true)}
-        title={next ? `${current.name} · ${t('rank.next', { name: next.name, h: next.hours })}` : current.name}
+        title={next ? `${current.name} · ${t('rank.next', { h: next.hours })}` : current.name}
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 500, damping: 20 }}
@@ -311,8 +305,9 @@ function RankMap({ open, onClose, totalMinutes }: { open: boolean; onClose: () =
                     {earned ? (
                       <img src={badgeSrc(r.n)} alt={`${r.n} ${r.name}`} draggable={false} />
                     ) : (
-                      <Mystery n={r.n} name={r.name} hours={r.hours} peel={isNext ? badgeSrc(r.n) : undefined} />
+                      <Mystery n={r.n} peel={isNext ? badgeSrc(r.n) : undefined} />
                     )}
+                    <span className="rank-caption">{r.hours} h</span>
                     {isCurrent && <Burst id={burst} n={14} />}
                   </motion.div>
                 )
