@@ -310,17 +310,20 @@ export function Songs() {
                 </span>
                 {col.id === 'learned' && <Burst id={cheer} n={14} />}
               </div>
-              <AnimatePresence initial={false}>
-                {items.map((s) => (
-                  <SongCard key={s.id} song={s} />
-                ))}
-              </AnimatePresence>
-              {items.length === 0 && (
-                <div className="drop-slot">
-                  <span className="cover placeholder" aria-hidden />
-                  <span className="small">{t('songs.drop')}</span>
-                </div>
-              )}
+              {/* the list scrolls inside the column, so every column's head stays in view while dragging */}
+              <motion.div className="col-list" layoutScroll>
+                <AnimatePresence initial={false}>
+                  {items.map((s) => (
+                    <SongCard key={s.id} song={s} />
+                  ))}
+                </AnimatePresence>
+                {items.length === 0 && (
+                  <div className="drop-slot">
+                    <span className="cover placeholder" aria-hidden />
+                    <span className="small">{t('songs.drop')}</span>
+                  </div>
+                )}
+              </motion.div>
             </div>
           )
         })}

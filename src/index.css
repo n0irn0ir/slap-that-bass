@@ -1600,6 +1600,24 @@ button {
   background: transparent;
   border: 3px dashed color-mix(in srgb, var(--c) 50%, var(--bg));
   transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease-spring);
+  /* a column is never taller than the screen below the top bar; its list scrolls instead */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 64px - 40px);
+}
+/* the board ends the songs page; a short bottom padding keeps the column heads below the top bar at full scroll */
+.page:has(> .board) {
+  padding-bottom: 20px;
+}
+.col-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  /* room for the cards' hover tilt and shadow */
+  margin: 0 -6px;
+  padding: 4px 6px 6px;
 }
 .col.over {
   background: color-mix(in srgb, var(--c) 8%, var(--bg));
@@ -1635,7 +1653,7 @@ button {
   border: 1px solid var(--line);
   border-left: 4px solid var(--c);
   border-radius: var(--r-md);
-  padding: 14px 16px 12px;
+  padding: 8px 10px;
   margin: 0 0 6px;
   cursor: grab;
   transition: border-color 0.2s, box-shadow 0.25s, transform 0.3s var(--ease-spring);
@@ -1652,19 +1670,19 @@ button {
 }
 .song .artist {
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 12px;
 }
 .song-row {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
 }
 .song .cover {
   display: block;
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.45);
   background: var(--line);
@@ -1690,6 +1708,7 @@ button {
   min-width: 0;
 }
 .song-row .h3 {
+  font-size: 14px;
   overflow-wrap: anywhere;
 }
 .song-row .slot {
@@ -1718,28 +1737,48 @@ button {
 .song .slot.dream {
   --s: var(--magenta-d);
 }
+/* actions appear over the right end of the card on hover, so the card stays one row tall */
 .song .foot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
+  align-items: center;
   gap: 12px;
-  margin-top: 8px;
+  padding: 0 12px 0 32px;
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: linear-gradient(to right, transparent, var(--paper) 28px);
   font-size: 12px;
-  opacity: 0.75;
+  opacity: 0;
+  pointer-events: none;
   transition: opacity 0.2s;
 }
 .song:hover .foot,
 .song:focus-within .foot {
   opacity: 1;
+  pointer-events: auto;
+}
+@media (hover: none) {
+  .song .foot {
+    position: static;
+    margin-top: 6px;
+    padding: 0;
+    background: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 .col.done .song .h3 {
   color: var(--ink-2);
 }
 .drop-slot {
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 40px 1fr;
   gap: 12px;
   align-items: center;
-  min-height: 80px;
-  padding: 14px 16px 12px;
+  min-height: 58px;
+  padding: 8px 10px;
   margin: 0;
   border-radius: var(--r-md);
   border: 1.5px dashed color-mix(in srgb, var(--c) 40%, var(--bg));
@@ -1749,9 +1788,9 @@ button {
 }
 .drop-slot .cover {
   display: block;
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
   border: 1.5px dashed color-mix(in srgb, var(--c) 45%, var(--paper));
   background: color-mix(in srgb, var(--c) 8%, var(--paper));
 }
@@ -2473,6 +2512,15 @@ button {
   }
   .board {
     grid-template-columns: 1fr;
+  }
+  .col {
+    max-height: none;
+  }
+  .col-list {
+    overflow: visible;
+  }
+  .page:has(> .board) {
+    padding-bottom: 64px;
   }
   .rose-legend {
     grid-template-columns: 1fr;
