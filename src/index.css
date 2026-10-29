@@ -1605,6 +1605,9 @@ button {
   flex-direction: column;
   max-height: calc(100dvh - 64px - 40px);
 }
+.col:hover .col-list {
+  scrollbar-color: color-mix(in srgb, var(--c) 45%, transparent) transparent;
+}
 /* the board ends the songs page; a short bottom padding keeps the column heads below the top bar at full scroll */
 .page:has(> .board) {
   padding-bottom: 20px;
@@ -1614,7 +1617,10 @@ button {
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* a thin scrollbar in the column's colour, shown only while the pointer is over the column */
   scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.25s;
   /* room for the cards' hover tilt and shadow */
   margin: 0 -6px;
   padding: 4px 6px 6px;
